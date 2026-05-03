@@ -1,10 +1,37 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Se o servidor já aponta para public/, não redirecionar novamente
-    # Caso o document root seja a raiz do projeto, redireciona para public/
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{DOCUMENT_ROOT}/public [d]
-    RewriteCond %{DOCUMENT_ROOT}/index.php !-f
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Serve arquivos estaticos de public/ diretamente (css, js, images, etc.)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Remove /public/ da URL se alguem acessar diretamente
+    RewriteCond %{REQUEST_URI} ^/public/(.*)$
+    RewriteRule ^public/(.*)$ /$1 [R=301,L]
+
+    # Redireciona trailing slash
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo que nao e arquivo estatico vai para o index.php da raiz
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
 </IfModule>
+
+# Seguranca: bloqueia acesso direto a arquivos sensiveis
+<FilesMatch "^\.env|composer\.(json|lock)|artisan$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
