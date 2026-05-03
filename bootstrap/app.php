@@ -11,8 +11,26 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'instalacao' => \App\Http\Middleware\VerificarInstalacao::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Se a tabela de sessões não existir (sistema não instalado ainda),
+        // redireciona para o instalador em vez de mostrar erro 500.
+        $exceptions->render(function (\Illuminate\Database\QueryException $e, \Illuminate\Http\Request $request) {
+            if (str_contains($e->getMessage(), "sessions' doesn't exist")) {
+                // Corrige o .env para usar file driver e redireciona para o instalador
+                $envPath = base_path('.env');
+                if (file_exists($envPath)) {
+                    $env = file_get_contents($envPath);
+                    if (str_contains($env, 'SESSION_DRIVER=database')) {
+                        $env = preg_replace('/^SESSION_DRIVER=.*/m', 'SESSION_DRIVER=file', $env);
+                        $env = preg_replace('/^CACHE_STORE=.*/m',    'CACHE_STORE=file',    $env);
+                        file_put_contents($envPath, $env);
+                    }
+                }
+                return redirect('/instalar');
+            }
+        });
     })->create();

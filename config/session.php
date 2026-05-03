@@ -18,7 +18,17 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => env('SESSION_DRIVER', 'file'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTA DE INSTALAÇÃO
+    |--------------------------------------------------------------------------
+    | Durante a instalação inicial (antes das migrations), o driver deve ser
+    | "file" ou "cookie". O instalador altera automaticamente para "database"
+    | após as migrations serem executadas com sucesso.
+    |--------------------------------------------------------------------------
+    */
 
     /*
     |--------------------------------------------------------------------------

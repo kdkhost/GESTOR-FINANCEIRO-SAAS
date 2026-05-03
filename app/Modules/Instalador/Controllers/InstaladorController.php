@@ -12,24 +12,33 @@ use Illuminate\Support\Facades\Schema;
 
 class InstaladorController extends Controller
 {
-    /**
-     * Middleware: bloqueia acesso se instalação já foi concluída.
-     */
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (file_exists(storage_path('installed'))) {
-                return redirect('/admin/dashboard');
-            }
-            return $next($request);
-        });
-    }
+    // Middleware aplicado via rota (ver Routes/web.php)
 
     /**
      * Exibe a interface do instalador.
+     * Garante que SESSION_DRIVER seja compatível com o estado atual
+     * (antes das migrations, não pode usar driver "database").
      */
     public function index()
     {
+        // Se o driver de sessão for "database" mas as tabelas ainda não existem,
+        // corrige automaticamente para "file" para o instalador funcionar.
+        if (config('session.driver') === 'database') {
+            try {
+                \Illuminate\Support\Facades\Schema::hasTable('sessions');
+            } catch (\Throwable) {
+                // Banco inacessível ou tabela inexistente — corrige o .env
+                $envPath = base_path('.env');
+                if (file_exists($envPath)) {
+                    $env = file_get_contents($envPath);
+                    $env = preg_replace('/^SESSION_DRIVER=.*/m', 'SESSION_DRIVER=file', $env);
+                    $env = preg_replace('/^CACHE_STORE=.*/m',    'CACHE_STORE=file',    $env);
+                    file_put_contents($envPath, $env);
+                    \Illuminate\Support\Facades\Artisan::call('config:clear');
+                }
+            }
+        }
+
         return view('instalador.index');
     }
 
@@ -111,6 +120,8 @@ class InstaladorController extends Controller
 
     /**
      * Etapa 4 — Salvar configurações do banco no .env
+     * Também força SESSION_DRIVER=file para o instalador funcionar
+     * antes das migrations criarem a tabela sessions.
      */
     public function salvarConfiguracaoBanco(Request $request): JsonResponse
     {
@@ -127,16 +138,24 @@ class InstaladorController extends Controller
             $env = file_get_contents($envPath);
 
             $substituicoes = [
-                'DB_CONNECTION' => 'mysql',
-                'DB_HOST'       => $request->db_host,
-                'DB_PORT'       => $request->db_port,
-                'DB_DATABASE'   => $request->db_database,
-                'DB_USERNAME'   => $request->db_username,
-                'DB_PASSWORD'   => $request->db_password ?? '',
+                'DB_CONNECTION'  => 'mysql',
+                'DB_HOST'        => $request->db_host,
+                'DB_PORT'        => $request->db_port,
+                'DB_DATABASE'    => $request->db_database,
+                'DB_USERNAME'    => $request->db_username,
+                'DB_PASSWORD'    => $request->db_password ?? '',
+                // Garante que sessão use arquivo durante a instalação
+                // (tabela sessions ainda não existe até as migrations rodarem)
+                'SESSION_DRIVER' => 'file',
+                'CACHE_STORE'    => 'file',
             ];
 
             foreach ($substituicoes as $chave => $valor) {
-                $env = preg_replace("/^{$chave}=.*/m", "{$chave}={$valor}", $env);
+                if (preg_match("/^{$chave}=/m", $env)) {
+                    $env = preg_replace("/^{$chave}=.*/m", "{$chave}={$valor}", $env);
+                } else {
+                    $env .= "\n{$chave}={$valor}";
+                }
             }
 
             file_put_contents($envPath, $env);
@@ -280,6 +299,7 @@ class InstaladorController extends Controller
 
     /**
      * Etapa 11 — Finalizar instalação e bloquear instalador.
+     * Após as migrations, muda SESSION_DRIVER e CACHE_STORE para database.
      */
     public function finalizar(): JsonResponse
     {
@@ -291,6 +311,13 @@ class InstaladorController extends Controller
                 ['chave' => 'instalacao_concluida'],
                 ['valor' => '1', 'updated_at' => now()]
             );
+
+            // Agora que as migrations rodaram, ativa drivers de banco
+            $envPath = base_path('.env');
+            $env     = file_get_contents($envPath);
+            $env     = preg_replace('/^SESSION_DRIVER=.*/m', 'SESSION_DRIVER=database', $env);
+            $env     = preg_replace('/^CACHE_STORE=.*/m',    'CACHE_STORE=database',    $env);
+            file_put_contents($envPath, $env);
 
             // Limpa caches
             Artisan::call('config:clear');
