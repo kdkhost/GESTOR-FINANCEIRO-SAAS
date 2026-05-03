@@ -14,6 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'instalacao' => \App\Http\Middleware\VerificarInstalacao::class,
         ]);
+
+        // Substitui o StartSession padrão por versão que trata graciosamente
+        // a ausência da tabela sessions (sistema não instalado ainda).
+        $middleware->replace(
+            \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\StartSessionSegura::class,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Se a tabela de sessões não existir (sistema não instalado ainda),
