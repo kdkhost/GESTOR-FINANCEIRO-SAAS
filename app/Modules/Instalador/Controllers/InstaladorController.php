@@ -232,6 +232,9 @@ class InstaladorController extends Controller
 
     /**
      * Etapa 9 — Criar superadministrador inicial.
+     * Cria o usuário sem atribuir role do Spatie neste momento,
+     * pois as tabelas de permissões podem ainda não existir.
+     * A role é atribuída na etapa de finalização.
      */
     public function criarSuperadmin(Request $request): JsonResponse
     {
@@ -250,10 +253,17 @@ class InstaladorController extends Controller
                 'status'   => 'ativo',
             ]);
 
-            // Criar role superadmin se não existir
-            if (class_exists(\Spatie\Permission\Models\Role::class)) {
-                $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'superadmin', 'guard_name' => 'web']);
-                $user->assignRole($role);
+            // Tenta atribuir role do Spatie apenas se a tabela já existir
+            try {
+                if (class_exists(\Spatie\Permission\Models\Role::class) && Schema::hasTable('roles')) {
+                    $role = \Spatie\Permission\Models\Role::firstOrCreate([
+                        'name'       => 'superadmin',
+                        'guard_name' => 'web',
+                    ]);
+                    $user->assignRole($role);
+                }
+            } catch (\Throwable) {
+                // Tabela roles ainda não existe — será configurada na etapa de permissões
             }
 
             return response()->json(['sucesso' => true, 'mensagem' => 'Superadministrador criado com sucesso!']);
@@ -311,6 +321,24 @@ class InstaladorController extends Controller
                 ['chave' => 'instalacao_concluida'],
                 ['valor' => '1', 'updated_at' => now()]
             );
+
+            // Atribui role superadmin ao primeiro usuário se a tabela roles existir
+            try {
+                if (class_exists(\Spatie\Permission\Models\Role::class) && Schema::hasTable('roles')) {
+                    $user = \App\Modules\Usuarios\Models\User::where('tipo', 'superadmin')->first();
+                    if ($user) {
+                        $role = \Spatie\Permission\Models\Role::firstOrCreate([
+                            'name'       => 'superadmin',
+                            'guard_name' => 'web',
+                        ]);
+                        if (! $user->hasRole('superadmin')) {
+                            $user->assignRole($role);
+                        }
+                    }
+                }
+            } catch (\Throwable) {
+                // Não bloqueia a finalização se roles falhar
+            }
 
             // Agora que as migrations rodaram, ativa drivers de banco
             $envPath = base_path('.env');
