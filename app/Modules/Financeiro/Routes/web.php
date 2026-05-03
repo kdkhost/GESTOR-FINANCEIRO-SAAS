@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\Financeiro\Controllers\DashboardController;
@@ -8,6 +8,7 @@ use App\Modules\Financeiro\Controllers\ReceitaController;
 use App\Modules\Financeiro\Controllers\DespesaController;
 use App\Modules\Financeiro\Controllers\TransferenciaController;
 use App\Modules\Financeiro\Controllers\CategoriaController;
+use App\Modules\Financeiro\Controllers\SubcategoriaController;
 use App\Modules\Financeiro\Controllers\ContaBancariaController;
 use App\Modules\Financeiro\Controllers\ClienteController;
 use App\Modules\Financeiro\Controllers\FornecedorController;
@@ -49,12 +50,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'web'])->group(funct
     });
 
     // Receitas e Despesas
-    Route::apiResource('receitas', ReceitaController::class)->except(['create', 'edit']);
-    Route::apiResource('despesas', DespesaController::class)->except(['create', 'edit']);
     Route::get('receitas/listar', [ReceitaController::class, 'listar'])->name('receitas.listar');
     Route::get('despesas/listar', [DespesaController::class, 'listar'])->name('despesas.listar');
+    Route::apiResource('receitas', ReceitaController::class)->except(['create', 'edit']);
+    Route::apiResource('despesas', DespesaController::class)->except(['create', 'edit']);
 
-    // Transferências
+    // Transferencias
     Route::prefix('transferencias')->name('transferencias.')->group(function () {
         Route::get('/', [TransferenciaController::class, 'index'])->name('index');
         Route::get('/listar', [TransferenciaController::class, 'listar'])->name('listar');
@@ -66,7 +67,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'web'])->group(funct
     Route::apiResource('categorias', CategoriaController::class)->except(['create', 'edit']);
     Route::apiResource('subcategorias', SubcategoriaController::class)->except(['create', 'edit']);
 
-    // Contas Bancárias
+    // Contas Bancarias
     Route::prefix('contas-bancarias')->name('contas-bancarias.')->group(function () {
         Route::get('/', [ContaBancariaController::class, 'index'])->name('index');
         Route::get('/listar', [ContaBancariaController::class, 'listar'])->name('listar');
@@ -78,16 +79,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'web'])->group(funct
     });
 
     // Clientes e Fornecedores
-    Route::apiResource('clientes', ClienteController::class)->except(['create', 'edit']);
-    Route::apiResource('fornecedores', FornecedorController::class)->except(['create', 'edit']);
     Route::get('clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
     Route::get('fornecedores/buscar', [FornecedorController::class, 'buscar'])->name('fornecedores.buscar');
+    Route::apiResource('clientes', ClienteController::class)->except(['create', 'edit']);
+    Route::apiResource('fornecedores', FornecedorController::class)->except(['create', 'edit']);
 
-    // Metas e Orçamentos
+    // Metas e Orcamentos
     Route::apiResource('metas', MetaController::class)->except(['create', 'edit']);
     Route::apiResource('orcamentos', OrcamentoController::class)->except(['create', 'edit']);
 
-    // Recorrências
+    // Recorrencias
     Route::apiResource('recorrencias', RecorrenciaController::class)->except(['create', 'edit']);
 
     // Anexos
