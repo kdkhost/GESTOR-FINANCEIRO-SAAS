@@ -1,4 +1,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Se o servidor já aponta para public/, não redirecionar novamente
+    # Caso o document root seja a raiz do projeto, redireciona para public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public [d]
+    RewriteCond %{DOCUMENT_ROOT}/index.php !-f
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
