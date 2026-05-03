@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -346,7 +346,8 @@ function testarBanco() {
     fetch('/instalar/testar-banco', { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'}, body: new URLSearchParams(fd) })
         .then(r => r.json())
         .then(data => {
-            document.getElementById('banco-result').innerHTML = alertBox(data.mensagem + (data.versao ? ' (MySQL ' + data.versao + ')' : ''), data.sucesso ? 'success' : 'danger');
+            const msg = data.mensagem || data.message || 'Erro desconhecido.';
+            document.getElementById('banco-result').innerHTML = alertBox(msg + (data.versao ? ' (MySQL ' + data.versao + ')' : ''), data.sucesso ? 'success' : 'danger');
             if (data.sucesso) document.getElementById('btn-salvar-banco').disabled = false;
         })
         .catch(() => { document.getElementById('banco-result').innerHTML = alertBox('Erro de conexão.', 'danger'); })
@@ -361,7 +362,11 @@ function salvarBanco() {
         .then(r => r.json())
         .then(data => {
             if (data.sucesso) { goStep(4); }
-            else { document.getElementById('banco-result').innerHTML = alertBox(data.mensagem, 'danger'); btn.disabled = false; btn.innerHTML = 'Salvar e Continuar <i class="bi bi-arrow-right ms-1"></i>'; }
+            else {
+                const msg = data.mensagem || data.message || 'Erro ao salvar.';
+                document.getElementById('banco-result').innerHTML = alertBox(msg, 'danger');
+                btn.disabled = false; btn.innerHTML = 'Salvar e Continuar <i class="bi bi-arrow-right ms-1"></i>';
+            }
         })
         .catch(() => { document.getElementById('banco-result').innerHTML = alertBox('Erro ao salvar.', 'danger'); btn.disabled = false; });
 }
@@ -374,7 +379,8 @@ function executarMigrations() {
     fetch('/instalar/migrations', { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'} })
         .then(r => r.json())
         .then(data => {
-            document.getElementById('migration-result').innerHTML = alertBox(data.mensagem, data.sucesso ? 'success' : 'danger');
+            const msg = data.mensagem || data.message || 'Erro desconhecido.';
+            document.getElementById('migration-result').innerHTML = alertBox(msg, data.sucesso ? 'success' : 'danger');
             if (data.sucesso) {
                 btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Concluído';
                 setTimeout(() => goStep(5), 1200);
@@ -393,7 +399,14 @@ function criarAdmin() {
     fetch('/instalar/superadmin', { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'}, body: new URLSearchParams(fd) })
         .then(r => r.json())
         .then(data => {
-            document.getElementById('admin-result').innerHTML = alertBox(data.mensagem, data.sucesso ? 'success' : 'danger');
+            // Suporta tanto data.mensagem (resposta do controller) quanto data.message (erro Laravel)
+            const msg = data.mensagem || data.message || 'Erro desconhecido.';
+            // Se houver erros de validação, lista-os
+            let erros = '';
+            if (data.errors) {
+                erros = '<ul class="mb-0 mt-1">' + Object.values(data.errors).flat().map(e => `<li>${e}</li>`).join('') + '</ul>';
+            }
+            document.getElementById('admin-result').innerHTML = alertBox(msg + erros, data.sucesso ? 'success' : 'danger');
             if (data.sucesso) setTimeout(() => goStep(6), 1000);
         })
         .catch(() => { document.getElementById('admin-result').innerHTML = alertBox('Erro ao criar administrador.', 'danger'); });
@@ -405,7 +418,12 @@ function salvarConfig() {
     fetch('/instalar/configuracao', { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'}, body: new URLSearchParams(fd) })
         .then(r => r.json())
         .then(data => {
-            document.getElementById('config-result').innerHTML = alertBox(data.mensagem, data.sucesso ? 'success' : 'danger');
+            const msg = data.mensagem || data.message || 'Erro desconhecido.';
+            let erros = '';
+            if (data.errors) {
+                erros = '<ul class="mb-0 mt-1">' + Object.values(data.errors).flat().map(e => `<li>${e}</li>`).join('') + '</ul>';
+            }
+            document.getElementById('config-result').innerHTML = alertBox(msg + erros, data.sucesso ? 'success' : 'danger');
             if (data.sucesso) setTimeout(() => goStep(7), 1000);
         })
         .catch(() => { document.getElementById('config-result').innerHTML = alertBox('Erro ao salvar configurações.', 'danger'); });
@@ -418,14 +436,15 @@ function finalizar() {
     fetch('/instalar/finalizar', { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'} })
         .then(r => r.json())
         .then(data => {
+            const msg = data.mensagem || data.message || 'Erro desconhecido.';
             if (data.sucesso) {
                 document.getElementById('final-icon').textContent = '✅';
                 document.getElementById('final-title').textContent = 'Instalação concluída!';
                 document.getElementById('final-desc').textContent = 'Redirecionando para o painel...';
-                document.getElementById('final-result').innerHTML = alertBox(data.mensagem, 'success');
+                document.getElementById('final-result').innerHTML = alertBox(msg, 'success');
                 setTimeout(() => { window.location.href = data.redirect || '/admin/dashboard'; }, 2000);
             } else {
-                document.getElementById('final-result').innerHTML = alertBox(data.mensagem, 'danger');
+                document.getElementById('final-result').innerHTML = alertBox(msg, 'danger');
                 btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Tentar Novamente';
             }
         })
