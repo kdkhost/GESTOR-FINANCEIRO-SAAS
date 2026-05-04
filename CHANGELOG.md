@@ -6,6 +6,19 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.4] - 2026-05-04
+
+### Corrigido
+- Corrigido erro 500 em `/admin/notificacoes/templates` causado por exemplos `{{nome}}`, `{{email}}`, `{{valor}}` e `{{telefone}}` interpretados pelo Blade dentro dos placeholders do formulario.
+
+### Validado
+- `php artisan view:cache` compilou as views Blade com sucesso.
+- `php artisan route:list --path=admin/notificacoes/templates` confirmou 6 rotas do modulo de templates.
+- `php artisan test` com 18 testes passando.
+- `git diff --check` sem erros.
+
+---
+
 ## [1.2.3] - 2026-05-04
 
 ### Adicionado

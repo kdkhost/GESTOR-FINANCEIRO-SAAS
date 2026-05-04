@@ -87,11 +87,11 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-medium">Conteudo</label>
-                            <textarea class="form-control" rows="7" name="conteudo" required placeholder="Use variaveis como {{nome}}, {{email}}, {{valor}}"></textarea>
+                            <textarea class="form-control" rows="7" name="conteudo" required placeholder="Use variaveis como &#123;&#123;nome&#125;&#125;, &#123;&#123;email&#125;&#125;, &#123;&#123;valor&#125;&#125;"></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-medium">Variaveis (uma por linha)</label>
-                            <textarea class="form-control" rows="3" name="variaveis" placeholder="{{nome}}\n{{email}}\n{{telefone}}"></textarea>
+                            <textarea class="form-control" rows="3" name="variaveis" placeholder="&#123;&#123;nome&#125;&#125;&#10;&#123;&#123;email&#125;&#125;&#10;&#123;&#123;telefone&#125;&#125;"></textarea>
                         </div>
                         <div class="col-12">
                             <div class="form-check form-switch">
@@ -239,4 +239,3 @@ $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTemplates(
 carregarTemplates();
 </script>
 @endpush
-
