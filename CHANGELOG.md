@@ -6,6 +6,25 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.2] - 2026-05-04
+
+### Adicionado
+- Módulo administrativo **Gestão de Módulos** (`/admin/modulos`) com listagem paginada AJAX, filtros, criação, edição, ativação/desativação e remoção de módulos adicionais.
+- Estrutura de dados `modulos` com suporte a módulos nativos e desacoplados adicionais.
+- Novo item **Módulos** no menu de administração do AdminLTE.
+
+### Alterado
+- `ModuleServiceProvider` agora:
+  - registra/carrega o módulo nativo `Modulos`;
+  - carrega dinamicamente módulos adicionais ativos cadastrados no banco;
+  - sincroniza automaticamente os módulos nativos na tabela `modulos` quando disponível.
+
+### Validado
+- `php artisan migrate --force` executado com sucesso (migration `create_modulos_table` aplicada).
+- `php artisan route:list --path=admin/modulos` confirmou 7 rotas do novo módulo.
+
+---
+
 ## [1.2.1] - 2026-05-04
 
 ### Corrigido
