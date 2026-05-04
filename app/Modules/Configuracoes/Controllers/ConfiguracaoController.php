@@ -75,12 +75,65 @@ class ConfiguracaoController extends Controller
     {
         $request->validate(['email_teste' => 'required|email']);
         try {
-            \Illuminate\Support\Facades\Mail::raw('Teste de configuracao SMTP do FinanceiroSaaS.', function ($msg) use ($request) {
-                $msg->to($request->email_teste)->subject('Teste SMTP - FinanceiroSaaS');
+            // Carrega configuracoes SMTP do banco
+            $config = [
+                'driver' => Configuracao::obter('mail_driver', 'smtp'),
+                'host' => Configuracao::obter('mail_host', ''),
+                'port' => Configuracao::obter('mail_port', '587'),
+                'encryption' => Configuracao::obter('mail_encryption', 'tls'),
+                'username' => Configuracao::obter('mail_username', ''),
+                'password' => Configuracao::obter('mail_password', ''),
+                'from' => [
+                    'name' => Configuracao::obter('mail_from_name', config('app.name')),
+                    'address' => Configuracao::obter('mail_from_address', ''),
+                ],
+            ];
+
+            // Verifica se host esta configurado
+            if (empty($config['host'])) {
+                return response()->json([
+                    'sucesso' => false,
+                    'mensagem' => 'Host SMTP nao configurado. Salve as configuracoes primeiro.',
+                ], 422);
+            }
+
+            // Cria transport SMTP temporario
+            $transport = new \Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport(
+                $config['host'],
+                (int) $config['port'],
+                $config['encryption'] === 'tls',
+                null,
+                null
+            );
+
+            if (!empty($config['username'])) {
+                $transport->setUsername($config['username']);
+                $transport->setPassword($config['password']);
+            }
+
+            $mailer = new \Illuminate\Mail\Mailer(
+                'smtp',
+                app('view'),
+                new \Symfony\Component\Mailer\Transport\SmtpTransport($transport)
+            );
+
+            $mailer->from($config['from']['address'], $config['from']['name']);
+
+            $mailer->raw('Teste de configuracao SMTP do FinanceiroSaaS.', function ($msg) use ($request, $config) {
+                $msg->to($request->email_teste)
+                    ->subject('Teste SMTP - ' . $config['from']['name'])
+                    ->from($config['from']['address'], $config['from']['name']);
             });
-            return response()->json(['sucesso' => true, 'mensagem' => 'E-mail de teste enviado com sucesso!']);
+
+            return response()->json([
+                'sucesso' => true,
+                'mensagem' => 'E-mail de teste enviado para ' . $request->email_teste,
+            ]);
         } catch (\Throwable $e) {
-            return response()->json(['sucesso' => false, 'mensagem' => 'Falha no envio: ' . $e->getMessage()], 422);
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Falha no envio: ' . $e->getMessage(),
+            ], 422);
         }
     }
 }
