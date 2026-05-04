@@ -6,6 +6,29 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.0] - 2026-05-04
+
+### Adicionado
+- Instalador web completo substituindo o placeholder, com etapas para requisitos, permissões de pastas, banco MariaDB/MySQL, migrations, superadmin, seeders, permissões internas, storage link, configuração inicial e finalização.
+- Endpoints reais do instalador para `seeders` e publicação de permissões do sistema.
+- Módulo administrativo de permissões com matriz granular de roles/permissões, CRUD AJAX de papéis e atribuição de roles por usuário.
+- Migration própria das tabelas do Spatie Permission, evitando publicação duplicada durante a instalação.
+- Seeds padrão para permissões, papéis, categorias, formas de pagamento e crons iniciais.
+
+### Alterado
+- Requisito do projeto ajustado para PHP `^8.4`.
+- Provider de autenticação passou a usar o model modular `App\Modules\Usuarios\Models\User`, compatível com roles do Spatie.
+- Configuração padrão de banco passou a priorizar MySQL/MariaDB fora do ambiente de testes.
+- Testes antigos de bug foram convertidos para preservar o comportamento corrigido do instalador.
+
+### Validado
+- `php artisan test` com 15 testes passando.
+- `php artisan route:list` carregando 138 rotas.
+- `npm run build` concluído com sucesso.
+- `composer validate --strict` sem erros.
+
+---
+
 ## [1.1.0] - 2026-05-03
 
 ### Corrigido

@@ -3,12 +3,16 @@
 namespace App\Modules\Instalador\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Permissoes\Support\PermissoesPadrao;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class InstaladorController extends Controller
 {
@@ -36,7 +40,7 @@ class InstaladorController extends Controller
     public function verificarRequisitos(): JsonResponse
     {
         $requisitos = [
-            ['nome' => 'PHP >= 8.2',    'ok' => version_compare(PHP_VERSION, '8.2.0', '>='), 'valor' => PHP_VERSION],
+            ['nome' => 'PHP >= 8.4',    'ok' => version_compare(PHP_VERSION, '8.4.0', '>='), 'valor' => PHP_VERSION],
             ['nome' => 'ext-pdo',       'ok' => extension_loaded('pdo'),       'valor' => extension_loaded('pdo')       ? 'Ativo' : 'Inativo'],
             ['nome' => 'ext-pdo_mysql', 'ok' => extension_loaded('pdo_mysql'), 'valor' => extension_loaded('pdo_mysql') ? 'Ativo' : 'Inativo'],
             ['nome' => 'ext-mbstring',  'ok' => extension_loaded('mbstring'),  'valor' => extension_loaded('mbstring')  ? 'Ativo' : 'Inativo'],
@@ -176,11 +180,13 @@ class InstaladorController extends Controller
                 // Banco vazio ou inacessivel — continua normalmente
             }
 
-            // Publica migrations do Spatie antes de rodar
-            Artisan::call('vendor:publish', [
-                '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
-                '--force'    => true,
-            ]);
+            // O projeto ja possui migration propria do Spatie; publicar novamente criaria duplicidade.
+            if (empty(glob(database_path('migrations/*create_permission_tables*.php')))) {
+                Artisan::call('vendor:publish', [
+                    '--provider' => 'Spatie\\Permission\\PermissionServiceProvider',
+                    '--force'    => true,
+                ]);
+            }
 
             // Roda todas as migrations
             Artisan::call('migrate', ['--force' => true]);
@@ -193,6 +199,63 @@ class InstaladorController extends Controller
             ]);
         } catch (\Throwable $e) {
             return response()->json(['sucesso' => false, 'mensagem' => 'Erro nas migrations: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Etapa 6 - Executar seeders padrao do sistema.
+     */
+    public function executarSeeders(): JsonResponse
+    {
+        try {
+            Artisan::call('db:seed', ['--force' => true]);
+
+            return response()->json([
+                'sucesso' => true,
+                'mensagem' => 'Dados iniciais criados com sucesso!',
+                'log' => Artisan::output(),
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Erro ao executar seeders: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Etapa 7 - Criar permissoes e papeis iniciais.
+     */
+    public function publicarPermissoes(): JsonResponse
+    {
+        try {
+            if (! Schema::hasTable('roles') || ! Schema::hasTable('permissions')) {
+                return response()->json([
+                    'sucesso' => false,
+                    'mensagem' => 'As tabelas de permissoes ainda nao existem. Execute as migrations primeiro.',
+                ], 422);
+            }
+
+            foreach (PermissoesPadrao::nomes() as $nome) {
+                Permission::firstOrCreate(['name' => $nome, 'guard_name' => 'web']);
+            }
+
+            foreach (PermissoesPadrao::papeis() as $papel => $permissoes) {
+                $role = Role::firstOrCreate(['name' => $papel, 'guard_name' => 'web']);
+                $role->syncPermissions($permissoes);
+            }
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+            return response()->json([
+                'sucesso' => true,
+                'mensagem' => 'Permissoes internas publicadas com sucesso!',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Erro ao publicar permissoes: ' . $e->getMessage(),
+            ], 500);
         }
     }
 

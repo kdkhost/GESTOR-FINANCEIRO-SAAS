@@ -96,7 +96,7 @@ class PreservationPropertyTest extends TestCase
         $this->assertNotNull($financeiroRoutes, 'Financeiro dashboard route should be loaded');
         
         // Usuarios module routes should be loaded
-        $usuariosRoutes = $routeCollection->getByName('auth.login');
+        $usuariosRoutes = $routeCollection->getByName('login');
         $this->assertNotNull($usuariosRoutes, 'Usuarios auth routes should be loaded');
         
         // Instalador module routes should be loaded

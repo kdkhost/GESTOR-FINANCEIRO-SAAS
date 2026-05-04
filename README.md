@@ -4,7 +4,7 @@
 
 [![PHP](https://img.shields.io/badge/PHP-8.4-blue)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-13-red)](https://laravel.com)
-[![Versão](https://img.shields.io/badge/versão-1.1.0-green)]()
+[![Versão](https://img.shields.io/badge/versão-1.2.0-green)]()
 [![License](https://img.shields.io/badge/license-proprietary-gray)]()
 
 ---
@@ -67,14 +67,13 @@ php artisan serve
 
 Acesse o instalador em: **http://localhost:8000/instalar**
 
-O instalador web guia você por 7 etapas:
+O instalador web guia você por 6 etapas:
 1. Verificação de requisitos do servidor
-2. Verificação de permissões de pastas
-3. Configuração do banco de dados MySQL
-4. Execução das migrations
-5. Criação do superadministrador
-6. Configurações do sistema (nome, SMTP)
-7. Finalização
+2. Banco de dados MariaDB/MySQL e migrations
+3. Criação do superadministrador
+4. Seeds, permissões internas e storage link
+5. Configurações do sistema (nome, proprietário, SMTP)
+6. Finalização
 
 > **Importante:** O sistema usa `SESSION_DRIVER=file` durante a instalação
 > e muda automaticamente para `SESSION_DRIVER=database` após as migrations.
@@ -99,10 +98,10 @@ Veja: `DEPLOY_CPANEL.md`
 
 | Módulo          | Status     | Descrição                                                        |
 |-----------------|------------|------------------------------------------------------------------|
-| **Instalador**  | ✅ Completo | Instalação web em 7 etapas com interface responsiva              |
+| **Instalador**  | ✅ Completo | Instalação web completa com requisitos, banco, superadmin, seeds e finalização |
 | **Usuarios**    | ✅ Completo | Autenticação, perfil, sessões ativas, reset de senha             |
 | **Financeiro**  | ✅ Completo | Contas a pagar/receber, receitas, despesas, transferências       |
-| **Permissoes**  | 🔧 Estrutura | RBAC com Roles, Permissions, Policies (Spatie)                  |
+| **Permissoes**  | ✅ Completo | RBAC com Roles, Permissions, matriz granular e atribuição por usuário |
 | **Configuracoes**| 🔧 Estrutura | Nome, logo, SMTP, tema, cores                                   |
 | **Relatorios**  | 🔧 Estrutura | Fluxo de caixa, DRE, evolução mensal, inadimplência             |
 | **Auditoria**   | ✅ Completo | Log completo de todas as ações do sistema                        |
