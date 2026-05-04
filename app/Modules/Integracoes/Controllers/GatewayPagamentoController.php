@@ -9,6 +9,11 @@ use Illuminate\Http\JsonResponse;
 
 class GatewayPagamentoController extends Controller
 {
+    private function exigirAdmin(): void
+    {
+        abort_unless(auth()->check() && auth()->user()?->is_admin, 403);
+    }
+
     private array $padroes = [
         ['nome' => 'Mercado Pago', 'identificador' => 'mercadopago'],
         ['nome' => 'Stripe', 'identificador' => 'stripe'],
@@ -17,6 +22,7 @@ class GatewayPagamentoController extends Controller
 
     public function index()
     {
+        $this->exigirAdmin();
         foreach ($this->padroes as $padrao) {
             GatewayPagamento::firstOrCreate(
                 ['identificador' => $padrao['identificador']],
@@ -31,6 +37,8 @@ class GatewayPagamentoController extends Controller
 
     public function update(Request $request, GatewayPagamento $gateway): JsonResponse
     {
+        $this->exigirAdmin();
+
         $validated = $request->validate([
             'ativo'        => 'sometimes|boolean',
             'sandbox'      => 'sometimes|boolean',
@@ -39,8 +47,8 @@ class GatewayPagamentoController extends Controller
         ]);
 
         $gateway->update([
-            'ativo'         => $request->boolean('ativo'),
-            'sandbox'       => $request->boolean('sandbox'),
+            'ativo'         => $request->has('ativo') ? $request->boolean('ativo') : $gateway->ativo,
+            'sandbox'       => $request->has('sandbox') ? $request->boolean('sandbox') : $gateway->sandbox,
             'credenciais'   => $request->input('credenciais', []),
             'configuracoes' => $request->input('configuracoes', []),
         ]);
