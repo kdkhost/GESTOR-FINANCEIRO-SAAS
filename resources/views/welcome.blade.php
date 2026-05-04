@@ -57,7 +57,7 @@
                         @auth
                             <a href="{{ url('/admin/dashboard') }}" class="font-medium text-gray-600 hover:text-primary dark:text-gray-300 transition-colors">Acessar Painel</a>
                         @else
-                            <a href="{{ route('auth.login') }}" class="font-medium text-gray-600 hover:text-primary dark:text-gray-300 transition-colors">Login</a>
+                            <a href="{{ route('login') }}" class="font-medium text-gray-600 hover:text-primary dark:text-gray-300 transition-colors">Login</a>
                             <a href="#" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30">Cadastre-se</a>
                         @endauth
                     @else
