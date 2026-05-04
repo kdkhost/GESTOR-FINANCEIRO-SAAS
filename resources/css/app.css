@@ -36,6 +36,29 @@ a {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
 }
 
+.card-header.d-flex {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem;
+}
+
+.card-header.d-flex > * {
+    float: none !important;
+}
+
+.card-header.d-flex > .card-title,
+.card-header.d-flex > div:first-child .card-title {
+    margin-bottom: 0;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.card-header.d-flex > :last-child {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 .btn {
     border-radius: var(--raio-controle) !important;
     font-weight: 600;
