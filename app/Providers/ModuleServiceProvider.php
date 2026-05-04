@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
+use App\Modules\Modulos\Models\Modulo;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class ModuleServiceProvider extends ServiceProvider
         'Pwa',
         'Cron',
         'Auditoria',
+        'Modulos',
     ];
 
     /**
@@ -31,6 +34,12 @@ class ModuleServiceProvider extends ServiceProvider
     {
         foreach ($this->modulos as $modulo) {
             $this->registrarServicos($modulo);
+        }
+
+        foreach ($this->modulosAdicionaisAtivos() as $modulo) {
+            if (! in_array($modulo, $this->modulos, true)) {
+                $this->registrarServicos($modulo);
+            }
         }
     }
 
@@ -42,6 +51,14 @@ class ModuleServiceProvider extends ServiceProvider
         foreach ($this->modulos as $modulo) {
             $this->carregarRotas($modulo);
         }
+
+        foreach ($this->modulosAdicionaisAtivos() as $modulo) {
+            if (! in_array($modulo, $this->modulos, true)) {
+                $this->carregarRotas($modulo);
+            }
+        }
+
+        $this->sincronizarModulosNativos();
     }
 
     /**
@@ -73,6 +90,44 @@ class ModuleServiceProvider extends ServiceProvider
         $provider = "App\\Modules\\{$modulo}\\{$modulo}ServiceProvider";
         if (class_exists($provider)) {
             $this->app->register($provider);
+        }
+    }
+
+    protected function modulosAdicionaisAtivos(): array
+    {
+        if (! Schema::hasTable('modulos')) {
+            return [];
+        }
+
+        return Modulo::query()
+            ->where('ativo', true)
+            ->where('nativo', false)
+            ->whereNotNull('diretorio')
+            ->pluck('diretorio')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    protected function sincronizarModulosNativos(): void
+    {
+        if (! Schema::hasTable('modulos')) {
+            return;
+        }
+
+        foreach ($this->modulos as $modulo) {
+            Modulo::query()->firstOrCreate(
+                ['slug' => str($modulo)->kebab()->toString()],
+                [
+                    'nome' => $modulo,
+                    'versao' => '1.0.0',
+                    'diretorio' => $modulo,
+                    'descricao' => 'Modulo nativo do sistema',
+                    'ativo' => true,
+                    'nativo' => true,
+                ]
+            );
         }
     }
 }

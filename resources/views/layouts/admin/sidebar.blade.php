@@ -185,6 +185,11 @@
                         <i class="nav-icon bi bi-gear-fill"></i><p>Configurações</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.modulos.index') }}" class="nav-link {{ request()->routeIs('admin.modulos.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-boxes"></i><p>Modulos</p>
+                    </a>
+                </li>
                 @endif
 
             </ul>
