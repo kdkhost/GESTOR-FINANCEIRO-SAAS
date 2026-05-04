@@ -8,8 +8,3 @@ Route::get('/', function () {
 
     return redirect()->route('admin.dashboard.index');
 });
-
-// Alias para compatibilidade
-Route::get('/register', function () {
-    return redirect('/login');
-})->name('register');

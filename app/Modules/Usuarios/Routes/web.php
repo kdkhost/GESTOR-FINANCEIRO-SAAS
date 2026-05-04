@@ -7,6 +7,8 @@ use App\Modules\Usuarios\Controllers\UsuarioController;
 Route::middleware('guest')->group(function () {
     Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('auth.register.post');
     Route::get('/esqueci-senha',  [AuthController::class, 'showEsqueciSenha'])->name('auth.esqueci-senha');
     Route::post('/esqueci-senha', [AuthController::class, 'enviarLinkRedefinicao'])->name('auth.enviar-link');
     Route::get('/redefinir-senha/{token}', [AuthController::class, 'showRedefinirSenha'])->name('auth.redefinir-senha');

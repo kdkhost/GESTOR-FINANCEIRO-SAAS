@@ -14,6 +14,14 @@ use Illuminate\Support\Str;
 class AuthController extends Controller
 {
     /**
+     * Exibe a tela de cadastro.
+     */
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    /**
      * Exibe a tela de login.
      */
     public function showLogin()
@@ -85,6 +93,40 @@ class AuthController extends Controller
         return response()->json([
             'sucesso'  => true,
             'mensagem' => 'Bem-vindo, ' . $usuario->name . '!',
+            'redirect' => route('admin.dashboard.index'),
+        ]);
+    }
+
+    /**
+     * Processa cadastro de novo usuario.
+     */
+    public function register(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|max:190|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $usuario = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'tipo' => 'usuario',
+            'status' => 'ativo',
+        ]);
+
+        auditoria('criou', 'Usuarios', 'users', $usuario->id, null, [
+            'name' => $usuario->name,
+            'email' => $usuario->email,
+            'tipo' => $usuario->tipo,
+        ], 'Cadastro publico');
+
+        Auth::login($usuario);
+
+        return response()->json([
+            'sucesso' => true,
+            'mensagem' => 'Cadastro realizado com sucesso!',
             'redirect' => route('admin.dashboard.index'),
         ]);
     }
