@@ -35,12 +35,6 @@ class ModuleServiceProvider extends ServiceProvider
         foreach ($this->modulos as $modulo) {
             $this->registrarServicos($modulo);
         }
-
-        foreach ($this->modulosAdicionaisAtivos() as $modulo) {
-            if (! in_array($modulo, $this->modulos, true)) {
-                $this->registrarServicos($modulo);
-            }
-        }
     }
 
     /**
