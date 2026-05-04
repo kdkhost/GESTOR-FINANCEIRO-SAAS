@@ -17,7 +17,7 @@
     {{-- Menu --}}
     <div class="sidebar-wrapper">
         <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu">
+            <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview" data-accordion="false" role="menu">
 
                 {{-- Dashboard --}}
                 <li class="nav-item">
