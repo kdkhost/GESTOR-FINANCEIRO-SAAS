@@ -6,5 +6,5 @@ Route::get('/', function () {
         return redirect('/instalar');
     }
 
-    return redirect()->route('admin.dashboard.index');
+    return view('welcome');
 });
