@@ -30,10 +30,15 @@
         }
     </script>
 </head>
+@php
+    $nomeSistema = configuracao('sistema_nome', 'FinanceiroSaaS');
+    $descricaoSistema = configuracao('sistema_descricao', 'A plataforma SaaS definitiva para alavancar os resultados da sua empresa.');
+    $proprietarioSistema = configuracao('sistema_proprietario', 'FinanceiroSaaS');
+@endphp
 <body class="antialiased bg-gray-50 text-gray-800 dark:bg-dark dark:text-gray-100 selection:bg-primary selection:text-white">
 
     <!-- Navbar -->
-    <nav class="w-full bg-white dark:bg-slate-900 shadow-sm border-b border-gray-200 dark:border-gray-800 relative z-50">
+    <nav id="site-navbar" class="sticky top-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur shadow-sm border-b border-gray-200 dark:border-gray-800 z-50 transition-all duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center gap-2">
@@ -43,7 +48,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">Gestor<span class="text-primary">Financeiro</span></span>
+                    <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">{{ $nomeSistema }}</span>
                 </div>
                 
                 <div class="hidden md:flex space-x-8">
@@ -58,7 +63,7 @@
                             <a href="{{ url('/admin/dashboard') }}" class="font-medium text-gray-600 hover:text-primary dark:text-gray-300 transition-colors">Acessar Painel</a>
                         @else
                             <a href="{{ route('login') }}" class="font-medium text-gray-600 hover:text-primary dark:text-gray-300 transition-colors">Login</a>
-                            <a href="#" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30">Cadastre-se</a>
+                            <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30">Cadastre-se</a>
                         @endauth
                     @else
                         <a href="{{ url('/instalar') }}" class="px-5 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition-colors shadow-lg shadow-red-500/30">Iniciar Instalação</a>
@@ -79,11 +84,10 @@
                 Gestão Financeira <br class="hidden md:block" />
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">Descomplicada</span>
             </h1>
-            <p class="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto mb-10">
+            <p class="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto mb-10">{{ $descricaoSistema }}</p>
                 A plataforma SaaS definitiva para alavancar os resultados da sua empresa. Controle contas, fluxos, emita cobranças e visualize relatórios dinâmicos.
-            </p>
             <div class="flex justify-center gap-4">
-                <a href="#" class="px-8 py-4 rounded-xl bg-primary text-white font-semibold text-lg hover:bg-blue-600 transition-all transform hover:-translate-y-1 shadow-xl shadow-blue-500/40">
+                <a href="{{ route('register') }}" class="px-8 py-4 rounded-xl bg-primary text-white font-semibold text-lg hover:bg-blue-600 transition-all transform hover:-translate-y-1 shadow-xl shadow-blue-500/40">
                     Comece Grátis
                 </a>
                 <a href="#recursos" class="px-8 py-4 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white font-semibold text-lg hover:bg-gray-50 dark:hover:bg-slate-700 border border-gray-200 dark:border-gray-700 transition-all shadow-sm">
@@ -164,7 +168,7 @@
                             Suporte via Email
                         </li>
                     </ul>
-                    <a href="#" class="w-full py-3 px-4 bg-blue-50 dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-xl hover:bg-blue-100 dark:hover:bg-slate-600 transition-colors text-center">Assinar Básico</a>
+                    <a href="{{ route('register') }}" class="w-full py-3 px-4 bg-blue-50 dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-xl hover:bg-blue-100 dark:hover:bg-slate-600 transition-colors text-center">Assinar Básico</a>
                 </div>
 
                 <!-- Plano Pro -->
@@ -192,7 +196,7 @@
                             Auditoria e Relatórios
                         </li>
                     </ul>
-                    <a href="#" class="w-full py-3 px-4 bg-white text-primary font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-lg text-center">Assinar Pro</a>
+                    <a href="{{ route('register') }}" class="w-full py-3 px-4 bg-white text-primary font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-lg text-center">Assinar Pro</a>
                 </div>
 
                 <!-- Plano VIP -->
@@ -217,24 +221,32 @@
                             Suporte Prioritário 24/7
                         </li>
                     </ul>
-                    <a href="#" class="w-full py-3 px-4 bg-blue-50 dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-xl hover:bg-blue-100 dark:hover:bg-slate-600 transition-colors text-center">Assinar Empresarial</a>
+                    <a href="{{ route('register') }}" class="w-full py-3 px-4 bg-blue-50 dark:bg-slate-700 text-primary dark:text-white font-semibold rounded-xl hover:bg-blue-100 dark:hover:bg-slate-600 transition-colors text-center">Assinar Empresarial</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-slate-900 py-12 border-t border-gray-200 dark:border-gray-800">
+    <footer id="contato" class="bg-white dark:bg-slate-900 py-12 border-t border-gray-200 dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2">
                 <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span class="font-bold text-gray-900 dark:text-white">Gestor<span class="text-primary">Financeiro</span> SaaS</span>
+                <span class="font-bold text-gray-900 dark:text-white">{{ $nomeSistema }}</span>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-                &copy; {{ date('Y') }} Todos os direitos reservados.
+                &copy; {{ date('Y') }} {{ $proprietarioSistema }}. Todos os direitos reservados.
             </p>
         </div>
     </footer>
+
+    <script>
+        const nav = document.getElementById('site-navbar');
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 12) nav.classList.add('shadow-md');
+            else nav.classList.remove('shadow-md');
+        });
+    </script>
 
 </body>
 </html>
