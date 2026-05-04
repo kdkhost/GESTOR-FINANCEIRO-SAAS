@@ -156,7 +156,7 @@
                             </a>
                         </li>
                     @else
-                        <li class="nav-item {{ $ativo ? 'menu-open' : '' }}">
+                        <li class="nav-item nav-item-tree {{ $ativo ? 'menu-open' : '' }}" data-menu-group="principal">
                             <a href="#" class="nav-link {{ $ativo ? 'active' : '' }}">
                                 <i class="nav-icon {{ $item['icon'] }}"></i>
                                 <p>
@@ -184,7 +184,7 @@
                         @php
                             $ativo = request()->routeIs(...$item['active']);
                         @endphp
-                        <li class="nav-item {{ $ativo ? 'menu-open' : '' }}">
+                        <li class="nav-item nav-item-tree {{ $ativo ? 'menu-open' : '' }}" data-menu-group="admin">
                             <a href="#" class="nav-link {{ $ativo ? 'active' : '' }}">
                                 <i class="nav-icon {{ $item['icon'] }}"></i>
                                 <p>
@@ -229,21 +229,111 @@
 </aside>
 
 <script>
-document.getElementById('sidebar-menu-search')?.addEventListener('input', function (e) {
-    const termo = e.target.value.trim().toLowerCase();
-    const itens = document.querySelectorAll('#sidebar-menu-root > .nav-item');
+(() => {
+    const menuRoot = document.getElementById('sidebar-menu-root');
+    const searchInput = document.getElementById('sidebar-menu-search');
+    if (!menuRoot) return;
 
-    itens.forEach((item) => {
-        const texto = item.innerText.toLowerCase();
-        const corresponde = termo === '' || texto.includes(termo);
-        item.style.display = corresponde ? '' : 'none';
-        if (termo !== '' && corresponde && item.classList.contains('menu-open') === false) {
-            const tree = item.querySelector('.nav-treeview');
-            if (tree) {
-                item.classList.add('menu-open');
-                item.querySelector('.nav-link')?.classList.add('active');
+    const treeItems = Array.from(menuRoot.querySelectorAll('.nav-item-tree'));
+
+    function closeSiblingTrees(currentItem) {
+        const currentGroup = currentItem.dataset.menuGroup || '';
+        treeItems.forEach((item) => {
+            if (item === currentItem) return;
+            if ((item.dataset.menuGroup || '') !== currentGroup) return;
+            item.classList.remove('menu-open');
+            const parentLink = item.querySelector(':scope > .nav-link');
+            if (parentLink && !parentLink.dataset.routeActive) {
+                parentLink.classList.remove('active');
             }
+        });
+    }
+
+    function restoreActiveTree() {
+        treeItems.forEach((item) => {
+            const parentLink = item.querySelector(':scope > .nav-link');
+            const hasActiveChild = !!item.querySelector('.nav-treeview .nav-link.active');
+            const isRouteActive = parentLink?.dataset.routeActive === '1';
+
+            item.classList.toggle('menu-open', hasActiveChild || isRouteActive);
+            if (parentLink) {
+                parentLink.classList.toggle('active', hasActiveChild || isRouteActive);
+            }
+        });
+
+        const firstOpenByGroup = {};
+        treeItems.forEach((item) => {
+            if (!item.classList.contains('menu-open')) return;
+            const group = item.dataset.menuGroup || '';
+            if (!firstOpenByGroup[group]) {
+                firstOpenByGroup[group] = item;
+                return;
+            }
+            item.classList.remove('menu-open');
+            const parentLink = item.querySelector(':scope > .nav-link');
+            if (parentLink && !parentLink.dataset.routeActive) {
+                parentLink.classList.remove('active');
+            }
+        });
+    }
+
+    treeItems.forEach((item) => {
+        const parentLink = item.querySelector(':scope > .nav-link');
+        if (!parentLink) return;
+
+        const routeActive = parentLink.classList.contains('active') || !!item.querySelector('.nav-treeview .nav-link.active');
+        if (routeActive) {
+            parentLink.dataset.routeActive = '1';
+        }
+
+        parentLink.addEventListener('click', () => {
+            window.setTimeout(() => {
+                if (item.classList.contains('menu-open')) {
+                    closeSiblingTrees(item);
+                }
+            }, 10);
+        });
+    });
+
+    restoreActiveTree();
+
+    searchInput?.addEventListener('input', function (e) {
+        const termo = e.target.value.trim().toLowerCase();
+        const itens = menuRoot.querySelectorAll(':scope > .nav-item');
+        let firstMatchedTree = null;
+
+        itens.forEach((item) => {
+            const texto = item.innerText.toLowerCase();
+            const corresponde = termo === '' || texto.includes(termo);
+            item.style.display = corresponde ? '' : 'none';
+
+            if (!item.classList.contains('nav-item-tree')) return;
+
+            const parentLink = item.querySelector(':scope > .nav-link');
+
+            if (termo === '') {
+                return;
+            }
+
+            item.classList.remove('menu-open');
+            if (parentLink && parentLink.dataset.routeActive !== '1') {
+                parentLink.classList.remove('active');
+            }
+
+            if (corresponde && !firstMatchedTree) {
+                firstMatchedTree = item;
+            }
+        });
+
+        if (termo === '') {
+            restoreActiveTree();
+            return;
+        }
+
+        if (firstMatchedTree) {
+            firstMatchedTree.classList.add('menu-open');
+            firstMatchedTree.querySelector(':scope > .nav-link')?.classList.add('active');
         }
     });
-});
+})();
 </script>
