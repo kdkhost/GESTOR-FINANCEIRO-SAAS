@@ -11,7 +11,15 @@ class EnsureAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless(auth()->check(), 403);
+        // Para rotas administrativas, quando nao estiver autenticado devemos
+        // redirecionar para login (em vez de retornar 403).
+        if (!auth()->check()) {
+            try {
+                return redirect()->route('login');
+            } catch (\Throwable $e) {
+                return redirect('/login');
+            }
+        }
 
         $user = auth()->user();
 
