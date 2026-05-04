@@ -76,6 +76,11 @@ class User extends Authenticatable
             return true;
         }
 
+        // Fallback de recuperacao: primeira instalacao com apenas 1 usuario.
+        if (static::query()->count() === 1) {
+            return true;
+        }
+
         try {
             return $this->hasAnyRole(['admin', 'superadmin']);
         } catch (\Throwable) {
