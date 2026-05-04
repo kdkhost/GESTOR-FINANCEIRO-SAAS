@@ -222,6 +222,18 @@
                 </li>
                 @endif
 
+                {{-- Sair (fallback no sidebar) --}}
+                <li class="nav-item mt-2">
+                    <form method="POST" action="{{ route('auth.logout') }}" id="form-logout-sidebar">
+                        @csrf
+                        <a class="nav-link text-danger" href="#"
+                           onclick="event.preventDefault();
+                           SistemaAlert.fire({title:'Sair do sistema?',icon:'question',showCancelButton:true,confirmButtonText:'Sim, sair',cancelButtonText:'Cancelar'}).then(r=>{if(r.isConfirmed)document.getElementById('form-logout-sidebar').submit()})">
+                            <i class="nav-icon bi bi-box-arrow-right"></i><p>Sair</p>
+                        </a>
+                    </form>
+                </li>
+
             </ul>
         </nav>
     </div>
