@@ -28,6 +28,8 @@ const faq = [
 export default function PremiumLanding({ props }) {
     const {
         sistemaNome, sistemaDescricao, proprietario, logo,
+        landingBadge, landingTitulo, landingSubtitulo, landingDescricao,
+        landingCtaPrimario, landingCtaSecundario,
         linkLogin, linkCadastro, linkPainel, instalado, autenticado,
     } = props;
 
@@ -57,12 +59,13 @@ export default function PremiumLanding({ props }) {
             <main>
                 <section id="visao" className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:pt-28">
                     <div>
-                        <p className="mb-4 inline-flex rounded-full border border-blue-400/40 bg-blue-500/10 px-3 py-1 text-xs uppercase tracking-widest text-blue-200">Premium SaaS</p>
-                        <h1 className="text-5xl font-semibold leading-tight tracking-tight text-white lg:text-6xl">{sistemaNome}</h1>
-                        <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">{sistemaDescricao}</p>
+                        <p className="mb-4 inline-flex rounded-full border border-blue-400/40 bg-blue-500/10 px-3 py-1 text-xs uppercase tracking-widest text-blue-200">{landingBadge || 'Premium SaaS'}</p>
+                        <h1 className="text-5xl font-semibold leading-tight tracking-tight text-white lg:text-6xl">{landingTitulo || sistemaNome}</h1>
+                        <p className="mt-2 max-w-xl text-base leading-relaxed text-blue-200">{landingSubtitulo || ''}</p>
+                        <p className="mt-4 max-w-xl text-lg leading-relaxed text-slate-300">{landingDescricao || sistemaDescricao}</p>
                         <div className="mt-8 flex flex-wrap gap-3">
-                            <a href={linkCadastro} className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-200">Comecar agora</a>
-                            <a href="#modulos" className="rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold hover:bg-white/10">Explorar modulo</a>
+                            <a href={linkCadastro} className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-200">{landingCtaPrimario || 'Comecar agora'}</a>
+                            <a href="#modulos" className="rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold hover:bg-white/10">{landingCtaSecundario || 'Explorar modulo'}</a>
                         </div>
                     </div>
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/30">

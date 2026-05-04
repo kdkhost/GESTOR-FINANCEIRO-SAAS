@@ -35,7 +35,12 @@ class ConfiguracaoController extends Controller
             }
 
             // Campos de texto
-            $camposGeral = ['sistema_nome', 'sistema_descricao', 'sistema_proprietario', 'sistema_moeda'];
+            $camposGeral = [
+                'sistema_nome', 'sistema_descricao', 'sistema_proprietario', 'sistema_moeda',
+                'whatsapp_suporte',
+                'landing_badge', 'landing_titulo', 'landing_subtitulo', 'landing_descricao',
+                'landing_cta_primario', 'landing_cta_secundario',
+            ];
             $camposSmtp  = ['mail_driver', 'mail_host', 'mail_port', 'mail_encryption', 'mail_username', 'mail_password', 'mail_from_name', 'mail_from_address'];
             $camposApar  = ['cor_primaria', 'cor_secundaria', 'tema_padrao'];
 

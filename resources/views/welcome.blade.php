@@ -10,8 +10,14 @@
     @php
         $props = [
             'sistemaNome' => configuracao('sistema_nome', 'FinanceiroSaaS'),
-            'sistemaDescricao' => configuracao('sistema_descricao', 'CRM SaaS completo para gestão financeira e comercial.'),
+            'sistemaDescricao' => configuracao('sistema_descricao', 'CRM SaaS completo para gestao financeira e comercial.'),
             'proprietario' => configuracao('sistema_proprietario', 'FinanceiroSaaS'),
+            'landingBadge' => configuracao('landing_badge', 'Premium SaaS'),
+            'landingTitulo' => configuracao('landing_titulo', configuracao('sistema_nome', 'FinanceiroSaaS')),
+            'landingSubtitulo' => configuracao('landing_subtitulo', 'Gestao com inteligencia e automacao'),
+            'landingDescricao' => configuracao('landing_descricao', configuracao('sistema_descricao', 'CRM SaaS completo para gestao financeira e comercial.')),
+            'landingCtaPrimario' => configuracao('landing_cta_primario', 'Comecar agora'),
+            'landingCtaSecundario' => configuracao('landing_cta_secundario', 'Explorar modulo'),
             'logo' => configuracao('sistema_logo') ? asset('storage/' . configuracao('sistema_logo')) : null,
             'linkLogin' => route('login'),
             'linkCadastro' => route('register'),
@@ -26,3 +32,4 @@
     <div id="vue-support-box" data-whatsapp="{{ configuracao('whatsapp_suporte', configuracao('sistema_telefone', '')) }}"></div>
 </body>
 </html>
+

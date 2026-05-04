@@ -63,6 +63,41 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label fw-medium">WhatsApp de Suporte (somente numeros com DDI)</label>
+                                    <input type="text" name="whatsapp_suporte" class="form-control"
+                                           value="{{ configuracao('whatsapp_suporte', configuracao('sistema_telefone', '')) }}" placeholder="5511999999999">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Badge da Landing</label>
+                                    <input type="text" name="landing_badge" class="form-control"
+                                           value="{{ configuracao('landing_badge', 'Premium SaaS') }}" placeholder="Premium SaaS">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Titulo da Landing</label>
+                                    <input type="text" name="landing_titulo" class="form-control"
+                                           value="{{ configuracao('landing_titulo', configuracao('sistema_nome', 'FinanceiroSaaS')) }}" placeholder="Nome principal da home">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Subtitulo da Landing</label>
+                                    <input type="text" name="landing_subtitulo" class="form-control"
+                                           value="{{ configuracao('landing_subtitulo', 'Gestao com inteligencia e automacao') }}" placeholder="Subtitulo principal">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Descricao da Landing</label>
+                                    <input type="text" name="landing_descricao" class="form-control"
+                                           value="{{ configuracao('landing_descricao', configuracao('sistema_descricao', '')) }}" placeholder="Descricao principal">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Texto do botao primario</label>
+                                    <input type="text" name="landing_cta_primario" class="form-control"
+                                           value="{{ configuracao('landing_cta_primario', 'Comecar agora') }}" placeholder="Comecar agora">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Texto do botao secundario</label>
+                                    <input type="text" name="landing_cta_secundario" class="form-control"
+                                           value="{{ configuracao('landing_cta_secundario', 'Explorar modulo') }}" placeholder="Explorar modulo">
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label fw-medium">Logo do Sistema</label>
                                     <input type="file" name="sistema_logo" id="input-logo" class="form-control" accept="image/*">
                                     @if(configuracao('sistema_logo'))

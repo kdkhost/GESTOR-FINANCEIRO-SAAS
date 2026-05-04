@@ -106,6 +106,14 @@ class AuthController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:190|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'telefone' => 'required|string|max:20',
+            'cep' => 'required|string|max:10',
+            'logradouro' => 'required|string|max:150',
+            'numero' => 'required|string|max:20',
+            'complemento' => 'nullable|string|max:120',
+            'bairro' => 'required|string|max:120',
+            'cidade' => 'required|string|max:120',
+            'estado' => 'required|string|size:2',
         ]);
 
         $usuario = User::create([
@@ -114,6 +122,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'tipo' => 'usuario',
             'status' => 'ativo',
+            'telefone' => $request->telefone,
+            'cep' => $request->cep,
+            'logradouro' => $request->logradouro,
+            'numero' => $request->numero,
+            'complemento' => $request->complemento,
+            'bairro' => $request->bairro,
+            'cidade' => $request->cidade,
+            'estado' => strtoupper($request->estado),
         ]);
 
         auditoria('criou', 'Usuarios', 'users', $usuario->id, null, [
