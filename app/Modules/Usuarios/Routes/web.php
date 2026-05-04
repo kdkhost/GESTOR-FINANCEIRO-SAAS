@@ -23,5 +23,10 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('admin/usuarios')->name('admin.usuarios.')->middleware(['auth','web'])->group(function () {
-    Route::get('/', [UsuarioController::class, 'index'])->name('index');
+    Route::get('/',          [UsuarioController::class, 'index'])->name('index');
+    Route::get('/listar',    [UsuarioController::class, 'listar'])->name('listar');
+    Route::post('/',         [UsuarioController::class, 'store'])->name('store');
+    Route::get('/{id}',      [UsuarioController::class, 'show'])->name('show');
+    Route::put('/{id}',      [UsuarioController::class, 'update'])->name('update');
+    Route::delete('/{id}',   [UsuarioController::class, 'destroy'])->name('destroy');
 });
