@@ -16,6 +16,15 @@ const jornada = [
     ['4. Pos-venda', 'Suporte, renovacoes e expansao da carteira.'],
 ];
 
+const integracoes = ['WhatsApp', 'Mercado Pago', 'Asaas', 'PIX', 'API', 'App Android', 'Webhook'];
+
+const faq = [
+    ['Preciso instalar algo?', 'Nao. O sistema e 100% SaaS e acessado pelo navegador, com app mobile quando contratado.'],
+    ['Posso testar antes?', 'Sim. O ambiente permite avaliacao inicial e ativacao progressiva de modulos.'],
+    ['Os modulos sao obrigatorios?', 'Nao. A arquitetura e desacoplada: voce ativa apenas o que usar.'],
+    ['Tem permissoes por equipe?', 'Sim. Controle granular por perfis, usuarios e acoes.'],
+];
+
 export default function PremiumLanding({ props }) {
     const {
         sistemaNome, sistemaDescricao, proprietario, logo,
@@ -67,7 +76,7 @@ export default function PremiumLanding({ props }) {
                     </div>
                 </section>
 
-                <section id="modulos" className="border-y border-white/10 bg-slate-900/60">
+                <section id="recursos" className="border-y border-white/10 bg-slate-900/60">
                     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
                         <div className="mb-8 flex items-end justify-between">
                             <div>
@@ -84,6 +93,26 @@ export default function PremiumLanding({ props }) {
                                 </article>
                             ))}
                         </div>
+                    </div>
+                </section>
+
+                <section id="modulos" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-semibold text-white">Modulos opcionais e adicionais</h2>
+                        <p className="mt-2 text-sm text-slate-300">Monte o CRM SaaS sob medida para sua operacao.</p>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {[
+                            ['Painel de Multi-Atendimento', 'Operadores simultaneos, filas, transferencia e historico de conversas.'],
+                            ['Chatbot Profissional', 'Fluxos com menus, respostas condicionais e transferencia para humano.'],
+                            ['Conexoes WhatsApp Extras', 'Adicione numeros por setor, equipe ou filial.'],
+                            ['Funcionarios Extras', 'Escalone equipe sem travas de arquitetura.'],
+                        ].map(([titulo, texto]) => (
+                            <article key={titulo} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                                <h3 className="text-lg font-semibold text-white">{titulo}</h3>
+                                <p className="mt-2 text-sm text-slate-300">{texto}</p>
+                            </article>
+                        ))}
                     </div>
                 </section>
 
@@ -136,6 +165,45 @@ export default function PremiumLanding({ props }) {
                         ))}
                     </div>
                 </section>
+
+                <section className="border-y border-white/10 bg-slate-900/60">
+                    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+                        <h2 className="text-3xl font-semibold text-white">Integracoes nativas</h2>
+                        <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
+                            {integracoes.map((i) => (
+                                <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center text-sm text-slate-200">{i}</div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl font-semibold text-white">Depoimentos</h2>
+                    <div className="mt-8 grid gap-4 md:grid-cols-3">
+                        {[
+                            ['“Automatizamos cobranca e atendimento em semanas.”', 'Gestora Financeira'],
+                            ['“Pipeline e CRM deram previsibilidade comercial.”', 'Diretor Comercial'],
+                            ['“Painel robusto, suporte rapido e operacao estavel.”', 'CEO SaaS'],
+                        ].map(([texto, cargo]) => (
+                            <blockquote key={texto} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                                <p className="text-sm text-slate-200">{texto}</p>
+                                <footer className="mt-4 text-xs text-slate-400">{cargo}</footer>
+                            </blockquote>
+                        ))}
+                    </div>
+                </section>
+
+                <section id="faq" className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl font-semibold text-white">FAQ</h2>
+                    <div className="mt-8 space-y-3">
+                        {faq.map(([q, a]) => (
+                            <details key={q} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                                <summary className="cursor-pointer text-sm font-semibold text-white">{q}</summary>
+                                <p className="mt-2 text-sm text-slate-300">{a}</p>
+                            </details>
+                        ))}
+                    </div>
+                </section>
             </main>
 
             <footer id="contato" className="border-t border-white/10 bg-slate-950/80">
@@ -147,4 +215,3 @@ export default function PremiumLanding({ props }) {
         </div>
     );
 }
-
