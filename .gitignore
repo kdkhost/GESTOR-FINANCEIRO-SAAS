@@ -17,7 +17,9 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/installed
 /storage/pail
+deploy_sync.tar
 /vendor
 Homestead.json
 Homestead.yaml

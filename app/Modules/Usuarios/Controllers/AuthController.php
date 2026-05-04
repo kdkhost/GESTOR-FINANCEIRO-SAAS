@@ -98,7 +98,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('auth.login');
+        return redirect()->route('login');
     }
 
     /**
@@ -187,6 +187,6 @@ class AuthController extends Controller
 
         \DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-        return response()->json(['sucesso' => true, 'mensagem' => 'Senha redefinida com sucesso! Faça login.', 'redirect' => route('auth.login')]);
+        return response()->json(['sucesso' => true, 'mensagem' => 'Senha redefinida com sucesso! Faça login.', 'redirect' => route('login')]);
     }
 }

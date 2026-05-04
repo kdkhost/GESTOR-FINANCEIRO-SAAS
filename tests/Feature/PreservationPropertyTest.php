@@ -62,11 +62,7 @@ class PreservationPropertyTest extends TestCase
         // Using expectException to avoid view loading issues
         try {
             $response = $this->get('/');
-            // If we get here, check it's a redirect (not 500 error)
-            $this->assertTrue(
-                in_array($response->getStatusCode(), [302, 301]), 
-                'Should redirect when system is installed'
-            );
+            $response->assertRedirect('/admin/dashboard');
         } catch (\Exception $e) {
             // If there's a view error, that's expected - the important thing is the redirect logic works
             $this->assertTrue(true, 'Redirect logic exists even if views are missing');

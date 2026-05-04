@@ -5,7 +5,8 @@ Route::get('/', function () {
     if (! file_exists(storage_path('installed'))) {
         return redirect('/instalar');
     }
-    return view('welcome');
+
+    return redirect()->route('admin.dashboard.index');
 });
 
 // Alias para compatibilidade
