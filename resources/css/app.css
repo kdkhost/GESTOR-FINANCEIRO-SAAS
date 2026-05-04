@@ -92,10 +92,25 @@ a {
 }
 
 .premium-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1038;
     border-bottom: 1px solid rgba(148, 163, 184, 0.16);
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(18px);
     box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
+}
+
+.layout-navbar-fixed .app-main {
+    padding-top: 0.25rem;
+}
+
+.layout-navbar-fixed .app-sidebar {
+    top: 0;
+}
+
+.layout-navbar-fixed .app-sidebar .sidebar-wrapper {
+    padding-top: 0.75rem;
 }
 
 .nav-icon-button {
@@ -422,6 +437,11 @@ a {
 [data-bs-theme="dark"] .nav-icon-button,
 [data-bs-theme="dark"] .quick-link {
     color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .premium-navbar {
+    background: rgba(15, 23, 42, 0.82);
+    border-bottom-color: rgba(148, 163, 184, 0.12);
 }
 
 [data-bs-theme="dark"] .navbar-meta,
