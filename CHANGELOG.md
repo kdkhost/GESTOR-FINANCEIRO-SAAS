@@ -11,12 +11,14 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ### Corrigido
 - A rota raiz com o sistema instalado agora redireciona para `/admin/dashboard`, permitindo o fluxo direto para login/dashboard do superadmin.
 - Logout e redefinição de senha agora redirecionam para a rota real `login`, removendo referência a alias inexistente.
+- `public/index.php` voltou a usar os caminhos padrão do Laravel (`../vendor` e `../bootstrap`), corrigindo o acesso via `php artisan serve`.
 - `storage/installed` e `deploy_sync.tar` passaram a ser ignorados pelo Git por serem arquivos de estado/artefato local.
 
 ### Validado
 - `php artisan test` com 15 testes passando.
 - `npm run build` concluído com sucesso.
 - `php artisan route:list` confirmou login, dashboard e configurações gerais carregados.
+- Login superadmin local validado por HTTP e acesso a `/admin/configuracoes` confirmado.
 
 ---
 
