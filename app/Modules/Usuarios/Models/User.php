@@ -130,7 +130,7 @@ class User extends Authenticatable
 
     public function metas(): HasMany
     {
-        return $this->hasMany(\App\Modules\Financeiro\Models\MetaFinanceira::class);
+        return $this->hasMany(\App\Modules\Financeiro\Models\Meta::class);
     }
 
     public function notificacoes(): HasMany

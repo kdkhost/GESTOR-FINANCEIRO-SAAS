@@ -80,7 +80,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'web'])->group(funct
 
     // Clientes e Fornecedores
     Route::get('clientes/buscar', [ClienteController::class, 'buscar'])->name('clientes.buscar');
+    Route::get('clientes/listar', [ClienteController::class, 'listar'])->name('clientes.listar');
     Route::get('fornecedores/buscar', [FornecedorController::class, 'buscar'])->name('fornecedores.buscar');
+    Route::get('fornecedores/listar', [FornecedorController::class, 'listar'])->name('fornecedores.listar');
     Route::apiResource('clientes', ClienteController::class)->except(['create', 'edit']);
     Route::apiResource('fornecedores', FornecedorController::class)->except(['create', 'edit']);
 

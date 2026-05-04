@@ -19,7 +19,11 @@ class ClienteController extends Controller
     public function listar(Request $request): JsonResponse
     {
         $query = Cliente::doUsuario(auth()->id());
-        if ($request->filled('search')) $query->where('nome', 'like', '%'.$request->search.'%');
+        if ($request->filled('search')) $query->where(function($q) use ($request) {
+            $q->where('nome', 'like', '%'.$request->search.'%')
+              ->orWhere('cpf_cnpj', 'like', '%'.$request->search.'%')
+              ->orWhere('email', 'like', '%'.$request->search.'%');
+        });
         if ($request->filled('ativo'))  $query->where('ativo', $request->ativo);
         $dados = $query->orderBy('nome')->paginate($request->get('per_page', 15));
         return response()->json(['sucesso' => true, 'dados' => $dados->items(), 'total' => $dados->total(), 'paginas' => $dados->lastPage()]);

@@ -7,7 +7,7 @@ use App\Modules\Financeiro\Models\ContaReceber;
 use App\Modules\Financeiro\Models\Receita;
 use App\Modules\Financeiro\Models\Despesa;
 use App\Modules\Financeiro\Models\ContaBancaria;
-use App\Modules\Financeiro\Models\MetaFinanceira;
+use App\Modules\Financeiro\Models\Meta;
 use Carbon\Carbon;
 
 /**
@@ -122,7 +122,9 @@ class SaudeFinanceiraService
 
     private function calcularMetas(): array
     {
-        $metas  = MetaFinanceira::where('user_id', $this->userId)->where('status', 'ativa')->get();
+        // Status 'ativa' conforme enum da tabela metas_financeiras
+        $metas  = Meta::where('user_id', $this->userId)->where('status', 'ativa')->get();
+        // Usa valor_alvo (nome real da coluna na tabela)
         $emDia  = $metas->filter(fn ($m) => ($m->valor_atual / max(1, $m->valor_alvo)) >= 0.5)->count();
         $total  = $metas->count();
         $pontos = $total > 0 ? (int) round(($emDia / $total) * 5) : 5;
