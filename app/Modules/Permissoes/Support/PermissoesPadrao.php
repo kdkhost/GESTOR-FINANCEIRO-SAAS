@@ -58,6 +58,15 @@ class PermissoesPadrao
             'Auditoria' => [
                 'auditoria.visualizar' => 'Visualizar auditoria',
             ],
+            'SaaS' => [
+                'saas.visualizar' => 'Visualizar SaaS',
+                'saas.empresas' => 'Gerenciar empresas (tenants)',
+                'saas.planos' => 'Gerenciar planos',
+                'saas.assinaturas' => 'Gerenciar assinaturas',
+                'saas.faturas' => 'Gerenciar faturas',
+                'saas.notificacoes' => 'Gerenciar templates de notificacao',
+                'saas.manutencao' => 'Gerenciar manutencao',
+            ],
         ];
     }
 

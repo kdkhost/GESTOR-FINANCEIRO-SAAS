@@ -205,6 +205,21 @@
                         <i class="nav-icon bi bi-layers"></i><p>SaaS (Planos)</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.saas.empresas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.empresas.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-buildings"></i><p>SaaS (Empresas)</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.saas.assinaturas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.assinaturas.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-receipt"></i><p>SaaS (Assinaturas)</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.saas.faturas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.faturas.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-cash-coin"></i><p>SaaS (Faturas)</p>
+                    </a>
+                </li>
                 @endif
 
             </ul>
