@@ -176,6 +176,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.gateways.index') }}" class="nav-link {{ request()->routeIs('admin.gateways.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-wallet2"></i><p>Gateways</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.configuracoes.index') }}" class="nav-link {{ request()->routeIs('admin.configuracoes.*') ? 'active' : '' }}">
                         <i class="nav-icon bi bi-gear-fill"></i><p>Configurações</p>
                     </a>

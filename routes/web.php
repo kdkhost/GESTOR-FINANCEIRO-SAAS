@@ -2,10 +2,10 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (file_exists(storage_path('installed'))) {
-        return redirect('/admin/dashboard');
+    if (! file_exists(storage_path('installed'))) {
+        return redirect('/instalar');
     }
-    return redirect('/instalar');
+    return view('welcome');
 });
 
 // Alias para compatibilidade

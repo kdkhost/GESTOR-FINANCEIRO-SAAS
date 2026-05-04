@@ -37,6 +37,20 @@
     @vite(['resources/css/app.css'])
 
     @stack('styles')
+    <style>
+        .app-content-header { padding: 1.25rem 0; }
+        .app-content-header .breadcrumb { margin-bottom: 0; }
+        .app-content-header h3 { font-size: 1.55rem; font-weight: 700; letter-spacing: -.02em; }
+        .app-content { padding: 1rem 0 1.5rem; }
+        .app-content .container-fluid { padding-left: 1rem; padding-right: 1rem; }
+        .card-standard { border-radius: 1rem; box-shadow: 0 18px 45px rgba(15,23,42,.05); }
+        .card-standard .card-header { border-bottom: 1px solid rgba(226,232,240,.7); }
+        .card-standard .card-title { font-size: 1rem; font-weight: 600; }
+        .card-standard .card-body { min-height: 1px; }
+        .page-section-title { font-size: 1rem; font-weight: 700; letter-spacing: .01em; }
+        .badge-subtle { opacity: .9; }
+        .table thead th { font-weight: 700; }
+    </style>
 </head>
 <body class="layout-fixed sidebar-expand-lg sidebar-mini">
 

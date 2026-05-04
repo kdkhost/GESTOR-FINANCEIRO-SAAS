@@ -59,6 +59,21 @@ class DashboardController extends Controller
     }
 
     /**
+     * Converte data do formato dd/mm/yyyy ou yyyy-mm-dd para yyyy-mm-dd.
+     */
+    private function parseDateInput(string $data): string
+    {
+        if (str_contains($data, '/')) {
+            try {
+                return Carbon::createFromFormat('d/m/Y', $data)->toDateString();
+            } catch (\Throwable) {
+                return now()->toDateString();
+            }
+        }
+        return $data;
+    }
+
+    /**
      * Converte string de período para datas de início e fim.
      */
     private function resolverPeriodo(string $periodo, Request $request): array
@@ -73,8 +88,8 @@ class DashboardController extends Controller
                 : Carbon::create(now()->year, 6, 30)->toDateString()],
             'ano'         => [now()->startOfYear()->toDateString(), now()->endOfYear()->toDateString()],
             'personalizado' => [
-                $request->get('inicio', now()->startOfMonth()->toDateString()),
-                $request->get('fim',    now()->endOfMonth()->toDateString()),
+                $this->parseDateInput($request->get('inicio', now()->startOfMonth()->toDateString())),
+                $this->parseDateInput($request->get('fim',    now()->endOfMonth()->toDateString())),
             ],
             default => [now()->startOfMonth()->toDateString(), now()->endOfMonth()->toDateString()],
         };

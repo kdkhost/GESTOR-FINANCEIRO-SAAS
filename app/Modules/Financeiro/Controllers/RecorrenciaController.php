@@ -7,12 +7,13 @@ use Illuminate\Http\JsonResponse;
 
 class RecorrenciaController extends Controller
 {
-
-
-    public function index(): JsonResponse
+    public function index(Request $request)
     {
-        $dados = Recorrencia::with('categoria')->doUsuario(auth()->id())->orderBy('descricao')->get();
-        return response()->json(['sucesso'=>true,'dados'=>$dados]);
+        if ($request->expectsJson() || $request->ajax()) {
+            $dados = Recorrencia::with('categoria')->doUsuario(auth()->id())->orderBy('descricao')->get();
+            return response()->json(['sucesso' => true, 'dados' => $dados]);
+        }
+        return view('admin.financeiro.recorrencias.index');
     }
 
     public function store(Request $request): JsonResponse
@@ -22,12 +23,13 @@ class RecorrenciaController extends Controller
             $dados = $request->all();
             $dados['user_id'] = auth()->id();
             $dados['valor']   = moeda_para_float($dados['valor']);
-            $dados['ativo']   = true;
+            $dados['ativo']   = isset($dados['ativo']) ? (bool)$dados['ativo'] : true;
+            if (isset($dados['data_inicio']) && str_contains($dados['data_inicio'],'/')) $dados['data_inicio'] = data_banco($dados['data_inicio']);
             $rec = Recorrencia::create($dados);
             auditoria('criou','Financeiro','recorrencias',$rec->id,null,$dados);
-            return response()->json(['sucesso'=>true,'mensagem'=>'Recorrência criada com sucesso!','dado'=>$rec],201);
+            return response()->json(['sucesso'=>true,'mensagem'=>'Recorrencia criada com sucesso!','dado'=>$rec],201);
         } catch (\Throwable $e) {
-            return response()->json(['sucesso'=>false,'mensagem'=>'Erro ao criar recorrência.','erro'=>config('app.debug')?$e->getMessage():null],500);
+            return response()->json(['sucesso'=>false,'mensagem'=>'Erro ao criar recorrencia.','erro'=>config('app.debug')?$e->getMessage():null],500);
         }
     }
 
@@ -43,9 +45,10 @@ class RecorrenciaController extends Controller
         $anterior = $rec->toArray();
         $dados    = $request->all();
         if (isset($dados['valor'])) $dados['valor'] = moeda_para_float($dados['valor']);
+        if (isset($dados['ativo'])) $dados['ativo'] = (bool)$dados['ativo'];
         $rec->update($dados);
         auditoria('editou','Financeiro','recorrencias',$rec->id,$anterior,$dados);
-        return response()->json(['sucesso'=>true,'mensagem'=>'Recorrência atualizada!','dado'=>$rec->fresh()]);
+        return response()->json(['sucesso'=>true,'mensagem'=>'Recorrencia atualizada!','dado'=>$rec->fresh()]);
     }
 
     public function destroy(int $id): JsonResponse
@@ -53,6 +56,6 @@ class RecorrenciaController extends Controller
         $rec = Recorrencia::doUsuario(auth()->id())->findOrFail($id);
         auditoria('excluiu','Financeiro','recorrencias',$rec->id,$rec->toArray(),null);
         $rec->delete();
-        return response()->json(['sucesso'=>true,'mensagem'=>'Recorrência excluída!']);
+        return response()->json(['sucesso'=>true,'mensagem'=>'Recorrencia excluida!']);
     }
 }

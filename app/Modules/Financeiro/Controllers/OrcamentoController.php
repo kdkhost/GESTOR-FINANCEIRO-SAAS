@@ -7,12 +7,13 @@ use Illuminate\Http\JsonResponse;
 
 class OrcamentoController extends Controller
 {
-
-
-    public function index(): JsonResponse
+    public function index(Request $request)
     {
-        $dados = Orcamento::with('categoria')->doUsuario(auth()->id())->orderBy('mes')->orderBy('ano')->get();
-        return response()->json(['sucesso'=>true,'dados'=>$dados]);
+        if ($request->expectsJson() || $request->ajax()) {
+            $dados = Orcamento::with('categoria')->doUsuario(auth()->id())->orderBy('mes')->orderBy('ano')->get();
+            return response()->json(['sucesso' => true, 'dados' => $dados]);
+        }
+        return view('admin.financeiro.orcamentos.index');
     }
 
     public function store(Request $request): JsonResponse
@@ -24,9 +25,9 @@ class OrcamentoController extends Controller
             $dados['valor_limite'] = moeda_para_float($dados['valor_limite']);
             $orc = Orcamento::create($dados);
             auditoria('criou','Financeiro','orcamentos',$orc->id,null,$dados);
-            return response()->json(['sucesso'=>true,'mensagem'=>'Orçamento criado com sucesso!','dado'=>$orc->load('categoria')],201);
+            return response()->json(['sucesso'=>true,'mensagem'=>'Orcamento criado com sucesso!','dado'=>$orc->load('categoria')],201);
         } catch (\Throwable $e) {
-            return response()->json(['sucesso'=>false,'mensagem'=>'Erro ao criar orçamento.','erro'=>config('app.debug')?$e->getMessage():null],500);
+            return response()->json(['sucesso'=>false,'mensagem'=>'Erro ao criar orcamento.','erro'=>config('app.debug')?$e->getMessage():null],500);
         }
     }
 
@@ -44,7 +45,7 @@ class OrcamentoController extends Controller
         if (isset($dados['valor_limite'])) $dados['valor_limite'] = moeda_para_float($dados['valor_limite']);
         $orc->update($dados);
         auditoria('editou','Financeiro','orcamentos',$orc->id,$anterior,$dados);
-        return response()->json(['sucesso'=>true,'mensagem'=>'Orçamento atualizado!','dado'=>$orc->fresh()]);
+        return response()->json(['sucesso'=>true,'mensagem'=>'Orcamento atualizado!','dado'=>$orc->fresh()]);
     }
 
     public function destroy(int $id): JsonResponse
@@ -52,6 +53,6 @@ class OrcamentoController extends Controller
         $orc = Orcamento::doUsuario(auth()->id())->findOrFail($id);
         auditoria('excluiu','Financeiro','orcamentos',$orc->id,$orc->toArray(),null);
         $orc->delete();
-        return response()->json(['sucesso'=>true,'mensagem'=>'Orçamento excluído!']);
+        return response()->json(['sucesso'=>true,'mensagem'=>'Orcamento excluido!']);
     }
 }
