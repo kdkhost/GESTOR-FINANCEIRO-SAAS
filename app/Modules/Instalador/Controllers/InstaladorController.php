@@ -330,11 +330,14 @@ class InstaladorController extends Controller
                 'sistema_nome'         => $request->sistema_nome,
                 'sistema_proprietario' => $request->sistema_proprietario,
                 'sistema_descricao'    => $request->sistema_descricao    ?? '',
-                'smtp_host'            => $request->smtp_host            ?? '',
-                'smtp_porta'           => $request->smtp_porta           ?? '587',
-                'smtp_usuario'         => $request->smtp_usuario         ?? '',
-                'smtp_senha'           => $request->smtp_senha           ?? '',
-                'smtp_remetente'       => $request->smtp_remetente       ?? '',
+                'mail_driver'          => 'smtp',
+                'mail_host'            => $request->smtp_host            ?? '',
+                'mail_port'            => $request->smtp_porta           ?? '587',
+                'mail_encryption'    => 'tls',
+                'mail_username'        => $request->smtp_usuario         ?? '',
+                'mail_password'        => $request->smtp_senha           ?? '',
+                'mail_from_name'       => $request->sistema_nome         ?? 'FinanceiroSaaS',
+                'mail_from_address'    => $request->smtp_remetente       ?? '',
             ];
 
             foreach ($configuracoes as $chave => $valor) {

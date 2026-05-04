@@ -302,16 +302,52 @@ $('#form-aparencia').on('submit', function(e) {
 });
 
 $('#btn-testar-smtp').on('click', function() {
-    const email = prompt('Digite o e-mail para teste:');
-    if (!email) return;
-    $.post('{{ route("admin.configuracoes.salvar") }}', {
-        _token: $('meta[name="csrf-token"]').attr('content'),
-        acao: 'testar_smtp',
-        email_teste: email,
-    }, r => {
-        if (r.sucesso) toast('E-mail de teste enviado para ' + email, 'sucesso');
-        else toast(r.mensagem || 'Falha no envio.', 'erro');
-    }).fail(r => toast(r.responseJSON?.mensagem || 'Erro ao testar SMTP.', 'erro'));
+    SistemaAlert.fire({
+        title: 'Testar Envio SMTP',
+        text: 'Digite o e-mail para receber o teste:',
+        input: 'email',
+        inputPlaceholder: 'seu@email.com',
+        showCancelButton: true,
+        confirmButtonText: '<i class="bi bi-send me-1"></i>Enviar Teste',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Digite um e-mail valido!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            const email = result.value;
+            $.post('{{ route("admin.configuracoes.salvar") }}', {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                acao: 'testar_smtp',
+                email_teste: email,
+            }, r => {
+                if (r.sucesso) {
+                    SistemaAlert.fire({
+                        icon: 'success',
+                        title: 'E-mail Enviado!',
+                        text: 'E-mail de teste enviado para ' + email,
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    SistemaAlert.fire({
+                        icon: 'error',
+                        title: 'Falha no Envio',
+                        text: r.mensagem || 'Erro ao enviar e-mail de teste.',
+                    });
+                }
+            }).fail(r => {
+                SistemaAlert.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: r.responseJSON?.mensagem || 'Erro ao testar SMTP. Verifique as configuracoes.',
+                });
+            });
+        }
+    });
 });
 </script>
 @endpush
