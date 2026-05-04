@@ -27,8 +27,12 @@ if (backToTopRoot) createApp(BackToTop).mount(backToTopRoot);
 
 const supportRoot = document.getElementById('vue-support-box');
 if (supportRoot) {
-    createApp(SupportBox, { whatsapp: supportRoot.dataset.whatsapp || '' }).mount(supportRoot);
+    const whatsapp = supportRoot.dataset.whatsapp || '';
+    if (whatsapp.replace(/\D/g, '').length >= 12) {
+        createApp(SupportBox, { whatsapp }).mount(supportRoot);
+    } else {
+        supportRoot.remove();
+    }
 }
 
 export { default as ajax } from './modules/ajax.js';
-

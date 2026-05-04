@@ -23,7 +23,6 @@
 
     <div id="premium-landing-root" data-props='@json($props)'></div>
     <div id="vue-back-to-top"></div>
-    <div id="vue-support-box" data-whatsapp="{{ configuracao('sistema_telefone', '') }}"></div>
+    <div id="vue-support-box" data-whatsapp="{{ configuracao('whatsapp_suporte', configuracao('sistema_telefone', '')) }}"></div>
 </body>
 </html>
-

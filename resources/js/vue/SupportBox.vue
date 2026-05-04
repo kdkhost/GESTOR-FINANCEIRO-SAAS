@@ -1,5 +1,6 @@
 <template>
   <a
+    v-if="habilitado"
     :href="hrefFinal"
     target="_blank"
     rel="noopener noreferrer"
@@ -18,10 +19,7 @@ const props = defineProps({
   whatsapp: { type: String, default: '' },
 });
 
-const hrefFinal = computed(() => {
-  const digits = (props.whatsapp || '').replace(/\D/g, '');
-  const phone = digits || '5521999999999';
-  return `https://wa.me/${phone}?text=Ol%C3%A1%2C%20preciso%20de%20suporte.`;
-});
+const digits = computed(() => (props.whatsapp || '').replace(/\D/g, ''));
+const habilitado = computed(() => digits.value.length >= 12);
+const hrefFinal = computed(() => `https://wa.me/${digits.value}?text=Ol%C3%A1%2C%20preciso%20de%20suporte.`);
 </script>
-
