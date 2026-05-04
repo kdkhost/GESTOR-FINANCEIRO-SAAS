@@ -225,6 +225,18 @@
         // Intercepta AJAX global para loading
         $(document).on('ajaxSend', function() { mostrarLoading(); });
         $(document).on('ajaxComplete', function() { ocultarLoading(); });
+        $(document).on('ajaxSuccess', function(_event, xhr, settings) {
+            const metodo = String(settings?.type || settings?.method || 'GET').toUpperCase();
+            if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(metodo)) return;
+
+            const detalhe = {
+                metodo,
+                url: settings?.url || null,
+                resposta: xhr?.responseJSON || null,
+            };
+
+            window.dispatchEvent(new CustomEvent('sistema:registro-atualizado', { detail: detalhe }));
+        });
 
         // Máscaras globais IMask
         document.addEventListener('DOMContentLoaded', function() {

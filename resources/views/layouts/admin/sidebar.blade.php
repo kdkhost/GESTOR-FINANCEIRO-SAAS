@@ -120,7 +120,7 @@
     </div>
 
     <div class="sidebar-wrapper">
-        <div class="sidebar-user-panel">
+        <div class="sidebar-user-panel sidebar-user-panel-compact">
             <div class="sidebar-user-avatar">
                 @if($usuario?->avatar_url)
                     <img src="{{ $usuario->avatar_url }}" alt="Avatar" class="img-fluid rounded-circle">
@@ -130,13 +130,19 @@
             </div>
             <div class="sidebar-user-copy">
                 <strong>{{ $usuario?->name ?? 'Usuario' }}</strong>
-                <span>{{ $usuario?->email ?? 'sem-email' }}</span>
+                <span>{{ strtoupper((string) ($usuario?->tipo ?? 'usuario')) }}</span>
             </div>
-            <span class="sidebar-user-badge">{{ strtoupper((string) ($usuario?->tipo ?? 'usuario')) }}</span>
+        </div>
+
+        <div class="sidebar-search-wrap">
+            <div class="input-group input-group-sm sidebar-search-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Buscar no menu">
+            </div>
         </div>
 
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-compact" data-lte-toggle="treeview" data-accordion="false" role="menu">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-compact" data-lte-toggle="treeview" data-accordion="true" role="menu" id="sidebar-menu-root">
                 <li class="nav-header">OPERACAO</li>
                 @foreach($menuPrincipal as $item)
                     @php
@@ -221,3 +227,23 @@
         </nav>
     </div>
 </aside>
+
+<script>
+document.getElementById('sidebar-menu-search')?.addEventListener('input', function (e) {
+    const termo = e.target.value.trim().toLowerCase();
+    const itens = document.querySelectorAll('#sidebar-menu-root > .nav-item');
+
+    itens.forEach((item) => {
+        const texto = item.innerText.toLowerCase();
+        const corresponde = termo === '' || texto.includes(termo);
+        item.style.display = corresponde ? '' : 'none';
+        if (termo !== '' && corresponde && item.classList.contains('menu-open') === false) {
+            const tree = item.querySelector('.nav-treeview');
+            if (tree) {
+                item.classList.add('menu-open');
+                item.querySelector('.nav-link')?.classList.add('active');
+            }
+        }
+    });
+});
+</script>
