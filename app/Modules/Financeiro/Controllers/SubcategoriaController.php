@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class SubcategoriaController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+
 
     public function index(): JsonResponse
     {

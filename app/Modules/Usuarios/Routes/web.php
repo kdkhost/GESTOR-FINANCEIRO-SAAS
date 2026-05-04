@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Modules\Usuarios\Controllers\AuthController;
@@ -6,7 +6,9 @@ use App\Modules\Usuarios\Controllers\PerfilController;
 
 // Autenticacao
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('auth.login');
+    // 'login' e obrigatorio pelo middleware auth do Laravel para redirecionar nao autenticados
+    // 'auth.login' e mantido como alias para compatibilidade com as views existentes
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
     Route::get('/esqueci-senha', [AuthController::class, 'showEsqueciSenha'])->name('auth.esqueci-senha');
     Route::post('/esqueci-senha', [AuthController::class, 'enviarLinkRedefinicao'])->name('auth.enviar-link');

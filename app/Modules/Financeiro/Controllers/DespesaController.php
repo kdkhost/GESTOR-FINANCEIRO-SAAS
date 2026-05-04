@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class DespesaController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+
 
     public function index() { return view('admin.financeiro.despesas.index'); }
 

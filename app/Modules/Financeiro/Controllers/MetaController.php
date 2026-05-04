@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class MetaController extends Controller
 {
-    public function __construct() { $this->middleware('auth'); }
+
 
     public function index(): JsonResponse
     {

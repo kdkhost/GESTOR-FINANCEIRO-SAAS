@@ -10,10 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class ContaPagarController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
 
     /**
      * Exibe a tela de listagem (view).

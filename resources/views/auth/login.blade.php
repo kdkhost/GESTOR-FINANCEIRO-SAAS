@@ -26,7 +26,7 @@
                     <div class="card-body p-4">
                         <h5 class="fw-semibold mb-4 text-center">Acesse sua conta</h5>
 
-                        <form id="form-login" method="POST" action="{{ route('auth.login') }}" novalidate>
+                        <form id="form-login" method="POST" action="{{ route('auth.login.post') }}" novalidate>
                             @csrf
 
                             {{-- E-mail --}}
