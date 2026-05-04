@@ -112,7 +112,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-info me-auto" id="btn-testar-gateway">
-                        <i class="bi bi-plug me-1"></i>Testar conexÃ£o
+                        <i class="bi bi-plug me-1"></i>Testar conexao
                     </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Salvar alterações</button>
