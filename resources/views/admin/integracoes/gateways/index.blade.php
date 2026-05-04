@@ -116,6 +116,19 @@
 </div>
 @endsection
 
+@php
+    $gatewaysJson = $gateways->map(function ($gateway) {
+        return [
+            'id' => $gateway->id,
+            'nome' => $gateway->nome,
+            'identificador' => $gateway->identificador,
+            'ativo' => $gateway->ativo,
+            'sandbox' => $gateway->sandbox,
+            'credenciais' => $gateway->credenciais ?? [],
+        ];
+    })->values();
+@endphp
+
 @push('scripts')
 <script>
     const gatewayCamposPorTipo = {
@@ -133,16 +146,7 @@
         ],
     };
 
-    const gateways = @json($gateways->map(function ($gateway) {
-        return [
-            'id' => $gateway->id,
-            'nome' => $gateway->nome,
-            'identificador' => $gateway->identificador,
-            'ativo' => $gateway->ativo,
-            'sandbox' => $gateway->sandbox,
-            'credenciais' => $gateway->credenciais ?? [],
-        ];
-    }));
+    const gateways = @json($gatewaysJson);
 
     function construirCamposCredenciais(identificador, valores = {}) {
         const campos = gatewayCamposPorTipo[identificador] || [];
