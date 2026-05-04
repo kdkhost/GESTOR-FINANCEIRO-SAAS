@@ -190,6 +190,21 @@
                         <i class="nav-icon bi bi-boxes"></i><p>Modulos</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.manutencao.index') }}" class="nav-link {{ request()->routeIs('admin.manutencao.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-cone-striped"></i><p>Manutencao</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.notificacoes.templates.index') }}" class="nav-link {{ request()->routeIs('admin.notificacoes.templates.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-bell-fill"></i><p>Notificacoes</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.saas.planos.index') }}" class="nav-link {{ request()->routeIs('admin.saas.*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-layers"></i><p>SaaS (Planos)</p>
+                    </a>
+                </li>
                 @endif
 
             </ul>
