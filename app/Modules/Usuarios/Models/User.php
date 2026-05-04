@@ -72,7 +72,15 @@ class User extends Authenticatable
 
     public function getIsAdminAttribute(): bool
     {
-        return in_array($this->tipo, ['admin', 'superadmin']);
+        if (in_array($this->tipo, ['admin', 'superadmin'], true)) {
+            return true;
+        }
+
+        try {
+            return $this->hasAnyRole(['admin', 'superadmin']);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     public function getEstaBloqueadoAttribute(): bool
