@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes, HasRoles;
 
+    protected string $guard_name = 'web';
+
     protected $fillable = [
         'name',
         'email',
@@ -201,5 +203,10 @@ class User extends Authenticatable
             'ultimo_acesso_em'  => now(),
         ]);
         $this->resetarTentativasLogin();
+    }
+
+    protected function getDefaultGuardName(): string
+    {
+        return 'web';
     }
 }
