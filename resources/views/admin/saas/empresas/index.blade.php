@@ -92,7 +92,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">CNPJ</label>
-                            <input type="text" class="form-control" name="cnpj" placeholder="00.000.000/0000-00">
+                            <input type="text" class="form-control mask-cnpj" name="cnpj" placeholder="00.000.000/0000-00">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">E-mail</label>
@@ -100,11 +100,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Telefone</label>
-                            <input type="text" class="form-control" name="telefone" placeholder="(11) 99999-9999">
+                            <input type="text" class="form-control mask-telefone" name="telefone" placeholder="(11) 99999-9999">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium">CEP</label>
-                            <input type="text" class="form-control" name="cep" placeholder="00000-000">
+                            <input type="text" class="form-control mask-cep viacep" name="cep" placeholder="00000-000">
                         </div>
                         <div class="col-md-7">
                             <label class="form-label fw-medium">Logradouro</label>
@@ -253,4 +253,3 @@ $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarEmpresas(1
 carregarEmpresas();
 </script>
 @endpush
-

@@ -51,11 +51,12 @@
                         <th>Valor</th>
                         <th>Vencimento</th>
                         <th>Status</th>
-                        <th class="text-end" style="width: 110px;">Acoes</th>
+                        <th>Gateway</th>
+                        <th class="text-end" style="width: 160px;">Acoes</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-faturas">
-                    <tr><td colspan="7" class="text-center py-4 text-muted"><i class="bi bi-hourglass-split me-2"></i>Carregando...</td></tr>
+                    <tr><td colspan="8" class="text-center py-4 text-muted"><i class="bi bi-hourglass-split me-2"></i>Carregando...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -100,7 +101,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium">Valor</label>
-                            <input type="text" class="form-control" name="valor" required placeholder="0,00">
+                            <input type="text" class="form-control mask-moeda" name="valor" required placeholder="0,00">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium">Vencimento</label>
@@ -140,6 +141,59 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-cobranca" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="bi bi-wallet2 me-2"></i>Gerar cobranca Mercado Pago</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="form-cobranca">
+                <div class="modal-body">
+                    <input type="hidden" id="cobranca-fatura-id">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Metodo</label>
+                            <select class="form-select" name="metodo" id="cobranca-metodo" required>
+                                <option value="pix">Pix</option>
+                                <option value="boleto">Boleto</option>
+                                <option value="cartao_credito">Cartao de credito tokenizado</option>
+                                <option value="cartao_debito">Cartao de debito tokenizado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">E-mail do pagador</label>
+                            <input type="email" class="form-control" name="payer_email" placeholder="cliente@empresa.com.br">
+                        </div>
+                        <div class="col-md-6 cobranca-cartao d-none">
+                            <label class="form-label fw-medium">Token do cartao</label>
+                            <input type="text" class="form-control" name="token" autocomplete="off">
+                        </div>
+                        <div class="col-md-3 cobranca-cartao d-none">
+                            <label class="form-label fw-medium">Bandeira</label>
+                            <input type="text" class="form-control" name="payment_method_id" placeholder="master">
+                        </div>
+                        <div class="col-md-3 cobranca-cartao d-none">
+                            <label class="form-label fw-medium">Parcelas</label>
+                            <input type="number" class="form-control" name="installments" min="1" max="24" value="1">
+                        </div>
+                        <div class="col-12">
+                            <div class="alert alert-secondary mb-0">
+                                Cartao usa token seguro gerado pelo MercadoPago.js/Card Payment Brick. Pix e boleto geram link, codigo copia e cola ou linha digitavel conforme retorno do Mercado Pago.
+                            </div>
+                        </div>
+                    </div>
+                    <div id="cobranca-resultado" class="mt-3 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-info text-white"><i class="bi bi-lightning-charge me-1"></i>Gerar cobranca</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -150,6 +204,7 @@ const URLS_F = {
     show:   '{{ url("/admin/saas/faturas") }}/',
     update: '{{ url("/admin/saas/faturas") }}/',
     destroy:'{{ url("/admin/saas/faturas") }}/',
+    mercadopago:'{{ url("/admin/saas/faturas") }}/',
 };
 let paginaAtualF = 1;
 const perPageF = 10;
@@ -163,6 +218,13 @@ function parseMoneyBr(v) {
 }
 function toBr(v) { return v ? String(v).replace('.', ',') : '0,00'; }
 function fmtData(v) { return v ? String(v).replace('T',' ').slice(0,16) : '<span class="text-muted">-</span>'; }
+function escapeHtmlF(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+function fmtGateway(f) {
+    if (!f.gateway) return '<span class="text-muted">-</span>';
+    const ref = f.gateway_ref ? `<small class="d-block text-muted">${escapeHtmlF(f.gateway_ref)}</small>` : '';
+    const link = f.link_pagamento ? `<a href="${escapeHtmlF(f.link_pagamento)}" target="_blank" class="small">abrir pagamento</a>` : '';
+    return `<div class="fw-medium">${escapeHtmlF(f.gateway)}</div>${ref}${link}`;
+}
 
 function preencherLookupsF() {
     const selE = $('#fatura-empresa').empty();
@@ -181,7 +243,7 @@ function carregarFaturas(pagina = 1) {
 
         const tbody = $('#tbody-faturas').empty();
         if (!r.sucesso || !r.dados.length) {
-            tbody.html('<tr><td colspan=\"7\" class=\"text-center py-4 text-muted\"><i class=\"bi bi-inbox fs-3 d-block mb-2\"></i>Nenhuma fatura encontrada.</td></tr>');
+            tbody.html('<tr><td colspan=\"8\" class=\"text-center py-4 text-muted\"><i class=\"bi bi-inbox fs-3 d-block mb-2\"></i>Nenhuma fatura encontrada.</td></tr>');
             $('#info-paginacao').text('0 registros');
             $('#paginacao').empty();
             return;
@@ -195,7 +257,9 @@ function carregarFaturas(pagina = 1) {
                 <td>R$ ${toBr(f.valor)}</td>
                 <td>${fmtData(f.vencimento_em)}</td>
                 <td><span class="badge bg-${statusMap[f.status]||'secondary'}">${f.status}</span></td>
+                <td>${fmtGateway(f)}</td>
                 <td class="text-end"><div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-success btn-cobranca" data-id="${f.id}" title="Gerar cobranca Mercado Pago"><i class="bi bi-wallet2"></i></button>
                     <button class="btn btn-outline-primary btn-editar" data-id="${f.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-outline-danger btn-excluir" data-id="${f.id}"><i class="bi bi-trash"></i></button>
                 </div></td>
@@ -254,6 +318,83 @@ $(document).on('click', '.btn-editar', function () {
     });
 });
 
+function alternarCamposCartao() {
+    const metodo = $('#cobranca-metodo').val();
+    $('.cobranca-cartao').toggleClass('d-none', !['cartao_credito', 'cartao_debito'].includes(metodo));
+}
+
+function renderResultadoCobranca(resultado = {}) {
+    const partes = [];
+    if (resultado.link_pagamento) {
+        partes.push(`<a class="btn btn-sm btn-outline-primary" target="_blank" href="${escapeHtmlF(resultado.link_pagamento)}"><i class="bi bi-box-arrow-up-right me-1"></i>Abrir pagamento</a>`);
+    }
+    if (resultado.pix_copia_e_cola) {
+        partes.push(`
+            <label class="form-label small fw-medium mt-2">Pix copia e cola</label>
+            <div class="input-group input-group-sm">
+                <input class="form-control" readonly value="${escapeHtmlF(resultado.pix_copia_e_cola)}">
+                <button class="btn btn-outline-secondary btn-copiar" type="button" data-valor="${escapeHtmlF(resultado.pix_copia_e_cola)}"><i class="bi bi-clipboard"></i></button>
+            </div>
+        `);
+    }
+    if (resultado.boleto_linha_digitavel) {
+        partes.push(`
+            <label class="form-label small fw-medium mt-2">Boleto linha digitavel</label>
+            <div class="input-group input-group-sm">
+                <input class="form-control" readonly value="${escapeHtmlF(resultado.boleto_linha_digitavel)}">
+                <button class="btn btn-outline-secondary btn-copiar" type="button" data-valor="${escapeHtmlF(resultado.boleto_linha_digitavel)}"><i class="bi bi-clipboard"></i></button>
+            </div>
+        `);
+    }
+    $('#cobranca-resultado')
+        .removeClass('d-none')
+        .html(`<div class="alert alert-success mb-0"><div class="fw-semibold mb-2">Cobranca gerada: ${escapeHtmlF(resultado.order_id || '-')}</div>${partes.join('')}</div>`);
+}
+
+$('#cobranca-metodo').on('change', alternarCamposCartao);
+
+$(document).on('click', '.btn-cobranca', function () {
+    const id = $(this).data('id');
+    $('#form-cobranca')[0].reset();
+    $('#cobranca-fatura-id').val(id);
+    $('#cobranca-resultado').addClass('d-none').empty();
+    alternarCamposCartao();
+
+    $.get(URLS_F.show + id, function (r) {
+        const fatura = r.dado || {};
+        $('#form-cobranca').find('[name="payer_email"]').val(fatura.empresa?.email || '');
+        $('#modal-cobranca').modal('show');
+    }).fail(() => $('#modal-cobranca').modal('show'));
+});
+
+$('#form-cobranca').on('submit', function (ev) {
+    ev.preventDefault();
+    const id = $('#cobranca-fatura-id').val();
+    const dados = {};
+    $(this).serializeArray().forEach(f => dados[f.name] = f.value);
+
+    $.ajax({
+        url: `${URLS_F.mercadopago}${id}/mercadopago`,
+        type: 'POST',
+        data: dados,
+        success: r => {
+            toast(r.mensagem || 'Cobranca gerada.', 'sucesso');
+            renderResultadoCobranca(r.resultado || {});
+            carregarFaturas(paginaAtualF);
+        },
+        error: xhr => {
+            const erros = xhr.responseJSON?.errors;
+            toast(erros ? Object.values(erros).flat().join(' | ') : (xhr.responseJSON?.mensagem || 'Erro ao gerar cobranca.'), 'erro');
+        },
+    });
+});
+
+$(document).on('click', '.btn-copiar', function () {
+    const valor = $(this).data('valor');
+    navigator.clipboard?.writeText(valor);
+    toast('Codigo copiado.', 'sucesso');
+});
+
 $('#form-fatura').on('submit', function(ev){
     ev.preventDefault();
     const id = $('#fatura-id').val();
@@ -288,4 +429,3 @@ $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarFaturas(1)
 carregarFaturas();
 </script>
 @endpush
-

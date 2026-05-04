@@ -6,6 +6,29 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.3] - 2026-05-04
+
+### Adicionado
+- Serviço `MercadoPagoOrderService` usando a API Orders do Mercado Pago para gerar cobranças de faturas SaaS por Pix, boleto e cartão tokenizado via MercadoPago.js/Card Payment Brick.
+- Endpoint AJAX `POST /admin/saas/faturas/{id}/mercadopago` para criar cobrança Mercado Pago diretamente na fatura, atualizar referência do gateway, link de pagamento, Pix copia e cola e linha digitável de boleto.
+- Modal administrativo de geração de cobrança na tela de faturas, com suporte a Pix, boleto, cartão de crédito tokenizado e cartão de débito tokenizado.
+- Testes automatizados cobrindo criação de cobrança Pix, boleto com pagador/endereço e exigência de token para cartão.
+
+### Alterado
+- Tela de gateways agora permite credenciais e configurações específicas por provedor, incluindo Mercado Pago com Access Token, Public Key, Webhook Secret, modos Pix/boleto/cartão e teste de conexão.
+- Salvamento de gateways deixou de recarregar a página e atualiza os badges da linha via AJAX.
+- Cadastro de empresas SaaS passou a usar máscaras globais de CNPJ, telefone e CEP com ViaCEP automático.
+- Cadastro de faturas passou a usar máscara de moeda no valor e a exibir informações de gateway/link de pagamento na listagem.
+
+### Validado
+- `php artisan test` com 18 testes passando.
+- `npm run build` concluído com sucesso.
+- `php artisan view:cache` compilou as views Blade com sucesso e `php artisan view:clear` limpou o cache depois da validação.
+- `php artisan route:list --path=admin/saas/faturas` confirmou 7 rotas de faturas, incluindo a rota Mercado Pago.
+- `php artisan route:list --path=admin/gateways` confirmou 3 rotas de gateways, incluindo teste de conexão.
+
+---
+
 ## [1.2.2] - 2026-05-04
 
 ### Adicionado

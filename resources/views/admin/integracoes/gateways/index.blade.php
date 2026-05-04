@@ -30,16 +30,16 @@
                         </thead>
                         <tbody>
                             @foreach($gateways as $gateway)
-                                <tr>
+                                <tr id="gateway-row-{{ $gateway->id }}">
                                     <td>{{ $gateway->nome }}</td>
                                     <td>{{ $gateway->identificador }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $gateway->ativo ? 'success' : 'secondary' }}">
+                                        <span class="badge gateway-status bg-{{ $gateway->ativo ? 'success' : 'secondary' }}">
                                             {{ $gateway->ativo ? 'Ativo' : 'Inativo' }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ $gateway->sandbox ? 'warning' : 'info' }}">
+                                        <span class="badge gateway-ambiente bg-{{ $gateway->sandbox ? 'warning' : 'info' }}">
                                             {{ $gateway->sandbox ? 'Sandbox' : 'Produção' }}
                                         </span>
                                     </td>
@@ -50,7 +50,8 @@
                                                 data-identificador="{{ $gateway->identificador }}"
                                                 data-ativo="{{ $gateway->ativo ? '1' : '0' }}"
                                                 data-sandbox="{{ $gateway->sandbox ? '1' : '0' }}"
-                                                data-credenciais='@json($gateway->credenciais)'>
+                                                data-credenciais='@json($gateway->credenciais)'
+                                                data-configuracoes='@json($gateway->configuracoes)'>
                                             <i class="bi bi-pencil-square me-1"></i>Editar
                                         </button>
                                     </td>
@@ -90,15 +91,18 @@
                     </div>
 
                     <div id="gateway-credenciais" class="row g-3 mt-3"></div>
+                    <div id="gateway-configuracoes" class="row g-3 mt-1"></div>
 
                     <div class="row g-3 mt-3">
                         <div class="col-md-6">
+                            <input type="hidden" name="ativo" value="0">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="gateway-ativo" name="ativo" value="1">
                                 <label class="form-check-label" for="gateway-ativo">Ativar gateway</label>
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <input type="hidden" name="sandbox" value="0">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="gateway-sandbox" name="sandbox" value="1">
                                 <label class="form-check-label" for="gateway-sandbox">Usar ambiente de sandbox</label>
@@ -107,6 +111,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-info me-auto" id="btn-testar-gateway">
+                        <i class="bi bi-plug me-1"></i>Testar conexÃ£o
+                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Salvar alterações</button>
                 </div>
@@ -125,6 +132,7 @@
             'ativo' => $gateway->ativo,
             'sandbox' => $gateway->sandbox,
             'credenciais' => $gateway->credenciais ?? [],
+            'configuracoes' => $gateway->configuracoes ?? [],
         ];
     })->values();
 @endphp
@@ -133,20 +141,45 @@
 <script>
     const gatewayCamposPorTipo = {
         mercadopago: [
-            {name: 'access_token', label: 'Access Token'},
+            {name: 'access_token', label: 'Access Token', type: 'password'},
             {name: 'public_key', label: 'Public Key'},
+            {name: 'webhook_secret', label: 'Webhook Secret', type: 'password'},
         ],
         stripe: [
-            {name: 'secret_key', label: 'Secret Key'},
+            {name: 'secret_key', label: 'Secret Key', type: 'password'},
             {name: 'publishable_key', label: 'Publishable Key'},
         ],
         asaas: [
-            {name: 'token', label: 'Token'},
+            {name: 'token', label: 'Token', type: 'password'},
             {name: 'account_id', label: 'Account ID'},
         ],
     };
 
-    const gateways = @json($gatewaysJson);
+    const gatewayConfiguracoesPorTipo = {
+        mercadopago: [
+            {name: 'processing_mode', label: 'Processamento', type: 'select', options: {automatic: 'Automatico', manual: 'Manual'}},
+            {name: 'pix_expiration_time', label: 'Validade Pix (ISO 8601)', placeholder: 'P1D'},
+            {name: 'boleto_expiration_time', label: 'Validade boleto (ISO 8601)', placeholder: 'P3D'},
+            {name: 'pix_ativo', label: 'Pix ativo', type: 'checkbox'},
+            {name: 'boleto_ativo', label: 'Boleto ativo', type: 'checkbox'},
+            {name: 'cartao_credito_ativo', label: 'Cartao de credito ativo', type: 'checkbox'},
+            {name: 'cartao_debito_ativo', label: 'Cartao de debito ativo', type: 'checkbox'},
+            {name: 'card_brick_enabled', label: 'Card Payment Brick habilitado', type: 'checkbox'},
+        ],
+        stripe: [
+            {name: 'cartao_credito_ativo', label: 'Cartao de credito ativo', type: 'checkbox'},
+        ],
+        asaas: [
+            {name: 'pix_ativo', label: 'Pix ativo', type: 'checkbox'},
+            {name: 'boleto_ativo', label: 'Boleto ativo', type: 'checkbox'},
+        ],
+    };
+
+    let gateways = @json($gatewaysJson);
+
+    function escapeHtml(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
 
     function construirCamposCredenciais(identificador, valores = {}) {
         const campos = gatewayCamposPorTipo[identificador] || [];
@@ -155,10 +188,52 @@
             return `
                 <div class="col-md-6">
                     <label class="form-label fw-medium">${campo.label}</label>
-                    <input type="text" name="credenciais[${campo.name}]" class="form-control" value="${valor}">
+                    <input type="${campo.type || 'text'}" name="credenciais[${campo.name}]" class="form-control" value="${escapeHtml(valor)}">
                 </div>
             `;
         }).join('');
+    }
+
+    function construirCamposConfiguracoes(identificador, valores = {}) {
+        const campos = gatewayConfiguracoesPorTipo[identificador] || [];
+        if (!campos.length) return '';
+
+        return `
+            <div class="col-12">
+                <hr class="my-2">
+                <h6 class="fw-bold mb-0"><i class="bi bi-sliders me-1"></i>Configuracoes de checkout</h6>
+            </div>
+            ${campos.map(campo => {
+                const valor = valores[campo.name] ?? '';
+                if (campo.type === 'checkbox') {
+                    const checked = valor === true || valor === '1' || valor === 1 ? 'checked' : '';
+                    return `
+                        <div class="col-md-6">
+                            <input type="hidden" name="configuracoes[${campo.name}]" value="0">
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="configuracoes[${campo.name}]" value="1" id="cfg-${campo.name}" ${checked}>
+                                <label class="form-check-label" for="cfg-${campo.name}">${campo.label}</label>
+                            </div>
+                        </div>
+                    `;
+                }
+                if (campo.type === 'select') {
+                    const options = Object.entries(campo.options || {}).map(([key, label]) => `<option value="${key}" ${String(valor) === key ? 'selected' : ''}>${label}</option>`).join('');
+                    return `
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">${campo.label}</label>
+                            <select class="form-select" name="configuracoes[${campo.name}]">${options}</select>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">${campo.label}</label>
+                        <input type="text" name="configuracoes[${campo.name}]" class="form-control" value="${escapeHtml(valor)}" placeholder="${escapeHtml(campo.placeholder || '')}">
+                    </div>
+                `;
+            }).join('')}
+        `;
     }
 
     function abrirModalGateway(gatewayId) {
@@ -171,8 +246,23 @@
         $('#gateway-ativo').prop('checked', gateway.ativo);
         $('#gateway-sandbox').prop('checked', gateway.sandbox);
         $('#gateway-credenciais').html(construirCamposCredenciais(gateway.identificador, gateway.credenciais));
+        $('#gateway-configuracoes').html(construirCamposConfiguracoes(gateway.identificador, gateway.configuracoes));
         $('#modal-gateway-title').text(`Editar ${gateway.nome}`);
+        $('#btn-testar-gateway').toggle(gateway.identificador === 'mercadopago');
         new bootstrap.Modal(document.getElementById('modal-gateway')).show();
+    }
+
+    function atualizarLinhaGateway(gateway) {
+        const row = $(`#gateway-row-${gateway.id}`);
+        row.find('.gateway-status')
+            .removeClass('bg-success bg-secondary')
+            .addClass(gateway.ativo ? 'bg-success' : 'bg-secondary')
+            .text(gateway.ativo ? 'Ativo' : 'Inativo');
+        row.find('.gateway-ambiente')
+            .removeClass('bg-warning bg-info')
+            .addClass(gateway.sandbox ? 'bg-warning' : 'bg-info')
+            .text(gateway.sandbox ? 'Sandbox' : 'Producao');
+        gateways = gateways.map(item => item.id === gateway.id ? gateway : item);
     }
 
     $(document).on('click', '.btn-editar-gateway', function () {
@@ -193,7 +283,8 @@
             data,
             success: response => {
                 toast(response.mensagem, 'sucesso');
-                window.location.reload();
+                atualizarLinhaGateway(response.gateway);
+                bootstrap.Modal.getInstance(document.getElementById('modal-gateway'))?.hide();
             },
             error: response => {
                 const errors = response.responseJSON?.errors;
@@ -204,6 +295,19 @@
                 }
                 toast(response.responseJSON?.mensagem || 'Erro ao salvar gateway.', 'erro');
             }
+        });
+    });
+
+    $('#btn-testar-gateway').on('click', function () {
+        const gatewayId = $('#gateway-id').val();
+        if (!gatewayId) return;
+
+        $.post(`{{ url('admin/gateways') }}/${gatewayId}/testar`, {}, function (response) {
+            toast(response.mensagem || 'Conexao validada.', 'sucesso');
+        }).fail(function (response) {
+            const errors = response.responseJSON?.errors;
+            const mensagem = errors ? Object.values(errors).flat().join('<br>') : (response.responseJSON?.message || 'Erro ao testar conexao.');
+            toast(mensagem, 'erro');
         });
     });
 </script>

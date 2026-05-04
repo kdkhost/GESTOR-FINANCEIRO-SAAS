@@ -18,9 +18,29 @@ class GatewayPagamento extends Model
     ];
 
     protected $casts = [
-        'credenciais'     => 'array',
-        'configuracoes'   => 'array',
-        'ativo'           => 'boolean',
-        'sandbox'         => 'boolean',
+        'credenciais' => 'array',
+        'configuracoes' => 'array',
+        'ativo' => 'boolean',
+        'sandbox' => 'boolean',
     ];
+
+    public function getLogoUrlAttribute(): string
+    {
+        return asset('vendor/gateways/'.$this->identificador.'.svg');
+    }
+
+    public function getModoAttribute(): string
+    {
+        return $this->sandbox ? 'sandbox' : 'producao';
+    }
+
+    public function credential(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->credenciais ?? [], $key, $default);
+    }
+
+    public function configuration(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->configuracoes ?? [], $key, $default);
+    }
 }

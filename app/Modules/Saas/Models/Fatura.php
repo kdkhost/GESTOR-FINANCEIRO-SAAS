@@ -3,6 +3,7 @@
 namespace App\Modules\Saas\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Fatura extends Model
 {
@@ -32,5 +33,14 @@ class Fatura extends Model
             'pago_em' => 'datetime',
         ];
     }
-}
 
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function assinatura(): BelongsTo
+    {
+        return $this->belongsTo(Assinatura::class, 'assinatura_id');
+    }
+}
