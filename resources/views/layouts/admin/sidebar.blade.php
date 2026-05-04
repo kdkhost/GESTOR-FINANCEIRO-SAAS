@@ -1,239 +1,222 @@
-<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+@php
+    $usuario = auth()->user();
+    $isAdmin = (bool) ($usuario?->is_admin ?? false) || in_array((string) ($usuario?->tipo ?? ''), ['admin', 'superadmin'], true);
 
-    {{-- Logo --}}
+    $menuPrincipal = [
+        [
+            'type' => 'link',
+            'label' => 'Dashboard',
+            'icon' => 'bi bi-speedometer2',
+            'route' => 'admin.dashboard.index',
+            'active' => ['admin.dashboard.*'],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'Financeiro',
+            'icon' => 'bi bi-cash-stack',
+            'active' => ['admin.contas-pagar.*', 'admin.contas-receber.*', 'admin.receitas.*', 'admin.despesas.*', 'admin.transferencias.*', 'admin.recorrencias.*'],
+            'children' => [
+                ['label' => 'Contas a Pagar', 'icon' => 'bi bi-arrow-up-circle', 'route' => 'admin.contas-pagar.index', 'active' => ['admin.contas-pagar.*'], 'icon_class' => 'text-danger'],
+                ['label' => 'Contas a Receber', 'icon' => 'bi bi-arrow-down-circle', 'route' => 'admin.contas-receber.index', 'active' => ['admin.contas-receber.*'], 'icon_class' => 'text-success'],
+                ['label' => 'Receitas', 'icon' => 'bi bi-plus-circle', 'route' => 'admin.receitas.index', 'active' => ['admin.receitas.*'], 'icon_class' => 'text-success'],
+                ['label' => 'Despesas', 'icon' => 'bi bi-dash-circle', 'route' => 'admin.despesas.index', 'active' => ['admin.despesas.*'], 'icon_class' => 'text-danger'],
+                ['label' => 'Transferencias', 'icon' => 'bi bi-arrow-left-right', 'route' => 'admin.transferencias.index', 'active' => ['admin.transferencias.*'], 'icon_class' => 'text-info'],
+                ['label' => 'Recorrencias', 'icon' => 'bi bi-repeat', 'route' => 'admin.recorrencias.index', 'active' => ['admin.recorrencias.*'], 'icon_class' => 'text-warning'],
+            ],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'Planejamento',
+            'icon' => 'bi bi-bullseye',
+            'active' => ['admin.metas.*', 'admin.orcamentos.*'],
+            'children' => [
+                ['label' => 'Metas Financeiras', 'icon' => 'bi bi-trophy', 'route' => 'admin.metas.index', 'active' => ['admin.metas.*'], 'icon_class' => 'text-warning'],
+                ['label' => 'Orcamentos', 'icon' => 'bi bi-pie-chart', 'route' => 'admin.orcamentos.index', 'active' => ['admin.orcamentos.*'], 'icon_class' => 'text-info'],
+            ],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'Cadastros',
+            'icon' => 'bi bi-folder2-open',
+            'active' => ['admin.categorias.*', 'admin.contas-bancarias.*', 'admin.clientes.*', 'admin.fornecedores.*'],
+            'children' => [
+                ['label' => 'Categorias', 'icon' => 'bi bi-tags', 'route' => 'admin.categorias.index', 'active' => ['admin.categorias.*']],
+                ['label' => 'Contas Bancarias', 'icon' => 'bi bi-bank', 'route' => 'admin.contas-bancarias.index', 'active' => ['admin.contas-bancarias.*']],
+                ['label' => 'Clientes', 'icon' => 'bi bi-people', 'route' => 'admin.clientes.index', 'active' => ['admin.clientes.*']],
+                ['label' => 'Fornecedores', 'icon' => 'bi bi-shop', 'route' => 'admin.fornecedores.index', 'active' => ['admin.fornecedores.*']],
+            ],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'Relatorios',
+            'icon' => 'bi bi-file-earmark-bar-graph',
+            'active' => ['admin.relatorios.*'],
+            'children' => [
+                ['label' => 'Fluxo de Caixa', 'icon' => 'bi bi-water', 'route' => 'admin.relatorios.fluxo-caixa', 'active' => ['admin.relatorios.fluxo-caixa']],
+                ['label' => 'DRE', 'icon' => 'bi bi-journal-text', 'route' => 'admin.relatorios.dre', 'active' => ['admin.relatorios.dre']],
+                ['label' => 'Saude Financeira', 'icon' => 'bi bi-heart-pulse', 'route' => 'admin.relatorios.saude-financeira', 'active' => ['admin.relatorios.saude-financeira']],
+                ['label' => 'Evolucao Mensal', 'icon' => 'bi bi-graph-up', 'route' => 'admin.relatorios.evolucao', 'active' => ['admin.relatorios.evolucao']],
+                ['label' => 'Inadimplencia', 'icon' => 'bi bi-exclamation-triangle', 'route' => 'admin.relatorios.inadimplencia', 'active' => ['admin.relatorios.inadimplencia'], 'icon_class' => 'text-danger'],
+            ],
+        ],
+    ];
+
+    $menuAdmin = [
+        [
+            'type' => 'tree',
+            'label' => 'Usuarios e Acessos',
+            'icon' => 'bi bi-people-fill',
+            'active' => ['admin.usuarios.*', 'admin.permissoes.*'],
+            'children' => [
+                ['label' => 'Usuarios', 'icon' => 'bi bi-person-lines-fill', 'route' => 'admin.usuarios.index', 'active' => ['admin.usuarios.*']],
+                ['label' => 'Permissoes', 'icon' => 'bi bi-shield-check', 'route' => 'admin.permissoes.index', 'active' => ['admin.permissoes.*']],
+            ],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'Sistema',
+            'icon' => 'bi bi-sliders2',
+            'active' => ['admin.configuracoes.*', 'admin.modulos.*', 'admin.gateways.*', 'admin.notificacoes.*', 'admin.manutencao.*', 'admin.cron.*', 'admin.auditoria.*'],
+            'children' => [
+                ['label' => 'Configuracoes', 'icon' => 'bi bi-gear-fill', 'route' => 'admin.configuracoes.index', 'active' => ['admin.configuracoes.*']],
+                ['label' => 'Modulos', 'icon' => 'bi bi-boxes', 'route' => 'admin.modulos.index', 'active' => ['admin.modulos.*']],
+                ['label' => 'Gateways', 'icon' => 'bi bi-wallet2', 'route' => 'admin.gateways.index', 'active' => ['admin.gateways.*']],
+                ['label' => 'Notificacoes', 'icon' => 'bi bi-bell-fill', 'route' => 'admin.notificacoes.templates.index', 'active' => ['admin.notificacoes.*']],
+                ['label' => 'Cron Jobs', 'icon' => 'bi bi-clock-history', 'route' => 'admin.cron.index', 'active' => ['admin.cron.*']],
+                ['label' => 'Auditoria', 'icon' => 'bi bi-journal-check', 'route' => 'admin.auditoria.index', 'active' => ['admin.auditoria.*']],
+                ['label' => 'Manutencao', 'icon' => 'bi bi-cone-striped', 'route' => 'admin.manutencao.index', 'active' => ['admin.manutencao.*']],
+            ],
+        ],
+        [
+            'type' => 'tree',
+            'label' => 'SaaS',
+            'icon' => 'bi bi-grid-1x2-fill',
+            'active' => ['admin.saas.*'],
+            'children' => [
+                ['label' => 'Planos', 'icon' => 'bi bi-layers', 'route' => 'admin.saas.planos.index', 'active' => ['admin.saas.planos.*']],
+                ['label' => 'Empresas', 'icon' => 'bi bi-buildings', 'route' => 'admin.saas.empresas.index', 'active' => ['admin.saas.empresas.*']],
+                ['label' => 'Assinaturas', 'icon' => 'bi bi-receipt', 'route' => 'admin.saas.assinaturas.index', 'active' => ['admin.saas.assinaturas.*']],
+                ['label' => 'Faturas', 'icon' => 'bi bi-cash-coin', 'route' => 'admin.saas.faturas.index', 'active' => ['admin.saas.faturas.*']],
+            ],
+        ],
+    ];
+@endphp
+
+<aside class="app-sidebar shadow premium-sidebar" data-bs-theme="dark">
     <div class="sidebar-brand">
         <a href="{{ route('admin.dashboard.index') }}" class="brand-link">
-            @if(configuracao('sistema_logo'))
-                <img src="{{ asset('storage/' . configuracao('sistema_logo')) }}" alt="Logo" class="brand-image" style="max-height:36px;">
-            @else
-                <i class="bi bi-graph-up-arrow brand-image" style="font-size:2rem;color:#3b82f6;"></i>
-            @endif
-            <span class="brand-text fw-semibold ms-2">
-                {{ configuracao('sistema_nome', 'FinanceiroSaaS') }}
+            <span class="brand-mark">
+                @if(configuracao('sistema_logo'))
+                    <img src="{{ asset('storage/' . configuracao('sistema_logo')) }}" alt="Logo" class="brand-image" style="max-height: 36px;">
+                @else
+                    <i class="bi bi-graph-up-arrow"></i>
+                @endif
+            </span>
+            <span class="brand-copy">
+                <span class="brand-title">{{ configuracao('sistema_nome', 'FinanceiroSaaS') }}</span>
+                <span class="brand-subtitle">Painel administrativo</span>
             </span>
         </a>
     </div>
 
-    {{-- Menu --}}
     <div class="sidebar-wrapper">
+        <div class="sidebar-user-panel">
+            <div class="sidebar-user-avatar">
+                @if($usuario?->avatar_url)
+                    <img src="{{ $usuario->avatar_url }}" alt="Avatar" class="img-fluid rounded-circle">
+                @else
+                    <span>{{ strtoupper(substr($usuario?->name ?? 'FS', 0, 2)) }}</span>
+                @endif
+            </div>
+            <div class="sidebar-user-copy">
+                <strong>{{ $usuario?->name ?? 'Usuario' }}</strong>
+                <span>{{ $usuario?->email ?? 'sem-email' }}</span>
+            </div>
+            <span class="sidebar-user-badge">{{ strtoupper((string) ($usuario?->tipo ?? 'usuario')) }}</span>
+        </div>
+
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview" data-accordion="false" role="menu">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-compact" data-lte-toggle="treeview" data-accordion="false" role="menu">
+                <li class="nav-header">OPERACAO</li>
+                @foreach($menuPrincipal as $item)
+                    @php
+                        $ativo = request()->routeIs(...$item['active']);
+                    @endphp
+                    @if($item['type'] === 'link')
+                        <li class="nav-item">
+                            <a href="{{ route($item['route']) }}" class="nav-link {{ $ativo ? 'active' : '' }}">
+                                <i class="nav-icon {{ $item['icon'] }}"></i>
+                                <p>{{ $item['label'] }}</p>
+                            </a>
+                        </li>
+                    @else
+                        <li class="nav-item {{ $ativo ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $ativo ? 'active' : '' }}">
+                                <i class="nav-icon {{ $item['icon'] }}"></i>
+                                <p>
+                                    {{ $item['label'] }}
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @foreach($item['children'] as $child)
+                                    <li class="nav-item">
+                                        <a href="{{ route($child['route']) }}" class="nav-link {{ request()->routeIs(...$child['active']) ? 'active' : '' }}">
+                                            <i class="nav-icon {{ $child['icon'] }} {{ $child['icon_class'] ?? '' }}"></i>
+                                            <p>{{ $child['label'] }}</p>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @endif
+                @endforeach
 
-                {{-- Dashboard --}}
-                <li class="nav-item">
-                    <a href="{{ route('admin.dashboard.index') }}" class="nav-link {{ request()->routeIs('admin.dashboard.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-speedometer2"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-
-                {{-- Financeiro --}}
-                <li class="nav-item {{ request()->routeIs('admin.contas-pagar.*','admin.contas-receber.*','admin.receitas.*','admin.despesas.*','admin.transferencias.*','admin.recorrencias.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('admin.contas-pagar.*','admin.contas-receber.*','admin.receitas.*','admin.despesas.*','admin.transferencias.*','admin.recorrencias.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-currency-dollar"></i>
-                        <p>Financeiro <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.contas-pagar.index') }}" class="nav-link {{ request()->routeIs('admin.contas-pagar.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-arrow-up-circle text-danger"></i>
-                                <p>Contas a Pagar</p>
+                @if($isAdmin)
+                    <li class="nav-header">ADMINISTRACAO</li>
+                    @foreach($menuAdmin as $item)
+                        @php
+                            $ativo = request()->routeIs(...$item['active']);
+                        @endphp
+                        <li class="nav-item {{ $ativo ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ $ativo ? 'active' : '' }}">
+                                <i class="nav-icon {{ $item['icon'] }}"></i>
+                                <p>
+                                    {{ $item['label'] }}
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                @foreach($item['children'] as $child)
+                                    <li class="nav-item">
+                                        <a href="{{ route($child['route']) }}" class="nav-link {{ request()->routeIs(...$child['active']) ? 'active' : '' }}">
+                                            <i class="nav-icon {{ $child['icon'] }}"></i>
+                                            <p>{{ $child['label'] }}</p>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.contas-receber.index') }}" class="nav-link {{ request()->routeIs('admin.contas-receber.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-arrow-down-circle text-success"></i>
-                                <p>Contas a Receber</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.receitas.index') }}" class="nav-link {{ request()->routeIs('admin.receitas.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-plus-circle text-success"></i>
-                                <p>Receitas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.despesas.index') }}" class="nav-link {{ request()->routeIs('admin.despesas.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-dash-circle text-danger"></i>
-                                <p>Despesas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.transferencias.index') }}" class="nav-link {{ request()->routeIs('admin.transferencias.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-arrow-left-right text-info"></i>
-                                <p>Transferências</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.recorrencias.index') }}" class="nav-link {{ request()->routeIs('admin.recorrencias.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-repeat text-warning"></i>
-                                <p>Recorrências</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Planejamento --}}
-                <li class="nav-item {{ request()->routeIs('admin.metas.*','admin.orcamentos.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-bullseye"></i>
-                        <p>Planejamento <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.metas.index') }}" class="nav-link {{ request()->routeIs('admin.metas.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-trophy text-warning"></i>
-                                <p>Metas Financeiras</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.orcamentos.index') }}" class="nav-link {{ request()->routeIs('admin.orcamentos.*') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-pie-chart text-info"></i>
-                                <p>Orçamentos</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Relatórios --}}
-                <li class="nav-item {{ request()->routeIs('admin.relatorios.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-file-earmark-bar-graph"></i>
-                        <p>Relatórios <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.relatorios.fluxo-caixa') }}" class="nav-link">
-                                <i class="nav-icon bi bi-water"></i><p>Fluxo de Caixa</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.relatorios.dre') }}" class="nav-link">
-                                <i class="nav-icon bi bi-journal-text"></i><p>DRE</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.relatorios.saude-financeira') }}" class="nav-link">
-                                <i class="nav-icon bi bi-heart-pulse"></i><p>Saúde Financeira</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.relatorios.evolucao') }}" class="nav-link">
-                                <i class="nav-icon bi bi-graph-up"></i><p>Evolução Mensal</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.relatorios.inadimplencia') }}" class="nav-link">
-                                <i class="nav-icon bi bi-exclamation-triangle text-danger"></i><p>Inadimplência</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Cadastros --}}
-                <li class="nav-item {{ request()->routeIs('admin.categorias.*','admin.contas-bancarias.*','admin.clientes.*','admin.fornecedores.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-folder2-open"></i>
-                        <p>Cadastros <i class="nav-arrow bi bi-chevron-right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.categorias.index') }}" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categorias</p></a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.contas-bancarias.index') }}" class="nav-link"><i class="nav-icon bi bi-bank"></i><p>Contas Bancárias</p></a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.clientes.index') }}" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Clientes</p></a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.fornecedores.index') }}" class="nav-link"><i class="nav-icon bi bi-shop"></i><p>Fornecedores</p></a>
-                        </li>
-                    </ul>
-                </li>
-
-                @if(auth()->user()?->is_admin)
-                {{-- Administração --}}
-                <li class="nav-header">ADMINISTRAÇÃO</li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.usuarios.index') }}" class="nav-link {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-people-fill"></i><p>Usuários</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.permissoes.index') }}" class="nav-link {{ request()->routeIs('admin.permissoes.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-shield-check"></i><p>Permissões</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.auditoria.index') }}" class="nav-link {{ request()->routeIs('admin.auditoria.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-journal-check"></i><p>Auditoria</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.cron.index') }}" class="nav-link {{ request()->routeIs('admin.cron.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-clock-history"></i><p>Cron Jobs</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.gateways.index') }}" class="nav-link {{ request()->routeIs('admin.gateways.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-wallet2"></i><p>Gateways</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.configuracoes.index') }}" class="nav-link {{ request()->routeIs('admin.configuracoes.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-gear-fill"></i><p>Configurações</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.modulos.index') }}" class="nav-link {{ request()->routeIs('admin.modulos.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-boxes"></i><p>Modulos</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.manutencao.index') }}" class="nav-link {{ request()->routeIs('admin.manutencao.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cone-striped"></i><p>Manutencao</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.notificacoes.templates.index') }}" class="nav-link {{ request()->routeIs('admin.notificacoes.templates.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-bell-fill"></i><p>Notificacoes</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.saas.planos.index') }}" class="nav-link {{ request()->routeIs('admin.saas.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-layers"></i><p>SaaS (Planos)</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.saas.empresas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.empresas.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-buildings"></i><p>SaaS (Empresas)</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.saas.assinaturas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.assinaturas.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-receipt"></i><p>SaaS (Assinaturas)</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.saas.faturas.index') }}" class="nav-link {{ request()->routeIs('admin.saas.faturas.*') ? 'active' : '' }}">
-                        <i class="nav-icon bi bi-cash-coin"></i><p>SaaS (Faturas)</p>
-                    </a>
-                </li>
+                    @endforeach
                 @endif
 
-                {{-- Sair (fallback no sidebar) --}}
-                <li class="nav-item mt-2">
+                <li class="nav-header">CONTA</li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.perfil') }}" class="nav-link {{ request()->routeIs('admin.perfil*') ? 'active' : '' }}">
+                        <i class="nav-icon bi bi-person-circle"></i>
+                        <p>Meu Perfil</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <form method="POST" action="{{ route('auth.logout') }}" id="form-logout-sidebar">
                         @csrf
                         <a class="nav-link text-danger" href="#"
-                           onclick="event.preventDefault();
-                           SistemaAlert.fire({title:'Sair do sistema?',icon:'question',showCancelButton:true,confirmButtonText:'Sim, sair',cancelButtonText:'Cancelar'}).then(r=>{if(r.isConfirmed)document.getElementById('form-logout-sidebar').submit()})">
-                            <i class="nav-icon bi bi-box-arrow-right"></i><p>Sair</p>
+                           onclick="event.preventDefault(); SistemaAlert.fire({title:'Sair do sistema?',icon:'question',showCancelButton:true,confirmButtonText:'Sim, sair',cancelButtonText:'Cancelar'}).then(r=>{if(r.isConfirmed)document.getElementById('form-logout-sidebar').submit()})">
+                            <i class="nav-icon bi bi-box-arrow-right"></i>
+                            <p>Sair</p>
                         </a>
                     </form>
                 </li>
-
             </ul>
         </nav>
     </div>

@@ -38,21 +38,44 @@
 
     @stack('styles')
     <style>
-        .app-content-header { padding: 1.25rem 0; }
+        .app-wrapper {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22rem),
+                radial-gradient(circle at bottom left, rgba(30, 64, 175, 0.12), transparent 20rem),
+                #f3f7fb;
+        }
+        .app-content-header { padding: 1.5rem 0 1rem; }
         .app-content-header .breadcrumb { margin-bottom: 0; }
-        .app-content-header h3 { font-size: 1.55rem; font-weight: 700; letter-spacing: -.02em; }
-        .app-content { padding: 1rem 0 1.5rem; }
+        .app-content-header h3 { font-size: 1.75rem; font-weight: 700; letter-spacing: 0; }
+        .app-content { padding: .5rem 0 1.75rem; }
         .app-content .container-fluid { padding-left: 1rem; padding-right: 1rem; }
+        .app-footer {
+            border-top: 1px solid rgba(148, 163, 184, .18);
+            background: rgba(255, 255, 255, .65);
+            backdrop-filter: blur(10px);
+        }
         .card-standard { border-radius: 1rem; box-shadow: 0 18px 45px rgba(15,23,42,.05); }
         .card-standard .card-header { border-bottom: 1px solid rgba(226,232,240,.7); }
         .card-standard .card-title { font-size: 1rem; font-weight: 600; }
         .card-standard .card-body { min-height: 1px; }
-        .page-section-title { font-size: 1rem; font-weight: 700; letter-spacing: .01em; }
+        .page-section-title { font-size: 1rem; font-weight: 700; letter-spacing: 0; }
         .badge-subtle { opacity: .9; }
         .table thead th { font-weight: 700; }
+        [data-bs-theme="dark"] .app-wrapper {
+            background:
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.18), transparent 24rem),
+                radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.18), transparent 22rem),
+                #0b1120;
+        }
+        [data-bs-theme="dark"] .app-footer {
+            background: rgba(15, 23, 42, .72);
+            border-top-color: rgba(148, 163, 184, .12);
+            color: #cbd5e1;
+        }
     </style>
 </head>
-<body class="layout-fixed sidebar-expand-lg sidebar-mini">
+<body class="layout-fixed sidebar-expand-lg sidebar-mini admin-premium">
 
     {{-- Loading global AJAX --}}
     <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center;">
