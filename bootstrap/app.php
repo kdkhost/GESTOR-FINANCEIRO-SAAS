@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'instalacao' => \App\Http\Middleware\VerificarInstalacao::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
 
         // Substitui o StartSession padrão por versão que trata graciosamente

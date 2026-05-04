@@ -262,7 +262,7 @@ function salvarConfiguracoes(formId, campos) {
     campos.forEach(c => { if (fd.get(c) !== null) dados[c] = fd.get(c); });
 
     $.ajax({
-        url: '{{ route("admin.configuracoes.index") }}',
+        url: '{{ route("admin.configuracoes.salvar") }}',
         type: 'POST',
         data: dados,
         success: r => {
@@ -278,7 +278,7 @@ $('#form-geral').on('submit', function(e) {
     const fd = new FormData(this);
     fd.append('_token', $('meta[name="csrf-token"]').attr('content'));
     $.ajax({
-        url: '{{ route("admin.configuracoes.index") }}',
+        url: '{{ route("admin.configuracoes.salvar") }}',
         type: 'POST',
         data: fd,
         processData: false,
@@ -304,7 +304,7 @@ $('#form-aparencia').on('submit', function(e) {
 $('#btn-testar-smtp').on('click', function() {
     const email = prompt('Digite o e-mail para teste:');
     if (!email) return;
-    $.post('{{ route("admin.configuracoes.index") }}', {
+    $.post('{{ route("admin.configuracoes.salvar") }}', {
         _token: $('meta[name="csrf-token"]').attr('content'),
         acao: 'testar_smtp',
         email_teste: email,

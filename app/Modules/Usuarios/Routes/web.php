@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/notificacoes/{id}/marcar-lida', [\App\Modules\Auditoria\Controllers\NotificacaoController::class, 'marcarLida'])->name('admin.notificacoes.marcar-lida');
 });
 
-Route::prefix('admin/usuarios')->name('admin.usuarios.')->middleware(['auth','web'])->group(function () {
+Route::prefix('admin/usuarios')->name('admin.usuarios.')->middleware(['auth','web','admin'])->group(function () {
     Route::get('/',          [UsuarioController::class, 'index'])->name('index');
     Route::get('/listar',    [UsuarioController::class, 'listar'])->name('listar');
     Route::post('/',         [UsuarioController::class, 'store'])->name('store');
