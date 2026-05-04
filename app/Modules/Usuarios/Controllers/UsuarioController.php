@@ -8,10 +8,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
-    public function index() { return view('admin.usuarios.index'); }
+    private function exigirAdmin(): void
+    {
+        abort_unless(auth()->check() && auth()->user()?->is_admin, 403);
+    }
+
+    public function index() { $this->exigirAdmin(); return view('admin.usuarios.index'); }
 
     public function listar(Request $request): JsonResponse
     {
+        $this->exigirAdmin();
         $query = User::query();
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
@@ -26,6 +32,7 @@ class UsuarioController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $this->exigirAdmin();
         $request->validate([
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email',
@@ -50,12 +57,14 @@ class UsuarioController extends Controller
 
     public function show(int $id): JsonResponse
     {
+        $this->exigirAdmin();
         $user = User::findOrFail($id);
         return response()->json(['sucesso'=>true,'dado'=>$user]);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
+        $this->exigirAdmin();
         $user = User::findOrFail($id);
         $request->validate([
             'name'     => 'required|string|max:100',
@@ -72,6 +81,7 @@ class UsuarioController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
+        $this->exigirAdmin();
         $user = User::findOrFail($id);
         if ($user->tipo === 'superadmin') {
             return response()->json(['sucesso'=>false,'mensagem'=>'Nao e possivel excluir o superadmin.'],422);

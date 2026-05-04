@@ -186,14 +186,14 @@ class AuthController extends Controller
         try {
             $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host       = configuracao('smtp_host', config('mail.mailers.smtp.host'));
+            $mail->Host       = configuracao('mail_host', config('mail.mailers.smtp.host'));
             $mail->SMTPAuth   = true;
-            $mail->Username   = configuracao('smtp_usuario', config('mail.username'));
-            $mail->Password   = configuracao('smtp_senha', config('mail.password'));
-            $mail->SMTPSecure = configuracao('smtp_criptografia', 'tls');
-            $mail->Port       = (int) configuracao('smtp_porta', 587);
+            $mail->Username   = configuracao('mail_username', config('mail.username'));
+            $mail->Password   = configuracao('mail_password', config('mail.password'));
+            $mail->SMTPSecure = configuracao('mail_encryption', 'tls');
+            $mail->Port       = (int) configuracao('mail_port', 587);
             $mail->CharSet    = 'UTF-8';
-            $mail->setFrom(configuracao('smtp_remetente', config('mail.from.address')), configuracao('smtp_nome_remetente', 'FinanceiroSaaS'));
+            $mail->setFrom(configuracao('mail_from_address', config('mail.from.address')), configuracao('mail_from_name', 'FinanceiroSaaS'));
             $mail->addAddress($usuario->email, $usuario->name);
             $mail->isHTML(true);
             $mail->Subject = 'Redefinição de senha — ' . configuracao('sistema_nome', 'FinanceiroSaaS');

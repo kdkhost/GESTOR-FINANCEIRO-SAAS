@@ -9,13 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ConfiguracaoController extends Controller
 {
+    private function exigirAdmin(): void
+    {
+        abort_unless(auth()->check() && auth()->user()?->is_admin, 403);
+    }
+
     public function index()
     {
+        $this->exigirAdmin();
         return view('admin.configuracoes.index');
     }
 
     public function salvar(Request $request): JsonResponse
     {
+        $this->exigirAdmin();
         try {
             $acao = $request->input('acao');
 

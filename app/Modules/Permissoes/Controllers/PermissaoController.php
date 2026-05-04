@@ -14,8 +14,14 @@ use Spatie\Permission\PermissionRegistrar;
 
 class PermissaoController extends Controller
 {
+    private function exigirAdmin(): void
+    {
+        abort_unless(auth()->check() && auth()->user()?->is_admin, 403);
+    }
+
     public function index()
     {
+        $this->exigirAdmin();
         $tabelasOk = $this->tabelasPermissaoDisponiveis();
 
         if ($tabelasOk) {
@@ -30,6 +36,7 @@ class PermissaoController extends Controller
 
     public function listar(): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -58,6 +65,7 @@ class PermissaoController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -87,6 +95,7 @@ class PermissaoController extends Controller
 
     public function show(Role $role): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -104,6 +113,7 @@ class PermissaoController extends Controller
 
     public function update(Request $request, Role $role): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -142,6 +152,7 @@ class PermissaoController extends Controller
 
     public function destroy(Role $role): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -161,6 +172,7 @@ class PermissaoController extends Controller
 
     public function usuarios(Request $request): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
@@ -191,6 +203,7 @@ class PermissaoController extends Controller
 
     public function sincronizarUsuario(Request $request, User $user): JsonResponse
     {
+        $this->exigirAdmin();
         if (! $this->tabelasPermissaoDisponiveis()) {
             return $this->erroTabelasAusentes();
         }
