@@ -78,7 +78,8 @@
             'icon' => 'bi bi-sliders2',
             'active' => ['admin.configuracoes.*', 'admin.modulos.*', 'admin.gateways.*', 'admin.notificacoes.*', 'admin.manutencao.*', 'admin.cron.*', 'admin.auditoria.*'],
             'children' => [
-                ['label' => 'Configuracoes', 'icon' => 'bi bi-gear-fill', 'route' => 'admin.configuracoes.index', 'active' => ['admin.configuracoes.*']],
+                ['label' => 'Configuracoes', 'icon' => 'bi bi-gear-fill', 'route' => 'admin.configuracoes.index', 'active' => ['admin.configuracoes.index']],
+                ($usuario?->is_superadmin ? ['label' => 'Login Social', 'icon' => 'bi bi-google', 'route' => 'admin.configuracoes.social-login', 'active' => ['admin.configuracoes.social-login']] : null),
                 ['label' => 'Modulos', 'icon' => 'bi bi-boxes', 'route' => 'admin.modulos.index', 'active' => ['admin.modulos.*']],
                 ['label' => 'Gateways', 'icon' => 'bi bi-wallet2', 'route' => 'admin.gateways.index', 'active' => ['admin.gateways.*']],
                 ['label' => 'Notificacoes', 'icon' => 'bi bi-bell-fill', 'route' => 'admin.notificacoes.templates.index', 'active' => ['admin.notificacoes.*']],

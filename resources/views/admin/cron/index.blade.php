@@ -157,22 +157,24 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-medium">Frequencia</label>
-                        <select name="frequencia" class="form-select" required>
-                            <option value="everyMinute">A cada minuto</option>
-                            <option value="everyFiveMinutes">A cada 5 minutos</option>
-                            <option value="everyTenMinutes">A cada 10 minutos</option>
-                            <option value="everyThirtyMinutes">A cada 30 minutos</option>
-                            <option value="hourly">A cada hora</option>
-                            <option value="daily">Diario</option>
-                            <option value="dailyAt">Diario as...</option>
-                            <option value="weekly">Semanal</option>
-                            <option value="monthly">Mensal</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 d-none" id="campo-horario">
-                        <label class="form-label fw-medium">Horario (HH:MM)</label>
-                        <input type="time" name="horario" class="form-control">
+                        <label class="form-label fw-medium">Expressao Cron</label>
+                        <div class="input-group">
+                            <input type="text" name="expressao_cron" class="form-control" required placeholder="Ex: 0 2 * * * (2h da manha diario)" value="0 2 * * *">
+                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Predefinidas</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" onclick="setCron('* * * * *')">A cada minuto</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('*/5 * * * *')">A cada 5 min</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('*/10 * * * *')">A cada 10 min</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('*/30 * * * *')">A cada 30 min</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('0 * * * *')">A cada hora</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('0 2 * * *')">Diario 2h da manha</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('0 */6 * * *')">A cada 6 horas</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('0 0 * * 0')">Semanal (domingo)</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="setCron('0 0 1 * *')">Mensal (dia 1)</a></li>
+                            </ul>
+                        </div>
+                        <small class="text-muted">Formato: minuto hora dia-mes mes dia-semana</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-medium">Descricao (opcional)</label>
@@ -195,49 +197,86 @@
 
 @push('scripts')
 <script>
-const tarefasPadrao = [
-    { id: 1, nome: 'Limpar Cache', comando: 'cache:clear', frequencia: 'daily', ultima_execucao: null, status: 'ativo', descricao: 'Limpa cache do sistema' },
-    { id: 2, nome: 'Backup Database', comando: 'backup:run', frequencia: 'daily', ultima_execucao: null, status: 'ativo', descricao: 'Backup do banco de dados' },
-    { id: 3, nome: 'Verificar Faturas', comando: 'saas:verificar-faturas', frequencia: 'hourly', ultima_execucao: null, status: 'ativo', descricao: 'Verifica faturas vencidas' },
-    { id: 4, nome: 'Limpar Auditoria Antiga', comando: 'auditoria:limpar --dias=30', frequencia: 'weekly', ultima_execucao: null, status: 'ativo', descricao: 'Remove logs antigos' }
-];
-
-let tarefas = JSON.parse(localStorage.getItem('cron_tarefas')) || tarefasPadrao;
-let execucoes = JSON.parse(localStorage.getItem('cron_execucoes')) || [];
+const API_URL = '{{ url('api/admin/cron') }}';
+let tarefas = [];
+let execucoes = [];
 
 $(document).ready(function() {
-    renderizarTarefas();
-    atualizarEstatisticas();
-    renderizarExecucoes();
-    
-    $('select[name="frequencia"]').on('change', function() {
-        $('#campo-horario').toggleClass('d-none', !$(this).val().includes('At'));
-    });
+    carregarDados();
+
+    // Atualiza a cada 30 segundos
+    setInterval(carregarDados, 30000);
 });
+
+// Carrega dados da API
+function carregarDados() {
+    // Carrega tarefas
+    $.get(API_URL)
+        .done(function(res) {
+            if (res.sucesso) {
+                tarefas = res.dados;
+                renderizarTarefas();
+            }
+        })
+        .fail(function() {
+            toast('Erro ao carregar tarefas', 'erro');
+        });
+
+    // Carrega estatisticas
+    $.get(API_URL + '/estatisticas')
+        .done(function(res) {
+            if (res.sucesso) {
+                $('#stat-ativas').text(res.ativas);
+                $('#stat-hoje').text(res.executadas_hoje);
+                $('#stat-falhas').text(res.falhas);
+                $('#stat-proxima').text(res.proxima_execucao || '--:--');
+            }
+        });
+
+    // Carrega execucoes recentes (do primeiro job com logs)
+    if (tarefas.length > 0) {
+        $.get(API_URL + '/' + tarefas[0].id + '/logs')
+            .done(function(res) {
+                if (res.sucesso) {
+                    execucoes = res.dados.map(log => ({
+                        tarefa: tarefas.find(t => t.id === log.cron_job_id)?.nome || 'Desconhecida',
+                        data: log.executado_em_formatado || '-',
+                        status: log.status,
+                        mensagem: log.saida || log.erro
+                    }));
+                    renderizarExecucoes();
+                }
+            });
+    }
+}
 
 function renderizarTarefas() {
     const tbody = $('#tbody-cron');
     tbody.empty();
-    
+
     if (tarefas.length === 0) {
         tbody.append('<tr><td colspan="6" class="text-center text-muted py-3">Nenhuma tarefa configurada</td></tr>');
         return;
     }
-    
+
     tarefas.forEach(t => {
-        const ultima = t.ultima_execucao 
-            ? new Date(t.ultima_execucao).toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'})
-            : '<span class="text-muted">Nunca</span>';
-        
-        const statusBadge = t.status === 'ativo' 
-            ? '<span class="badge bg-success">Ativo</span>'
-            : '<span class="badge bg-secondary">Inativo</span>';
-        
+        const ultima = t.ultima_execucao_formatada || 'Nunca';
+        const proxima = t.proxima_execucao_formatada || '--';
+
+        let statusBadge;
+        if (t.ultimo_status === 'erro') {
+            statusBadge = '<span class="badge bg-danger">Erro</span>';
+        } else if (t.ativo) {
+            statusBadge = '<span class="badge bg-success">Ativo</span>';
+        } else {
+            statusBadge = '<span class="badge bg-secondary">Inativo</span>';
+        }
+
         const tr = `
             <tr data-id="${t.id}">
                 <td><strong>${t.nome}</strong><br><small class="text-muted">${t.descricao || ''}</small></td>
                 <td><code>php artisan ${t.comando}</code></td>
-                <td>${formatarFrequencia(t.frequencia)} ${t.horario || ''}</td>
+                <td>${t.frequencia_formatada || t.expressao_cron}</td>
                 <td>${ultima}</td>
                 <td>${statusBadge}</td>
                 <td class="text-end">
@@ -257,52 +296,18 @@ function renderizarTarefas() {
     });
 }
 
-function formatarFrequencia(freq) {
-    const map = {
-        'everyMinute': 'A cada minuto',
-        'everyFiveMinutes': 'A cada 5 min',
-        'everyTenMinutes': 'A cada 10 min',
-        'everyThirtyMinutes': 'A cada 30 min',
-        'hourly': 'A cada hora',
-        'daily': 'Diario',
-        'dailyAt': 'Diario as',
-        'weekly': 'Semanal',
-        'monthly': 'Mensal'
-    };
-    return map[freq] || freq;
-}
-
-function atualizarEstatisticas() {
-    const ativas = tarefas.filter(t => t.status === 'ativo').length;
-    const hoje = execucoes.filter(e => new Date(e.data).toDateString() === new Date().toDateString()).length;
-    const falhas = execucoes.filter(e => e.status === 'erro').length;
-    
-    $('#stat-ativas').text(ativas);
-    $('#stat-hoje').text(hoje);
-    $('#stat-falhas').text(falhas);
-    
-    const proxima = calcularProximaExecucao();
-    $('#stat-proxima').text(proxima);
-}
-
-function calcularProximaExecucao() {
-    const agora = new Date();
-    const proximaHora = new Date(agora.getTime() + 60 * 60 * 1000);
-    return proximaHora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-}
-
 function renderizarExecucoes() {
     const container = $('#lista-execucoes');
-    const recentes = execucoes.slice(-5).reverse();
-    
-    if (recentes.length === 0) {
+
+    if (execucoes.length === 0) {
         container.html('<div class="list-group-item text-center text-muted py-3"><small>Nenhuma execucao registrada</small></div>');
         return;
     }
-    
+
     container.empty();
-    recentes.forEach(e => {
+    execucoes.slice(0, 5).forEach(e => {
         const icon = e.status === 'sucesso' ? 'bi-check-circle text-success' : 'bi-x-circle text-danger';
+        const data = new Date(e.data);
         const item = `
             <div class="list-group-item py-2">
                 <div class="d-flex justify-content-between align-items-center">
@@ -310,39 +315,37 @@ function renderizarExecucoes() {
                         <i class="bi ${icon} me-2"></i>
                         <strong>${e.tarefa}</strong>
                     </div>
-                    <small class="text-muted">${new Date(e.data).toLocaleTimeString('pt-BR')}</small>
+                    <small class="text-muted">${data.toLocaleTimeString('pt-BR')}</small>
                 </div>
-                ${e.mensagem ? `<small class="text-muted d-block mt-1">${e.mensagem}</small>` : ''}
+                ${e.mensagem ? `<small class="text-muted d-block mt-1">${e.mensagem.substring(0, 100)}</small>` : ''}
             </div>
         `;
         container.append(item);
     });
 }
 
+function setCron(expressao) {
+    $('input[name="expressao_cron"]').val(expressao);
+}
+
 function novaTarefa() {
     $('#form-tarefa')[0].reset();
     $('#tarefa-id').val('');
     $('#modal-tarefa-titulo').text('Nova Tarefa');
-    $('#campo-horario').addClass('d-none');
     $('#modal-tarefa').modal('show');
 }
 
 function editarTarefa(id) {
     const tarefa = tarefas.find(t => t.id === id);
     if (!tarefa) return;
-    
+
     $('#tarefa-id').val(tarefa.id);
     $('input[name="nome"]').val(tarefa.nome);
     $('input[name="comando"]').val(tarefa.comando);
-    $('select[name="frequencia"]').val(tarefa.frequencia);
+    $('input[name="expressao_cron"]').val(tarefa.expressao_cron);
     $('textarea[name="descricao"]').val(tarefa.descricao);
-    $('#tarefa-ativo').prop('checked', tarefa.status === 'ativo');
-    
-    if (tarefa.frequencia.includes('At')) {
-        $('#campo-horario').removeClass('d-none');
-        $('input[name="horario"]').val(tarefa.horario || '00:00');
-    }
-    
+    $('#tarefa-ativo').prop('checked', tarefa.ativo);
+
     $('#modal-tarefa-titulo').text('Editar Tarefa');
     $('#modal-tarefa').modal('show');
 }
@@ -352,33 +355,40 @@ function salvarTarefa() {
     const dados = {
         nome: $('input[name="nome"]').val(),
         comando: $('input[name="comando"]').val(),
-        frequencia: $('select[name="frequencia"]').val(),
-        horario: $('input[name="horario"]').val(),
+        expressao_cron: $('input[name="expressao_cron"]').val(),
         descricao: $('textarea[name="descricao"]').val(),
-        status: $('#tarefa-ativo').is(':checked') ? 'ativo' : 'inativo',
-        ultima_execucao: null
+        ativo: $('#tarefa-ativo').is(':checked')
     };
-    
-    if (!dados.nome || !dados.comando) {
-        toast('Preencha nome e comando da tarefa', 'erro');
+
+    if (!dados.nome || !dados.comando || !dados.expressao_cron) {
+        toast('Preencha todos os campos obrigatorios', 'erro');
         return;
     }
-    
-    if (id) {
-        const idx = tarefas.findIndex(t => t.id == id);
-        if (idx >= 0) {
-            tarefas[idx] = { ...tarefas[idx], ...dados };
+
+    const url = id ? API_URL + '/' + id : API_URL;
+    const method = id ? 'PUT' : 'POST';
+
+    $.ajax({
+        url: url,
+        method: method,
+        data: dados,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
         }
-    } else {
-        dados.id = Date.now();
-        tarefas.push(dados);
-    }
-    
-    localStorage.setItem('cron_tarefas', JSON.stringify(tarefas));
-    renderizarTarefas();
-    atualizarEstatisticas();
-    $('#modal-tarefa').modal('hide');
-    toast('Tarefa salva com sucesso!', 'sucesso');
+    })
+    .done(function(res) {
+        if (res.sucesso) {
+            toast(res.mensagem, 'sucesso');
+            $('#modal-tarefa').modal('hide');
+            carregarDados();
+        } else {
+            toast(res.mensagem || 'Erro ao salvar', 'erro');
+        }
+    })
+    .fail(function(xhr) {
+        const msg = xhr.responseJSON?.mensagem || 'Erro ao salvar tarefa';
+        toast(msg, 'erro');
+    });
 }
 
 function excluirTarefa(id) {
@@ -391,11 +401,24 @@ function excluirTarefa(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            tarefas = tarefas.filter(t => t.id !== id);
-            localStorage.setItem('cron_tarefas', JSON.stringify(tarefas));
-            renderizarTarefas();
-            atualizarEstatisticas();
-            toast('Tarefa excluida', 'sucesso');
+            $.ajax({
+                url: API_URL + '/' + id,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .done(function(res) {
+                if (res.sucesso) {
+                    toast(res.mensagem, 'sucesso');
+                    carregarDados();
+                } else {
+                    toast(res.mensagem || 'Erro ao excluir', 'erro');
+                }
+            })
+            .fail(function() {
+                toast('Erro ao excluir tarefa', 'erro');
+            });
         }
     });
 }
@@ -403,39 +426,53 @@ function excluirTarefa(id) {
 function executarTarefa(id) {
     const tarefa = tarefas.find(t => t.id === id);
     if (!tarefa) return;
-    
-    const execucao = {
-        tarefa: tarefa.nome,
-        data: new Date().toISOString(),
-        status: 'sucesso',
-        mensagem: `Comando executado: php artisan ${tarefa.comando}`
-    };
-    
-    execucoes.push(execucao);
-    localStorage.setItem('cron_execucoes', JSON.stringify(execucoes));
-    
-    tarefa.ultima_execucao = new Date().toISOString();
-    localStorage.setItem('cron_tarefas', JSON.stringify(tarefas));
-    
-    renderizarTarefas();
-    renderizarExecucoes();
-    atualizarEstatisticas();
-    toast(`Tarefa "${tarefa.nome}" executada!`, 'sucesso');
+
+    $.ajax({
+        url: API_URL + '/' + id + '/executar',
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .done(function(res) {
+        if (res.sucesso) {
+            toast(`Tarefa "${tarefa.nome}" executada em ${res.duracao_ms}ms`, 'sucesso');
+            carregarDados();
+        } else {
+            toast(res.erro || 'Erro ao executar', 'erro');
+        }
+    })
+    .fail(function() {
+        toast('Erro ao executar tarefa', 'erro');
+    });
 }
 
 function executarTodas() {
     SistemaAlert.fire({
         title: 'Executar Todas?',
         text: 'Isso executara todas as tarefas ativas sequencialmente.',
+        icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Executar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            tarefas.filter(t => t.status === 'ativo').forEach(t => {
-                executarTarefa(t.id);
+            const ativas = tarefas.filter(t => t.ativo);
+            let executadas = 0;
+
+            ativas.forEach(t => {
+                $.ajax({
+                    url: API_URL + '/' + t.id + '/executar',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }).always(function() {
+                    executadas++;
+                    if (executadas >= ativas.length) {
+                        toast('Todas as tarefas foram executadas!', 'sucesso');
+                        carregarDados();
+                    }
+                });
             });
-            toast('Todas as tarefas foram executadas!', 'sucesso');
         }
     });
 }

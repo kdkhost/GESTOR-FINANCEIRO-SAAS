@@ -115,6 +115,30 @@
             {{-- Conteúdo --}}
             <div class="app-content">
                 <div class="container-fluid">
+
+                    {{-- Aviso de modo supervisionado --}}
+                    @if(session('impersonate_admin_id'))
+                    <div class="alert alert-warning alert-dismissible fade show mb-3 shadow-sm border-warning">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-eye-fill fs-4 me-3 text-warning"></i>
+                            <div class="flex-grow-1">
+                                <strong class="d-block">Modo de Acesso Supervisionado</strong>
+                                <span class="small">
+                                    Voce esta acessando a conta de <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->email }}) sem senha.
+                                    <br>Iniciado em: {{ session('impersonate_started_at') }}
+                                </span>
+                            </div>
+                            <form method="POST" action="{{ route('admin.stop-impersonating') }}" class="ms-3">
+                                @csrf
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-box-arrow-left me-1"></i>
+                                    Voltar para minha conta
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
+
                     @yield('conteudo')
                 </div>
             </div>

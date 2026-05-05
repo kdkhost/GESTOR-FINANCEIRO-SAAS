@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\Usuarios\Controllers\AuthController;
 use App\Modules\Usuarios\Controllers\PerfilController;
 use App\Modules\Usuarios\Controllers\UsuarioController;
+use App\Modules\Usuarios\Controllers\SocialAuthController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login',  [AuthController::class, 'showLogin'])->name('login');
@@ -13,6 +14,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/esqueci-senha', [AuthController::class, 'enviarLinkRedefinicao'])->name('auth.enviar-link');
     Route::get('/redefinir-senha/{token}', [AuthController::class, 'showRedefinirSenha'])->name('auth.redefinir-senha');
     Route::post('/redefinir-senha', [AuthController::class, 'redefinirSenha'])->name('auth.salvar-senha');
+
+    // Login Social
+    Route::get('/auth/{provider}', [SocialAuthController::class, 'redirect'])->name('auth.social.redirect');
+    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('auth.social.callback');
 });
 
 Route::middleware('auth')->group(function () {
@@ -31,4 +36,17 @@ Route::prefix('admin/usuarios')->name('admin.usuarios.')->middleware(['auth','we
     Route::get('/{id}',      [UsuarioController::class, 'show'])->name('show');
     Route::put('/{id}',      [UsuarioController::class, 'update'])->name('update');
     Route::delete('/{id}',   [UsuarioController::class, 'destroy'])->name('destroy');
+
+    // Acesso supervisionado (impersonate)
+    Route::post('/{id}/impersonate', [UsuarioController::class, 'impersonate'])->name('impersonate');
 });
+
+// Sair do modo supervisionado (acessível a qualquer usuário logado que esteja em modo supervisionado)
+Route::post('/admin/stop-impersonating', [UsuarioController::class, 'stopImpersonating'])
+    ->middleware(['auth'])
+    ->name('admin.stop-impersonating');
+
+// Status de impersonate (para verificar no frontend)
+Route::get('/admin/impersonate-status', [UsuarioController::class, 'impersonateStatus'])
+    ->middleware(['auth'])
+    ->name('admin.impersonate-status');

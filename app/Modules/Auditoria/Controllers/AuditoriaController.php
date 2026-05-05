@@ -56,6 +56,13 @@ class AuditoriaController extends Controller
         $auditorias = $query->orderBy('created_at', 'desc')
                            ->paginate(25);
 
+        // Formata datas para exibição
+        $auditorias->getCollection()->transform(function ($item) {
+            $item->created_at_formatado = $item->created_at ? $item->created_at->format('d/m/Y H:i') : null;
+            $item->updated_at_formatado = $item->updated_at ? $item->updated_at->format('d/m/Y H:i') : null;
+            return $item;
+        });
+
         return response()->json($auditorias);
     }
 

@@ -225,7 +225,7 @@ function renderizarTabela(dados) {
         const corAcao = coresAcao[item.acao] || 'secondary';
         
         const tr = $('<tr>').html(`
-            <td class="text-nowrap">${new Date(item.created_at).toLocaleString('pt-BR')}</td>
+            <td class="text-nowrap">${item.created_at_formatado || '-'}</td>
             <td><span class="badge bg-dark">${item.user_name || 'Sistema'}</span></td>
             <td><span class="badge bg-${corAcao}">${item.acao.toUpperCase()}</span></td>
             <td>${item.entidade_formatted || item.entidade}</td>
@@ -276,7 +276,7 @@ function verDetalhes(id) {
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Data/Hora</label>
-                    <p>${new Date(item.created_at).toLocaleString('pt-BR')}</p>
+                    <p>${item.created_at_formatado || '-'}</p>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Acao</label>

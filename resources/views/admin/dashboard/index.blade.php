@@ -9,11 +9,12 @@
 
 @push('styles')
 <style>
-.kpi-card { transition: transform .25s ease, box-shadow .25s ease; border-left-width: .45rem; border-left-style: solid; cursor: default; }
-.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(15,23,42,.08); }
-.kpi-icon { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
-.kpi-valor { font-size: 1.6rem; font-weight: 700; line-height: 1; }
-.kpi-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; opacity: .8; }
+.kpi-card { transition: transform .25s ease, box-shadow .25s ease; border-left-width: .25rem; border-left-style: solid; cursor: default; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
+.kpi-card .card-body { padding: 1rem; }
+.kpi-icon { width: 2.5rem; height: 2.5rem; border-radius: .75rem; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.kpi-valor { font-size: 1.25rem; font-weight: 700; line-height: 1; }
+.kpi-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; opacity: .8; }
 .saude-gauge { min-height: 230px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
 .saude-indice { font-size: 3.5rem; font-weight: 800; line-height: 1; }
 .filtro-periodo .btn { border-radius: 999px; }

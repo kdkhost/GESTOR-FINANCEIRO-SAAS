@@ -244,7 +244,7 @@
 @endsection
 @push('scripts')
 <script>
-const URLS_U = { listar: '/admin/usuarios/listar', store: '/admin/usuarios', show: '/admin/usuarios/', update: '/admin/usuarios/', destroy: '/admin/usuarios/' };
+const URLS_U = { listar: '/admin/usuarios/listar', store: '/admin/usuarios', show: '/admin/usuarios/', update: '/admin/usuarios/', destroy: '/admin/usuarios/', impersonate: '/admin/usuarios/:id/impersonate' };
 let paginaAtual = 1; const perPage = 10;
 
 function carregarTabela(pagina=1) {
@@ -262,9 +262,10 @@ function carregarTabela(pagina=1) {
                     <div><div class="fw-medium">${u.name}</div><small class="text-muted">${u.email}</small></div>
                 </div></td>
                 <td><span class="badge bg-${tipoMap[u.tipo]||'primary'}">${u.tipo}</span></td>
-                <td>${u.ultimo_acesso_em?u.ultimo_acesso_em.substring(0,16).replace('T',' '):'<span class="text-muted">Nunca</span>'}</td>
+                <td>${u.ultimo_acesso_em_formatado||'<span class="text-muted">Nunca</span>'}</td>
                 <td class="text-center"><span class="badge bg-${statusMap[u.status]||'secondary'}">${u.status}</span></td>
                 <td class="text-end"><div class="btn-group btn-group-sm">
+                    ${u.tipo !== 'superadmin' ? `<button class="btn btn-outline-success btn-impersonate-u" data-id="${u.id}" title="Acessar conta"><i class="bi bi-box-arrow-in-right"></i></button>` : ''}
                     <button class="btn btn-outline-primary btn-editar-u" data-id="${u.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-outline-danger btn-excluir-u" data-id="${u.id}" ${u.tipo==='superadmin'?'disabled':''}><i class="bi bi-trash"></i></button>
                 </div></td>
@@ -327,10 +328,9 @@ $(document).on('click','.btn-editar-u',function(){
         $('#badge-status').text(statusInfo[1]).attr('class', 'badge bg-' + statusInfo[0]);
 
         // Info de acesso
-        if(u.ultimo_acesso_em){
+        if(u.ultimo_acesso_em_formatado){
             $('#info-acesso').removeClass('d-none');
-            $('#ultimo-acesso').text(new Date(u.ultimo_acesso_em).toLocaleString('pt-BR'));
-            $('#ultimo-ip').text('IP: ' + (u.ultimo_ip || '--'));
+            $('#ultimo-acesso').text(u.ultimo_acesso_em_formatado);
         } else {
             $('#info-acesso').addClass('d-none');
         }
@@ -468,6 +468,46 @@ $(document).on('click','.btn-excluir-u',function(){
             success:r=>{toast(r.mensagem,'sucesso');carregarTabela(paginaAtual);},
             error:r=>toast(r.responseJSON?.mensagem||'Erro.','erro'),
         });
+    });
+});
+
+// Acesso supervisionado (impersonate)
+$(document).on('click','.btn-impersonate-u',function(){
+    const id=$(this).data('id');
+    const btn = $(this);
+    const nome = btn.closest('tr').find('.fw-medium').text();
+
+    SistemaAlert.fire({
+        title: 'Acessar Conta?',
+        html: `Voce ira acessar a conta de <strong>${nome}</strong> sem necessidade de senha.<br><br>
+               <span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Todas as acoes serao registradas em auditoria.</span>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Acessar Conta',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#198754'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: URLS_U.impersonate.replace(':id', id),
+                type: 'POST',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+            })
+            .done(function(r){
+                if(r.sucesso){
+                    toast(r.mensagem, 'sucesso');
+                    setTimeout(() => {
+                        window.location.href = r.redirect || '/admin/dashboard';
+                    }, 1000);
+                } else {
+                    toast(r.mensagem || 'Erro ao acessar conta.', 'erro');
+                }
+            })
+            .fail(function(xhr){
+                const msg = xhr.responseJSON?.mensagem || 'Erro ao acessar conta.';
+                toast(msg, 'erro');
+            });
+        }
     });
 });
 

@@ -19,7 +19,14 @@ class ReceitaController extends Controller
         if ($request->filled('categoria_id')) $query->where('categoria_id', $request->categoria_id);
         if ($request->filled('search'))       $query->where('descricao', 'like', '%'.$request->search.'%');
         $dados = $query->orderByDesc('data_receita')->paginate($request->get('per_page', 15));
-        return response()->json(['sucesso'=>true,'dados'=>$dados->items(),'total'=>$dados->total(),'paginas'=>$dados->lastPage()]);
+
+        // Formata os dados para exibição
+        $items = $dados->items();
+        foreach ($items as &$item) {
+            $item->data_receita = $item->data_receita ? data_br($item->data_receita) : null;
+        }
+
+        return response()->json(['sucesso'=>true,'dados'=>$items,'total'=>$dados->total(),'paginas'=>$dados->lastPage()]);
     }
 
     public function store(Request $request): JsonResponse

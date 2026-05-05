@@ -30,9 +30,16 @@ class ContaReceberController extends Controller
 
         $dados = $query->orderBy('data_vencimento')->paginate($request->get('per_page', 15));
 
+        // Formata os dados para exibição
+        $items = $dados->items();
+        foreach ($items as &$item) {
+            $item->data_vencimento = $item->data_vencimento ? data_br($item->data_vencimento) : null;
+            $item->data_recebimento = $item->data_recebimento ? data_br($item->data_recebimento) : null;
+        }
+
         return response()->json([
             'sucesso' => true,
-            'dados'   => $dados->items(),
+            'dados'   => $items,
             'total'   => $dados->total(),
             'paginas' => $dados->lastPage(),
         ]);

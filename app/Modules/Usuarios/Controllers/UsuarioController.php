@@ -27,7 +27,15 @@ class UsuarioController extends Controller
         }
         if ($request->filled('status')) $query->where('status', $request->status);
         $dados = $query->orderBy('name')->paginate($request->get('per_page', 10));
-        return response()->json(['sucesso'=>true,'dados'=>$dados->items(),'total'=>$dados->total(),'paginas'=>$dados->lastPage()]);
+
+        // Adiciona avatar_url e formata datas aos itens
+        $items = $dados->items();
+        foreach ($items as $item) {
+            $item->avatar_url = $item->avatar_url;
+            $item->ultimo_acesso_em_formatado = $item->ultimo_acesso_em ? $item->ultimo_acesso_em->format('d/m/Y H:i') : null;
+        }
+
+        return response()->json(['sucesso'=>true,'dados'=>$items,'total'=>$dados->total(),'paginas'=>$dados->lastPage()]);
     }
 
     public function store(Request $request): JsonResponse
@@ -178,5 +186,112 @@ class UsuarioController extends Controller
         auditoria('excluiu','Usuarios','users',$user->id,$user->toArray(),null);
         $user->delete();
         return response()->json(['sucesso'=>true,'mensagem'=>'Usuario excluido!']);
+    }
+
+    /**
+     * Acesso supervisionado - Admin/Superadmin entra na conta de outro usuario
+     */
+    public function impersonate(int $id): JsonResponse
+    {
+        $this->exigirAdmin();
+
+        $admin = auth()->user();
+        $targetUser = User::findOrFail($id);
+
+        // Superadmin pode acessar qualquer conta
+        // Admin pode acessar apenas usuarios comuns (nao admin/superadmin)
+        if (!$admin->is_superadmin && $targetUser->tipo !== 'usuario') {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Apenas superadmins podem acessar contas de admin.'
+            ], 403);
+        }
+
+        // Nao pode acessar a propria conta
+        if ($targetUser->id === $admin->id) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Voce ja esta logado na sua conta.'
+            ], 422);
+        }
+
+        // Verifica se usuario esta ativo
+        if ($targetUser->status !== 'ativo') {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Usuario inativo. Nao e possivel acessar esta conta.'
+            ], 422);
+        }
+
+        // Salva ID do admin original na sessao
+        session(['impersonate_admin_id' => $admin->id]);
+        session(['impersonate_target_id' => $targetUser->id]);
+        session(['impersonate_started_at' => now()->toDateTimeString()]);
+
+        // Faz login como o usuario alvo
+        auth()->login($targetUser);
+
+        auditoria('impersonate', 'Usuarios', 'users', $targetUser->id,
+            ['admin_id' => $admin->id, 'admin_name' => $admin->name],
+            ['user_id' => $targetUser->id, 'user_name' => $targetUser->name],
+            'Acesso supervisionado iniciado'
+        );
+
+        return response()->json([
+            'sucesso' => true,
+            'mensagem' => "Acessando conta de {$targetUser->name} ({$targetUser->email})",
+            'redirect' => route('admin.dashboard')
+        ]);
+    }
+
+    /**
+     * Sai do modo supervisionado e volta a conta do admin
+     */
+    public function stopImpersonating(): JsonResponse
+    {
+        $adminId = session('impersonate_admin_id');
+
+        if (!$adminId) {
+            return response()->json([
+                'sucesso' => false,
+                'mensagem' => 'Nenhuma sessao de acesso supervisionado ativa.'
+            ], 422);
+        }
+
+        $targetUser = auth()->user();
+        $admin = User::findOrFail($adminId);
+
+        // Limpa dados da sessao
+        session()->forget(['impersonate_admin_id', 'impersonate_target_id', 'impersonate_started_at']);
+
+        // Volta para conta do admin
+        auth()->login($admin);
+
+        auditoria('stop_impersonate', 'Usuarios', 'users', $targetUser->id,
+            ['user_id' => $targetUser->id, 'user_name' => $targetUser->name],
+            ['admin_id' => $admin->id, 'admin_name' => $admin->name],
+            'Acesso supervisionado encerrado'
+        );
+
+        return response()->json([
+            'sucesso' => true,
+            'mensagem' => 'Voltou a sua conta de administrador.',
+            'redirect' => route('admin.dashboard')
+        ]);
+    }
+
+    /**
+     * Verifica se esta em modo supervisionado
+     */
+    public function impersonateStatus(): JsonResponse
+    {
+        $isImpersonating = session()->has('impersonate_admin_id');
+
+        return response()->json([
+            'sucesso' => true,
+            'impersonating' => $isImpersonating,
+            'admin' => $isImpersonating ? User::find(session('impersonate_admin_id'))?->only(['id', 'name', 'email']) : null,
+            'started_at' => session('impersonate_started_at')
+        ]);
     }
 }
