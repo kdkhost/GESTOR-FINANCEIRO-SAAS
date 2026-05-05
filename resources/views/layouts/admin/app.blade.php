@@ -266,22 +266,28 @@
             });
         });
 
-        // ViaCEP automático
-        $(document).on('blur', '.viacep', function() {
-            const cep = $(this).val().replace(/\D/g, '');
+        // ViaCEP automático - busca enquanto digita
+        let cepTimeout;
+        $(document).on('input', '.viacep', function() {
+            const $this = $(this);
+            const cep = $this.val().replace(/\D/g, '');
+            
+            clearTimeout(cepTimeout);
             if (cep.length !== 8) return;
-            const form = $(this).closest('form');
-            const cepInput = $(this);
-            $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(dados) {
-                if (dados.erro) { toast('CEP não encontrado.', 'alerta'); return; }
-                form.find('[name="logradouro"]').val(dados.logradouro);
-                form.find('[name="bairro"]').val(dados.bairro);
-                form.find('[name="cidade"]').val(dados.localidade);
-                form.find('[name="estado"]').val(dados.uf);
-                // Foca no campo número após preencher o endereço
-                form.find('[name="numero"]').focus();
-                toast('Endereço preenchido automaticamente!', 'sucesso');
-            });
+            
+            cepTimeout = setTimeout(() => {
+                const form = $this.closest('form');
+                $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(dados) {
+                    if (dados.erro) { toast('CEP não encontrado.', 'alerta'); return; }
+                    form.find('[name="logradouro"]').val(dados.logradouro);
+                    form.find('[name="bairro"]').val(dados.bairro);
+                    form.find('[name="cidade"]').val(dados.localidade);
+                    form.find('[name="estado"]').val(dados.uf);
+                    // Foca no campo número automaticamente
+                    form.find('[name="numero"]').focus().select();
+                    toast('Endereço preenchido automaticamente!', 'sucesso');
+                });
+            }, 300);
         });
     </script>
 
