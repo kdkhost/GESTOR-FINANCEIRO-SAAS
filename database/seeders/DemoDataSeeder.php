@@ -335,27 +335,18 @@ class DemoUsuariosSeeder extends Seeder
                 'email' => 'admin@gestorfinanceiro.com.br',
                 'password' => Hash::make('admin123'),
                 'email_verified_at' => Carbon::now(),
-                'is_admin' => true,
-                'is_superadmin' => true,
-                'ativo' => true,
             ],
             [
                 'name' => 'Gestor Financeiro',
                 'email' => 'gestor@gestorfinanceiro.com.br',
                 'password' => Hash::make('gestor123'),
                 'email_verified_at' => Carbon::now(),
-                'is_admin' => true,
-                'is_superadmin' => false,
-                'ativo' => true,
             ],
             [
                 'name' => 'Usuário Comum',
                 'email' => 'usuario@gestorfinanceiro.com.br',
                 'password' => Hash::make('usuario123'),
                 'email_verified_at' => Carbon::now(),
-                'is_admin' => false,
-                'is_superadmin' => false,
-                'ativo' => true,
             ],
         ];
 
