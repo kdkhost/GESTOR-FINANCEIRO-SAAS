@@ -38,16 +38,49 @@ class UsuarioController extends Controller
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'tipo'     => 'nullable|in:usuario,admin,superadmin',
-            'status'   => 'nullable|in:ativo,inativo',
+            'status'   => 'nullable|in:ativo,inativo,bloqueado',
+            'avatar'   => 'nullable|image|max:2048',
+            'cpf'      => 'nullable|string|max:20',
+            'telefone' => 'nullable|string|max:20',
+            'cep'      => 'nullable|string|max:10',
+            'logradouro' => 'nullable|string|max:200',
+            'numero'   => 'nullable|string|max:20',
+            'complemento' => 'nullable|string|max:100',
+            'bairro'   => 'nullable|string|max:100',
+            'cidade'   => 'nullable|string|max:100',
+            'estado'   => 'nullable|string|max:2',
+            'dois_fatores' => 'nullable|boolean',
         ]);
         try {
-            $user = User::create([
+            $dados = [
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
                 'tipo'     => $request->tipo ?? 'usuario',
                 'status'   => $request->status ?? 'ativo',
-            ]);
+                'cpf'      => $request->cpf,
+                'telefone' => $request->telefone,
+                'cep'      => $request->cep,
+                'logradouro' => $request->logradouro,
+                'numero'   => $request->numero,
+                'complemento' => $request->complemento,
+                'bairro'   => $request->bairro,
+                'cidade'   => $request->cidade,
+                'estado'   => $request->estado,
+                'dois_fatores' => $request->boolean('dois_fatores', false),
+            ];
+
+            // Upload avatar
+            if ($request->hasFile('avatar')) {
+                $path = $request->file('avatar')->store('avatars', 'public');
+                $dados['avatar'] = $path;
+            }
+
+            $user = User::create($dados);
+
+            // Adicionar avatar_url ao retorno
+            $user->append('avatar_url');
+
             auditoria('criou','Usuarios','users',$user->id,null,['name'=>$user->name,'email'=>$user->email]);
             return response()->json(['sucesso'=>true,'mensagem'=>'Usuario criado com sucesso!','dado'=>$user],201);
         } catch (\Throwable $e) {
@@ -66,15 +99,68 @@ class UsuarioController extends Controller
     {
         $this->exigirAdmin();
         $user = User::findOrFail($id);
+
+        // Verificar permissao para editar superadmin
+        if ($user->tipo === 'superadmin' && !auth()->user()->is_superadmin) {
+            return response()->json(['sucesso' => false, 'mensagem' => 'Apenas superadmins podem editar outros superadmins.'], 403);
+        }
+
         $request->validate([
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,'.$id,
             'password' => 'nullable|min:8',
+            'tipo'     => 'nullable|in:usuario,admin,superadmin',
+            'status'   => 'nullable|in:ativo,inativo,bloqueado',
+            'avatar'   => 'nullable|image|max:2048',
+            'cpf'      => 'nullable|string|max:20',
+            'telefone' => 'nullable|string|max:20',
+            'cep'      => 'nullable|string|max:10',
+            'logradouro' => 'nullable|string|max:200',
+            'numero'   => 'nullable|string|max:20',
+            'complemento' => 'nullable|string|max:100',
+            'bairro'   => 'nullable|string|max:100',
+            'cidade'   => 'nullable|string|max:100',
+            'estado'   => 'nullable|string|max:2',
+            'dois_fatores' => 'nullable|boolean',
         ]);
-        $dados = $request->only(['name','email','tipo','status']);
-        if ($request->filled('password')) $dados['password'] = Hash::make($request->password);
+
+        $dados = [
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'tipo'     => $request->tipo ?? $user->tipo,
+            'status'   => $request->status ?? $user->status,
+            'cpf'      => $request->cpf,
+            'telefone' => $request->telefone,
+            'cep'      => $request->cep,
+            'logradouro' => $request->logradouro,
+            'numero'   => $request->numero,
+            'complemento' => $request->complemento,
+            'bairro'   => $request->bairro,
+            'cidade'   => $request->cidade,
+            'estado'   => $request->estado,
+            'dois_fatores' => $request->boolean('dois_fatores', $user->dois_fatores),
+        ];
+
+        if ($request->filled('password')) {
+            $dados['password'] = Hash::make($request->password);
+        }
+
+        // Upload avatar
+        if ($request->hasFile('avatar')) {
+            // Deletar avatar antigo se existir
+            if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $dados['avatar'] = $path;
+        }
+
         $anterior = $user->toArray();
         $user->update($dados);
+
+        // Adicionar avatar_url ao retorno
+        $user->append('avatar_url');
+
         auditoria('editou','Usuarios','users',$user->id,$anterior,$dados);
         return response()->json(['sucesso'=>true,'mensagem'=>'Usuario atualizado!','dado'=>$user->fresh()]);
     }

@@ -48,41 +48,188 @@
     </div>
 </div>
 <div class="modal fade" id="modal-usuario" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i><span id="modal-usuario-titulo">Novo Usuario</span></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="form-usuario">
+            <form id="form-usuario" enctype="multipart/form-data">
                 <div class="modal-body">
                     <input type="hidden" id="usuario-id">
+
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">Nome <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" required>
+                        <div class="col-lg-3 text-center">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <img id="preview-avatar" src="/images/avatar-padrao.png" class="rounded-circle mb-3" width="120" height="120" style="object-fit:cover;">
+                                    <div class="mb-2">
+                                        <span id="badge-tipo" class="badge bg-primary">Usuario</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span id="badge-status" class="badge bg-success">Ativo</span>
+                                    </div>
+                                    <div id="info-acesso" class="small text-muted d-none">
+                                        <hr class="my-2">
+                                        <div>Ultimo acesso:</div>
+                                        <div id="ultimo-acesso" class="fw-medium">--</div>
+                                        <div id="ultimo-ip" class="small">IP: --</div>
+                                    </div>
+                                    <hr class="my-2">
+                                    <label class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-camera me-1"></i>Alterar Foto
+                                        <input type="file" name="avatar" id="input-avatar" class="d-none" accept="image/*">
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">E-mail <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Tipo</label>
-                            <select name="tipo" class="form-select">
-                                <option value="usuario">Usuario</option>
-                                <option value="admin">Administrador</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Status</label>
-                            <select name="status" class="form-select">
-                                <option value="ativo">Ativo</option>
-                                <option value="inativo">Inativo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Senha <span id="senha-obrig" class="text-danger">*</span></label>
-                            <input type="password" name="password" id="input-senha-usuario" class="form-control" placeholder="Minimo 8 caracteres">
+
+                        <div class="col-lg-9">
+                            <ul class="nav nav-tabs mb-3" id="usuarioTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="tab-dados" data-bs-toggle="tab" data-bs-target="#painel-dados" type="button" role="tab">Dados Basicos</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="tab-contato" data-bs-toggle="tab" data-bs-target="#painel-contato" type="button" role="tab">Contato</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="tab-endereco" data-bs-toggle="tab" data-bs-target="#painel-endereco" type="button" role="tab">Endereco</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="tab-seguranca" data-bs-toggle="tab" data-bs-target="#painel-seguranca" type="button" role="tab">Seguranca</button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="usuarioTabsContent">
+                                <div class="tab-pane fade show active" id="painel-dados" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Nome Completo <span class="text-danger">*</span></label>
+                                            <input type="text" name="name" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">E-mail <span class="text-danger">*</span></label>
+                                            <input type="email" name="email" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Tipo de Usuario</label>
+                                            <select name="tipo" id="select-tipo" class="form-select">
+                                                <option value="usuario">Usuario</option>
+                                                <option value="admin">Administrador</option>
+                                                <option value="superadmin">Super Admin</option>
+                                            </select>
+                                            <div class="form-text text-warning d-none" id="aviso-superadmin">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>Apenas superadmins podem alterar este tipo.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Status</label>
+                                            <select name="status" class="form-select">
+                                                <option value="ativo">Ativo</option>
+                                                <option value="inativo">Inativo</option>
+                                                <option value="bloqueado">Bloqueado</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">CPF</label>
+                                            <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Telefone</label>
+                                            <input type="text" name="telefone" class="form-control" placeholder="(00) 00000-0000">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="painel-contato" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Telefone Principal</label>
+                                            <input type="text" name="telefone" class="form-control" placeholder="(00) 00000-0000">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">E-mail (confirmacao)</label>
+                                            <input type="email" class="form-control" disabled placeholder="Mesmo e-mail da aba Dados Basicos">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="painel-endereco" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-medium">CEP</label>
+                                            <input type="text" name="cep" class="form-control" placeholder="00000-000">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-medium">Logradouro</label>
+                                            <input type="text" name="logradouro" class="form-control" placeholder="Rua, Avenida, etc">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-medium">Numero</label>
+                                            <input type="text" name="numero" class="form-control" placeholder="123">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-medium">Complemento</label>
+                                            <input type="text" name="complemento" class="form-control" placeholder="Apto, Sala, etc">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-medium">Bairro</label>
+                                            <input type="text" name="bairro" class="form-control">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-medium">Cidade</label>
+                                            <input type="text" name="cidade" class="form-control">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-medium">UF</label>
+                                            <select name="estado" class="form-select">
+                                                <option value="">--</option>
+                                                <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+                                                <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+                                                <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+                                                <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+                                                <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+                                                <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+                                                <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+                                                <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+                                                <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="painel-seguranca" role="tabpanel">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Senha <span id="senha-obrig" class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <input type="password" name="password" id="input-senha-usuario" class="form-control" placeholder="Minimo 8 caracteres">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="toggleSenha('input-senha-usuario')">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                            <div class="form-text" id="senha-ajuda">Deixe em branco para manter a senha atual ao editar.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Confirmar Senha</label>
+                                            <input type="password" name="password_confirmation" id="input-senha-confirm" class="form-control" placeholder="Repita a senha">
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="dois_fatores" id="check-2fa" value="1">
+                                                <label class="form-check-label" for="check-2fa">Ativar Autenticacao de 2 Fatores</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12" id="info-seguranca" style="display:none;">
+                                            <div class="alert alert-info">
+                                                <h6 class="alert-heading"><i class="bi bi-shield-check me-2"></i>Informacoes de Seguranca</h6>
+                                                <p class="mb-1">Tentativas de login: <span id="tentativas-login" class="fw-bold">0</span></p>
+                                                <p class="mb-0">Bloqueado ate: <span id="bloqueado-ate">--</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,32 +285,179 @@ function renderPag(total,atual) {
 $(document).on('click','#paginacao a[data-p]',function(e){e.preventDefault();carregarTabela(parseInt($(this).data('p')));});
 
 $('#btn-novo').on('click',()=>{
-    $('#modal-usuario-titulo').text('Novo Usuario');$('#usuario-id').val('');$('#form-usuario')[0].reset();
-    $('#input-senha-usuario').attr('required',true);$('#senha-obrig').show();
+    $('#modal-usuario-titulo').text('Novo Usuario');
+    $('#usuario-id').val('');
+    $('#form-usuario')[0].reset();
+    $('#preview-avatar').attr('src', '/images/avatar-padrao.png');
+    $('#badge-tipo').text('Usuario').attr('class', 'badge bg-primary');
+    $('#badge-status').text('Ativo').attr('class', 'badge bg-success');
+    $('#info-acesso').addClass('d-none');
+    $('#info-seguranca').hide();
+    $('#input-senha-usuario').attr('required',true);
+    $('#senha-obrig').show();
+    $('#senha-ajuda').text('Obrigatorio para novo usuario.');
+    $('#aviso-superadmin').addClass('d-none');
+    $('#select-tipo').prop('disabled', false);
+    $('.nav-link').removeClass('active');
+    $('#tab-dados').addClass('active');
+    $('.tab-pane').removeClass('show active');
+    $('#painel-dados').addClass('show active');
     $('#modal-usuario').modal('show');
 });
 
 $(document).on('click','.btn-editar-u',function(){
-    $.get(URLS_U.show+$(this).data('id'),r=>{
+    const id = $(this).data('id');
+    $.get(URLS_U.show+id,function(r){
         if(!r.sucesso)return;
         const u=r.dado;
-        $('#modal-usuario-titulo').text('Editar Usuario');$('#usuario-id').val(u.id);
+
+        $('#modal-usuario-titulo').text('Editar Usuario');
+        $('#usuario-id').val(u.id);
+
+        // Avatar
+        $('#preview-avatar').attr('src', u.avatar_url || '/images/avatar-padrao.png');
+
+        // Badges
+        const tipoMap = {usuario: ['primary', 'Usuario'], admin: ['warning', 'Administrador'], superadmin: ['danger', 'Super Admin']};
+        const tipoInfo = tipoMap[u.tipo] || tipoMap.usuario;
+        $('#badge-tipo').text(tipoInfo[1]).attr('class', 'badge bg-' + tipoInfo[0]);
+
+        const statusMap = {ativo: ['success', 'Ativo'], inativo: ['secondary', 'Inativo'], bloqueado: ['danger', 'Bloqueado']};
+        const statusInfo = statusMap[u.status] || statusMap.ativo;
+        $('#badge-status').text(statusInfo[1]).attr('class', 'badge bg-' + statusInfo[0]);
+
+        // Info de acesso
+        if(u.ultimo_acesso_em){
+            $('#info-acesso').removeClass('d-none');
+            $('#ultimo-acesso').text(new Date(u.ultimo_acesso_em).toLocaleString('pt-BR'));
+            $('#ultimo-ip').text('IP: ' + (u.ultimo_ip || '--'));
+        } else {
+            $('#info-acesso').addClass('d-none');
+        }
+
+        // Dados Basicos
         const f=$('#form-usuario');
-        f.find('[name="name"]').val(u.name);f.find('[name="email"]').val(u.email);
-        f.find('[name="tipo"]').val(u.tipo);f.find('[name="status"]').val(u.status);
-        $('#input-senha-usuario').attr('required',false).val('');$('#senha-obrig').hide();
+        f.find('[name="name"]').val(u.name);
+        f.find('[name="email"]').val(u.email);
+        f.find('[name="tipo"]').val(u.tipo);
+        f.find('[name="status"]').val(u.status);
+        f.find('[name="cpf"]').val(u.cpf || '');
+        f.find('[name="telefone"]').val(u.telefone || '');
+
+        // Endereco
+        f.find('[name="cep"]').val(u.cep || '');
+        f.find('[name="logradouro"]').val(u.logradouro || '');
+        f.find('[name="numero"]').val(u.numero || '');
+        f.find('[name="complemento"]').val(u.complemento || '');
+        f.find('[name="bairro"]').val(u.bairro || '');
+        f.find('[name="cidade"]').val(u.cidade || '');
+        f.find('[name="estado"]').val(u.estado || '');
+
+        // Seguranca
+        $('#input-senha-usuario').attr('required',false).val('');
+        $('#input-senha-confirm').val('');
+        $('#senha-obrig').hide();
+        $('#senha-ajuda').text('Deixe em branco para manter a senha atual.');
+        $('#check-2fa').prop('checked', u.dois_fatores == 1 || u.dois_fatores === true);
+
+        // Info de seguranca
+        if(u.tentativas_login > 0 || u.bloqueado_ate){
+            $('#info-seguranca').show();
+            $('#tentativas-login').text(u.tentativas_login || 0);
+            $('#bloqueado-ate').text(u.bloqueado_ate ? new Date(u.bloqueado_ate).toLocaleString('pt-BR') : '--');
+        } else {
+            $('#info-seguranca').hide();
+        }
+
+        // Verificar se pode alterar tipo (apenas superadmin pode)
+        const userAtualTipo = '{{ auth()->user()->tipo }}';
+        if(userAtualTipo !== 'superadmin' && u.tipo === 'superadmin'){
+            $('#select-tipo').prop('disabled', true);
+            $('#aviso-superadmin').removeClass('d-none');
+        } else {
+            $('#select-tipo').prop('disabled', false);
+            $('#aviso-superadmin').addClass('d-none');
+        }
+
+        // Reset tabs
+        $('.nav-link').removeClass('active');
+        $('#tab-dados').addClass('active');
+        $('.tab-pane').removeClass('show active');
+        $('#painel-dados').addClass('show active');
+
         $('#modal-usuario').modal('show');
     });
 });
 
+// Preview avatar ao selecionar arquivo
+$('#input-avatar').on('change', function(){
+    const file = this.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            $('#preview-avatar').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+function toggleSenha(id){
+    const input = document.getElementById(id);
+    const icon = input.nextElementSibling.querySelector('i');
+    if(input.type === 'password'){
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
 $('#form-usuario').on('submit',function(e){
     e.preventDefault();
     const id=$('#usuario-id').val();
-    const dados={}; $(this).serializeArray().forEach(f=>dados[f.name]=f.value);
-    if(!dados.password) delete dados.password;
-    $.ajax({url:id?URLS_U.update+id:URLS_U.store,type:id?'PUT':'POST',data:dados,
-        success:r=>{if(r.sucesso){toast(r.mensagem,'sucesso');$('#modal-usuario').modal('hide');carregarTabela(paginaAtual);}else toast(r.mensagem||'Erro.','erro');},
-        error:r=>{const erros=r.responseJSON?.errors;if(erros)toast(Object.values(erros).flat().join(' | '),'erro');else toast(r.responseJSON?.mensagem||'Erro ao salvar.','erro');},
+    const formData = new FormData(this);
+
+    // Adicionar _method para PUT quando editar
+    if(id){
+        formData.append('_method', 'PUT');
+    }
+
+    // Remover senha vazia
+    if(!formData.get('password')){
+        formData.delete('password');
+    }
+    formData.delete('password_confirmation');
+
+    // Dois fatores
+    formData.set('dois_fatores', $('#check-2fa').is(':checked') ? '1' : '0');
+
+    $.ajax({
+        url: id ? URLS_U.update+id : URLS_U.store,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+        success: function(r){
+            if(r.sucesso){
+                toast(r.mensagem, 'sucesso');
+                $('#modal-usuario').modal('hide');
+                carregarTabela(paginaAtual);
+            } else {
+                toast(r.mensagem || 'Erro ao salvar.', 'erro');
+            }
+        },
+        error: function(r){
+            const erros = r.responseJSON?.errors;
+            if(erros){
+                toast(Object.values(erros).flat().join(' | '), 'erro');
+            } else {
+                toast(r.responseJSON?.mensagem || 'Erro ao salvar.', 'erro');
+            }
+        }
     });
 });
 
