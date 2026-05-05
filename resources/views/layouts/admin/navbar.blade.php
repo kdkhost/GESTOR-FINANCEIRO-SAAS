@@ -19,11 +19,13 @@
         </ul>
 
         <ul class="navbar-nav ms-auto align-items-center">
+            @if(auth()->check() && auth()->user()->is_admin)
             <li class="nav-item d-none d-lg-block">
                 <a class="nav-link quick-link" href="{{ route('admin.configuracoes.index') }}">
                     <i class="bi bi-sliders2 me-2"></i>Configuracoes
                 </a>
             </li>
+            @endif
 
             <li class="nav-item dropdown">
                 <a class="nav-link nav-icon-button position-relative" data-bs-toggle="dropdown" href="#" id="notificacoes-btn" aria-label="Notificacoes">
@@ -71,11 +73,13 @@
                             <i class="bi bi-person-circle me-2"></i>Meu Perfil
                         </a>
                     </li>
+                    @if(auth()->check() && auth()->user()->is_admin)
                     <li>
                         <a class="dropdown-item" href="{{ route('admin.configuracoes.index') }}">
                             <i class="bi bi-gear me-2"></i>Configuracoes
                         </a>
                     </li>
+                    @endif
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form method="POST" action="{{ route('auth.logout') }}" id="form-logout">
