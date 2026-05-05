@@ -111,7 +111,7 @@
                                     <input type="file" name="sistema_favicon" id="input-favicon" class="form-control" accept="image/*,.ico">
                                 </div>
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-check-lg me-1"></i>Salvar Configuracoes Gerais
                                 </button>
@@ -185,7 +185,7 @@
                             </div>
                             <div class="mt-4 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Salvar SMTP
+                                    <i class="bi bi-check-lg me-1"></i>Salvar Configuracoes SMTP
                                 </button>
                                 <button type="button" class="btn btn-outline-info" id="btn-testar-smtp">
                                     <i class="bi bi-send me-1"></i>Testar Envio
@@ -231,9 +231,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mt-4">
+                            <div class="mt-4 d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-lg me-1"></i>Salvar Aparencia
+                                    <i class="bi bi-check-lg me-1"></i>Salvar Configuracoes de Aparencia
                                 </button>
                             </div>
                         </form>
