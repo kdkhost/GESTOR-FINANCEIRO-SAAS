@@ -205,27 +205,27 @@
                     <div class="card-body">
                         <form id="form-aparencia">
                             <div class="row g-3">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label fw-medium">Cor Primaria</label>
-                                    <div class="input-group">
+                                    <div class="input-group input-group-sm">
                                         <input type="color" name="cor_primaria" class="form-control form-control-color"
-                                               value="{{ configuracao('cor_primaria', '#3b82f6') }}">
+                                               style="min-height: 38px;" value="{{ configuracao('cor_primaria', '#3b82f6') }}">
                                         <input type="text" class="form-control" id="cor_primaria_hex"
                                                value="{{ configuracao('cor_primaria', '#3b82f6') }}" placeholder="#3b82f6">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label fw-medium">Cor Secundaria</label>
-                                    <div class="input-group">
+                                    <div class="input-group input-group-sm">
                                         <input type="color" name="cor_secundaria" class="form-control form-control-color"
-                                               value="{{ configuracao('cor_secundaria', '#6c757d') }}">
-                                        <input type="text" class="form-control" id="cor_secundaria_hex"
+                                               style="min-height: 38px;" value="{{ configuracao('cor_secundaria', '#6c757d') }}">
+                                        <input type="text" class="form-control" id="cor_secaria_hex"
                                                value="{{ configuracao('cor_secundaria', '#6c757d') }}" placeholder="#6c757d">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label fw-medium">Tema Padrao</label>
-                                    <select name="tema_padrao" class="form-select">
+                                    <select name="tema_padrao" class="form-select form-select-sm" style="min-height: 38px;">
                                         <option value="light" {{ configuracao('tema_padrao','light') === 'light' ? 'selected' : '' }}>Claro</option>
                                         <option value="dark" {{ configuracao('tema_padrao','light') === 'dark' ? 'selected' : '' }}>Escuro</option>
                                     </select>
