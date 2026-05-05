@@ -39,15 +39,48 @@ class CronJobsSeeder extends Seeder
                 'expressao_cron' => '0 4 * * 0', // Domingo 4h da manhã (semanal)
                 'ativo' => true,
             ],
+            [
+                'nome' => 'Processar Recorrências',
+                'descricao' => 'Gera contas a pagar/receber recorrentes',
+                'comando' => 'financeiro:processar-recorrencias',
+                'expressao_cron' => '0 0 * * *', // Meia-noite diariamente
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Verificar Vencimentos',
+                'descricao' => 'Envia alertas de contas vencendo',
+                'comando' => 'financeiro:alertar-vencimentos',
+                'expressao_cron' => '0 9 * * *', // 9h da manhã diariamente
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Limpar Logs Antigos',
+                'descricao' => 'Remove logs de execução antigos',
+                'comando' => 'cron:limpar-logs --dias=7',
+                'expressao_cron' => '0 5 * * 0', // Domingo 5h da manhã
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Sincronizar Metas',
+                'descricao' => 'Atualiza status das metas financeiras',
+                'comando' => 'financeiro:sincronizar-metas',
+                'expressao_cron' => '0 1 * * *', // 1h da manhã diariamente
+                'ativo' => true,
+            ],
         ];
 
         foreach ($tarefas as $tarefa) {
-            // Calcula próxima execução
-            $cron = \Cron\CronExpression::factory($tarefa['expressao_cron']);
-            $tarefa['proxima_execucao'] = $cron->getNextRunDate();
-            $tarefa['ultimo_status'] = 'pendente';
+            // Verifica se já existe para não duplicar
+            $existente = CronJob::where('comando', $tarefa['comando'])->first();
+            
+            if (!$existente) {
+                // Calcula próxima execução
+                $cron = \Cron\CronExpression::factory($tarefa['expressao_cron']);
+                $tarefa['proxima_execucao'] = $cron->getNextRunDate();
+                $tarefa['ultimo_status'] = 'pendente';
 
-            CronJob::create($tarefa);
+                CronJob::create($tarefa);
+            }
         }
     }
 }
