@@ -1,7 +1,7 @@
 @extends('layouts.admin.app')
 @section('titulo', 'Configuracoes de Login Social')
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Admin</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Admin</a></li>
 <li class="breadcrumb-item"><a href="{{ route('admin.configuracoes.index') }}">Configuracoes</a></li>
 <li class="breadcrumb-item active">Login Social</li>
 @endsection
