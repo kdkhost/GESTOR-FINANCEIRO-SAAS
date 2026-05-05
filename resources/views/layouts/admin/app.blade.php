@@ -271,12 +271,15 @@
             const cep = $(this).val().replace(/\D/g, '');
             if (cep.length !== 8) return;
             const form = $(this).closest('form');
+            const cepInput = $(this);
             $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(dados) {
                 if (dados.erro) { toast('CEP não encontrado.', 'alerta'); return; }
                 form.find('[name="logradouro"]').val(dados.logradouro);
                 form.find('[name="bairro"]').val(dados.bairro);
                 form.find('[name="cidade"]').val(dados.localidade);
                 form.find('[name="estado"]').val(dados.uf);
+                // Foca no campo número após preencher o endereço
+                form.find('[name="numero"]').focus();
                 toast('Endereço preenchido automaticamente!', 'sucesso');
             });
         });

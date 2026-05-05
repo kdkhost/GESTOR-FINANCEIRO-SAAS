@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Modules\Relatorios\Controllers\RelatorioController;
-Route::prefix('admin/relatorios')->name('admin.relatorios.')->middleware(['auth','web','admin'])->group(function () {
+Route::prefix('admin/relatorios')->name('admin.relatorios.')->middleware(['auth','web'])->group(function () {
     Route::get('/fluxo-caixa',     [RelatorioController::class, 'fluxoCaixa'])->name('fluxo-caixa');
     Route::get('/dre',             [RelatorioController::class, 'dre'])->name('dre');
     Route::get('/evolucao',        [RelatorioController::class, 'evolucao'])->name('evolucao');
