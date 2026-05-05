@@ -158,7 +158,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <label class="form-label fw-medium">CEP</label>
-                                            <input type="text" name="cep" class="form-control" placeholder="00000-000">
+                                            <input type="text" name="cep" class="form-control mask-cep viacep" placeholder="00000-000">
                                         </div>
                                         <div class="col-md-8">
                                             <label class="form-label fw-medium">Logradouro</label>
