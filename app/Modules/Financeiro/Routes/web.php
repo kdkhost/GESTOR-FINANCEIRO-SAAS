@@ -17,7 +17,8 @@ use App\Modules\Financeiro\Controllers\OrcamentoController;
 use App\Modules\Financeiro\Controllers\RecorrenciaController;
 use App\Modules\Financeiro\Controllers\AnexoController;
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'web', 'admin'])->group(function () {
+// Rotas de USUARIO (todos os usuarios logados podem acessar)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'web'])->group(function () {
 
     // Dashboard
     Route::prefix('dashboard')->name('dashboard.')->group(function () {

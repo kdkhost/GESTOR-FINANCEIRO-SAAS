@@ -89,46 +89,8 @@
         {{-- Navbar superior --}}
         @include('layouts.admin.navbar')
 
-        {{-- Sidebar (apenas para admins) --}}
-        @if(auth()->check() && auth()->user()->is_admin)
-            @include('layouts.admin.sidebar')
-        @else
-            {{-- Sidebar simplificada para usuários comuns --}}
-            <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-                <div class="sidebar-brand">
-                    <a href="{{ route('painel') }}" class="brand-link">
-                        <span class="brand-text fw-light">{{ configuracao('sistema_nome', 'FinanceiroSaaS') }}</span>
-                    </a>
-                </div>
-                <div class="sidebar-wrapper">
-                    <nav class="mt-2">
-                        <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-                            <li class="nav-item">
-                                <a href="{{ route('painel') }}" class="nav-link {{ request()->routeIs('painel') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-house-door"></i>
-                                    <p>Meu Painel</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.perfil') }}" class="nav-link {{ request()->routeIs('admin.perfil') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-person"></i>
-                                    <p>Meu Perfil</p>
-                                </a>
-                            </li>
-                            <li class="nav-item mt-3">
-                                <form action="{{ route('auth.logout') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
-                                        <i class="nav-icon bi bi-box-arrow-right"></i>
-                                        <p>Sair</p>
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </aside>
-        @endif
+        {{-- Sidebar --}}
+        @include('layouts.admin.sidebar')
 
         {{-- Conteúdo principal --}}
         <main class="app-main">
@@ -142,11 +104,7 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                @if(auth()->check() && auth()->user()->is_admin)
-                                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Início</a></li>
-                                @else
-                                    <li class="breadcrumb-item"><a href="{{ route('painel') }}">Início</a></li>
-                                @endif
+                                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">Início</a></li>
                                 @yield('breadcrumb')
                             </ol>
                         </div>

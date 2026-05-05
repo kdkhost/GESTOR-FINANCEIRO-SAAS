@@ -58,6 +58,7 @@ document.getElementById('form-esqueci-senha')?.addEventListener('submit', functi
     .then(({ ok, data }) => {
         if (ok && data.sucesso) {
             toast(data.mensagem || 'Verifique seu e-mail.', 'sucesso');
+            document.getElementById('email').value = ''; // Limpa o campo
             return;
         }
         if (data.errors) {
