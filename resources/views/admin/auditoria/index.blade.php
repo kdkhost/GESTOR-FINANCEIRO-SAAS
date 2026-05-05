@@ -260,7 +260,7 @@ function renderizarPaginacao(r) {
 }
 
 function verDetalhes(id) {
-    $.get('{{ route("admin.auditoria.detalhes", "") }}/' + id, function(r) {
+    $.get('{{ url('admin/auditoria/detalhes') }}/' + id, function(r) {
         if (!r.sucesso) {
             toast('Erro ao carregar detalhes', 'erro');
             return;
