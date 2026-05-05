@@ -27,7 +27,7 @@ Route::get('/', function () {
         return redirect('/instalar');
     }
 
-    // Se instalado mas nao logado, vai para login
-    return redirect('/login');
+    // Se instalado mas nao logado, mostra landing page
+    return view('welcome');
 });
 
