@@ -5,9 +5,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    // Se usuario estiver logado, vai direto para dashboard
+    // Se usuario estiver logado, redireciona conforme o tipo
     if (Auth::check()) {
-        return redirect('/admin/dashboard');
+        // Se for admin/superadmin, vai para dashboard admin
+        if (Auth::user()->is_admin) {
+            return redirect('/admin/dashboard');
+        }
+        // Usuario comum vai para o painel
+        return redirect('/painel');
     }
 
     // Verifica se sistema esta instalado (arquivo ou banco)
@@ -29,4 +34,9 @@ Route::get('/', function () {
 
     // Se instalado mas nao logado, vai para login
     return redirect('/login');
+});
+
+// Painel para usuarios comuns (apenas auth, sem middleware admin)
+Route::middleware(['auth', 'web'])->group(function () {
+    Route::get('/painel', [\App\Modules\Financeiro\Controllers\HomeController::class, 'index'])->name('painel');
 });

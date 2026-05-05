@@ -90,10 +90,15 @@ class AuthController extends Controller
 
         auditoria('login', 'Usuarios', 'users', $usuario->id, null, null, 'Login realizado');
 
+        // Redireciona conforme o tipo de usuario
+        $redirect = $usuario->is_admin
+            ? route('admin.dashboard.index')
+            : route('painel');
+
         return response()->json([
             'sucesso'  => true,
             'mensagem' => 'Bem-vindo, ' . $usuario->name . '!',
-            'redirect' => route('admin.dashboard.index'),
+            'redirect' => $redirect,
         ]);
     }
 
@@ -140,10 +145,15 @@ class AuthController extends Controller
 
         Auth::login($usuario);
 
+        // Redireciona conforme o tipo de usuario
+        $redirect = $usuario->is_admin
+            ? route('admin.dashboard.index')
+            : route('painel');
+
         return response()->json([
             'sucesso' => true,
             'mensagem' => 'Cadastro realizado com sucesso!',
-            'redirect' => route('admin.dashboard.index'),
+            'redirect' => $redirect,
         ]);
     }
 
