@@ -379,32 +379,32 @@ class DemoClientesFornecedoresSeeder extends Seeder
         }
 
         $clientes = [
-            ['nome' => 'Empresa Alpha Ltda', 'documento' => '11.222.333/0001-44', 'email' => 'contato@alpha.com.br', 'telefone' => '(11) 99999-1111'],
-            ['nome' => 'Comércio Beta', 'documento' => '22.333.444/0001-55', 'email' => 'vendas@beta.com.br', 'telefone' => '(11) 99999-2222'],
-            ['nome' => 'Indústria Gamma', 'documento' => '33.444.555/0001-66', 'email' => 'financeiro@gamma.com.br', 'telefone' => '(11) 99999-3333'],
-            ['nome' => 'Serviços Delta', 'documento' => '44.555.666/0001-77', 'email' => 'admin@delta.com.br', 'telefone' => '(11) 99999-4444'],
-            ['nome' => 'João Silva', 'documento' => '123.456.789-00', 'email' => 'joao.silva@email.com', 'telefone' => '(11) 99999-5555'],
-            ['nome' => 'Maria Santos', 'documento' => '234.567.890-11', 'email' => 'maria.santos@email.com', 'telefone' => '(11) 99999-6666'],
-            ['nome' => 'Transportadora Ômega', 'documento' => '55.666.777/0001-88', 'email' => 'logistica@omega.com.br', 'telefone' => '(11) 99999-7777'],
-            ['nome' => 'Consultoria Sigma', 'documento' => '66.777.888/0001-99', 'email' => 'consultoria@sigma.com.br', 'telefone' => '(11) 99999-8888'],
+            ['nome' => 'Empresa Alpha Ltda', 'cpf_cnpj' => '11.222.333/0001-44', 'email' => 'contato@alpha.com.br', 'telefone' => '(11) 99999-1111'],
+            ['nome' => 'Comércio Beta', 'cpf_cnpj' => '22.333.444/0001-55', 'email' => 'vendas@beta.com.br', 'telefone' => '(11) 99999-2222'],
+            ['nome' => 'Indústria Gamma', 'cpf_cnpj' => '33.444.555/0001-66', 'email' => 'financeiro@gamma.com.br', 'telefone' => '(11) 99999-3333'],
+            ['nome' => 'Serviços Delta', 'cpf_cnpj' => '44.555.666/0001-77', 'email' => 'admin@delta.com.br', 'telefone' => '(11) 99999-4444'],
+            ['nome' => 'João Silva', 'cpf_cnpj' => '123.456.789-00', 'email' => 'joao.silva@email.com', 'telefone' => '(11) 99999-5555'],
+            ['nome' => 'Maria Santos', 'cpf_cnpj' => '234.567.890-11', 'email' => 'maria.santos@email.com', 'telefone' => '(11) 99999-6666'],
+            ['nome' => 'Transportadora Ômega', 'cpf_cnpj' => '55.666.777/0001-88', 'email' => 'logistica@omega.com.br', 'telefone' => '(11) 99999-7777'],
+            ['nome' => 'Consultoria Sigma', 'cpf_cnpj' => '66.777.888/0001-99', 'email' => 'consultoria@sigma.com.br', 'telefone' => '(11) 99999-8888'],
         ];
 
         $fornecedores = [
-            ['nome' => 'Fornecedor A Materiais', 'documento' => '77.888.999/0001-00', 'email' => 'vendas@fornecedora.com.br', 'telefone' => '(11) 98888-1111'],
-            ['nome' => 'Distribuidora B', 'documento' => '88.999.000/0001-11', 'email' => 'pedidos@distribuidorab.com.br', 'telefone' => '(11) 98888-2222'],
-            ['nome' => 'Energia Elétrica C', 'documento' => '99.000.111/0001-22', 'email' => 'faturamento@energiac.com.br', 'telefone' => '(11) 98888-3333'],
-            ['nome' => 'Telefonia D', 'documento' => '00.111.222/0001-33', 'email' => 'cobranca@telefoniad.com.br', 'telefone' => '(11) 98888-4444'],
-            ['nome' => 'Imobiliária E', 'documento' => '11.222.333/0001-44', 'email' => 'locacao@imobiliariae.com.br', 'telefone' => '(11) 98888-5555'],
-            ['nome' => 'Seguradora F', 'documento' => '22.333.444/0001-55', 'email' => 'seguros@seguradoraf.com.br', 'telefone' => '(11) 98888-6666'],
-            ['nome' => 'Escritório de Contabilidade G', 'documento' => '33.444.555/0001-66', 'email' => 'contato@contabilidadeg.com.br', 'telefone' => '(11) 98888-7777'],
-            ['nome' => 'Limpeza e Conservação H', 'documento' => '44.555.666/0001-77', 'email' => 'admin@limpezah.com.br', 'telefone' => '(11) 98888-8888'],
+            ['nome' => 'Fornecedor A Materiais', 'cpf_cnpj' => '77.888.999/0001-00', 'email' => 'vendas@fornecedora.com.br', 'telefone' => '(11) 98888-1111'],
+            ['nome' => 'Distribuidora B', 'cpf_cnpj' => '88.999.000/0001-11', 'email' => 'pedidos@distribuidorab.com.br', 'telefone' => '(11) 98888-2222'],
+            ['nome' => 'Energia Elétrica C', 'cpf_cnpj' => '99.000.111/0001-22', 'email' => 'faturamento@energiac.com.br', 'telefone' => '(11) 98888-3333'],
+            ['nome' => 'Telefonia D', 'cpf_cnpj' => '00.111.222/0001-33', 'email' => 'cobranca@telefoniad.com.br', 'telefone' => '(11) 98888-4444'],
+            ['nome' => 'Imobiliária E', 'cpf_cnpj' => '11.222.333/0001-44', 'email' => 'locacao@imobiliariae.com.br', 'telefone' => '(11) 98888-5555'],
+            ['nome' => 'Seguradora F', 'cpf_cnpj' => '22.333.444/0001-55', 'email' => 'seguros@seguradoraf.com.br', 'telefone' => '(11) 98888-6666'],
+            ['nome' => 'Escritório de Contabilidade G', 'cpf_cnpj' => '33.444.555/0001-66', 'email' => 'contato@contabilidadeg.com.br', 'telefone' => '(11) 98888-7777'],
+            ['nome' => 'Limpeza e Conservação H', 'cpf_cnpj' => '44.555.666/0001-77', 'email' => 'admin@limpezah.com.br', 'telefone' => '(11) 98888-8888'],
         ];
 
         foreach ($usuarios as $userId) {
             // Cria clientes
             foreach ($clientes as $cliente) {
                 DB::table('clientes')->updateOrInsert(
-                    ['documento' => $cliente['documento'], 'user_id' => $userId],
+                    ['cpf_cnpj' => $cliente['cpf_cnpj'], 'user_id' => $userId],
                     array_merge($cliente, [
                         'user_id' => $userId,
                         'ativo' => true,
@@ -417,7 +417,7 @@ class DemoClientesFornecedoresSeeder extends Seeder
             // Cria fornecedores
             foreach ($fornecedores as $fornecedor) {
                 DB::table('fornecedores')->updateOrInsert(
-                    ['documento' => $fornecedor['documento'], 'user_id' => $userId],
+                    ['cpf_cnpj' => $fornecedor['cpf_cnpj'], 'user_id' => $userId],
                     array_merge($fornecedor, [
                         'user_id' => $userId,
                         'ativo' => true,
@@ -461,9 +461,9 @@ class DemoFinanceiroSeeder extends Seeder
         }
 
         $contas = [
-            ['nome' => 'Conta Corrente Principal', 'banco' => 'Itaú', 'agencia' => '1234', 'numero_conta' => '56789-0', 'tipo' => 'corrente', 'saldo_atual' => 15000.00],
-            ['nome' => 'Conta Poupança', 'banco' => 'Bradesco', 'agencia' => '5678', 'numero_conta' => '12345-6', 'tipo' => 'poupanca', 'saldo_atual' => 5000.00],
-            ['nome' => 'Conta Digital', 'banco' => 'Nubank', 'agencia' => '0001', 'numero_conta' => '987654321-0', 'tipo' => 'digital', 'saldo_atual' => 2500.00],
+            ['nome' => 'Conta Corrente Principal - Itaú', 'agencia' => '1234', 'numero_conta' => '56789-0', 'digito' => '0', 'tipo' => 'corrente', 'saldo_inicial' => 15000.00, 'saldo_atual' => 15000.00],
+            ['nome' => 'Conta Poupança - Bradesco', 'agencia' => '5678', 'numero_conta' => '12345-6', 'digito' => '6', 'tipo' => 'poupanca', 'saldo_inicial' => 5000.00, 'saldo_atual' => 5000.00],
+            ['nome' => 'Conta Digital - Nubank', 'agencia' => '0001', 'numero_conta' => '987654321-0', 'digito' => '0', 'tipo' => 'corrente', 'saldo_inicial' => 2500.00, 'saldo_atual' => 2500.00],
         ];
 
         foreach ($contas as $conta) {
@@ -486,12 +486,12 @@ class DemoFinanceiroSeeder extends Seeder
         }
 
         $contas = [
-            ['descricao' => 'Aluguel do escritório', 'valor' => 3500.00, 'vencimento' => Carbon::now()->addDays(5), 'status' => 'pendente'],
-            ['descricao' => 'Energia elétrica', 'valor' => 850.00, 'vencimento' => Carbon::now()->addDays(10), 'status' => 'pendente'],
-            ['descricao' => 'Internet e telefone', 'valor' => 450.00, 'vencimento' => Carbon::now()->addDays(15), 'status' => 'pendente'],
-            ['descricao' => 'Salários', 'valor' => 25000.00, 'vencimento' => Carbon::now()->addDays(1), 'status' => 'pendente'],
-            ['descricao' => 'Fornecedor A - Materiais', 'valor' => 3200.00, 'vencimento' => Carbon::now()->subDays(5), 'status' => 'atrasada'],
-            ['descricao' => 'Contador', 'valor' => 1200.00, 'vencimento' => Carbon::now()->subDays(10), 'status' => 'paga', 'data_pagamento' => Carbon::now()->subDays(8)],
+            ['descricao' => 'Aluguel do escritório', 'valor' => 3500.00, 'data_vencimento' => Carbon::now()->addDays(5)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Energia elétrica', 'valor' => 850.00, 'data_vencimento' => Carbon::now()->addDays(10)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Internet e telefone', 'valor' => 450.00, 'data_vencimento' => Carbon::now()->addDays(15)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Salários', 'valor' => 25000.00, 'data_vencimento' => Carbon::now()->addDays(1)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Fornecedor A - Materiais', 'valor' => 3200.00, 'data_vencimento' => Carbon::now()->subDays(5)->format('Y-m-d'), 'status' => 'vencido'],
+            ['descricao' => 'Contador', 'valor' => 1200.00, 'data_vencimento' => Carbon::now()->subDays(10)->format('Y-m-d'), 'data_pagamento' => Carbon::now()->subDays(8)->format('Y-m-d'), 'status' => 'pago'],
         ];
 
         foreach ($contas as $conta) {
@@ -499,7 +499,7 @@ class DemoFinanceiroSeeder extends Seeder
                 'user_id' => $userId,
                 'descricao' => $conta['descricao'],
                 'valor' => $conta['valor'],
-                'vencimento' => $conta['vencimento'],
+                'data_vencimento' => $conta['data_vencimento'],
                 'data_pagamento' => $conta['data_pagamento'] ?? null,
                 'status' => $conta['status'],
                 'created_at' => Carbon::now(),
@@ -515,11 +515,11 @@ class DemoFinanceiroSeeder extends Seeder
         }
 
         $contas = [
-            ['descricao' => 'Serviços prestados - Cliente A', 'valor' => 15000.00, 'vencimento' => Carbon::now()->addDays(3), 'status' => 'pendente'],
-            ['descricao' => 'Venda de produtos - Cliente B', 'valor' => 8500.00, 'vencimento' => Carbon::now()->addDays(7), 'status' => 'pendente'],
-            ['descricao' => 'Consultoria mensal - Cliente C', 'valor' => 5000.00, 'vencimento' => Carbon::now()->addDays(12), 'status' => 'pendente'],
-            ['descricao' => 'Projeto especial - Cliente D', 'valor' => 25000.00, 'vencimento' => Carbon::now()->subDays(3), 'status' => 'atrasada'],
-            ['descricao' => 'Manutenção - Cliente E', 'valor' => 3200.00, 'vencimento' => Carbon::now()->subDays(7), 'status' => 'recebida', 'data_recebimento' => Carbon::now()->subDays(2)],
+            ['descricao' => 'Serviços prestados - Cliente A', 'valor' => 15000.00, 'data_vencimento' => Carbon::now()->addDays(3)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Venda de produtos - Cliente B', 'valor' => 8500.00, 'data_vencimento' => Carbon::now()->addDays(7)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Consultoria mensal - Cliente C', 'valor' => 5000.00, 'data_vencimento' => Carbon::now()->addDays(12)->format('Y-m-d'), 'status' => 'pendente'],
+            ['descricao' => 'Projeto especial - Cliente D', 'valor' => 25000.00, 'data_vencimento' => Carbon::now()->subDays(3)->format('Y-m-d'), 'status' => 'vencido'],
+            ['descricao' => 'Manutenção - Cliente E', 'valor' => 3200.00, 'data_vencimento' => Carbon::now()->subDays(7)->format('Y-m-d'), 'data_recebimento' => Carbon::now()->subDays(2)->format('Y-m-d'), 'status' => 'recebido'],
         ];
 
         foreach ($contas as $conta) {
@@ -527,7 +527,7 @@ class DemoFinanceiroSeeder extends Seeder
                 'user_id' => $userId,
                 'descricao' => $conta['descricao'],
                 'valor' => $conta['valor'],
-                'vencimento' => $conta['vencimento'],
+                'data_vencimento' => $conta['data_vencimento'],
                 'data_recebimento' => $conta['data_recebimento'] ?? null,
                 'status' => $conta['status'],
                 'created_at' => Carbon::now(),
@@ -541,10 +541,10 @@ class DemoFinanceiroSeeder extends Seeder
         // Receitas
         if (Schema::hasTable('receitas')) {
             $receitas = [
-                ['descricao' => 'Vendas de produtos', 'valor' => 25000.00, 'data' => Carbon::now()->subDays(15)],
-                ['descricao' => 'Prestação de serviços', 'valor' => 18000.00, 'data' => Carbon::now()->subDays(10)],
-                ['descricao' => 'Consultoria', 'valor' => 8000.00, 'data' => Carbon::now()->subDays(5)],
-                ['descricao' => 'Vendas online', 'valor' => 12000.00, 'data' => Carbon::now()->subDays(2)],
+                ['descricao' => 'Vendas de produtos', 'valor' => 25000.00, 'data_receita' => Carbon::now()->subDays(15)->format('Y-m-d')],
+                ['descricao' => 'Prestação de serviços', 'valor' => 18000.00, 'data_receita' => Carbon::now()->subDays(10)->format('Y-m-d')],
+                ['descricao' => 'Consultoria', 'valor' => 8000.00, 'data_receita' => Carbon::now()->subDays(5)->format('Y-m-d')],
+                ['descricao' => 'Vendas online', 'valor' => 12000.00, 'data_receita' => Carbon::now()->subDays(2)->format('Y-m-d')],
             ];
 
             foreach ($receitas as $receita) {
@@ -552,7 +552,8 @@ class DemoFinanceiroSeeder extends Seeder
                     'user_id' => $userId,
                     'descricao' => $receita['descricao'],
                     'valor' => $receita['valor'],
-                    'data' => $receita['data'],
+                    'data_receita' => $receita['data_receita'],
+                    'confirmado' => true,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
@@ -562,10 +563,10 @@ class DemoFinanceiroSeeder extends Seeder
         // Despesas
         if (Schema::hasTable('despesas')) {
             $despesas = [
-                ['descricao' => 'Compra de materiais', 'valor' => 8000.00, 'data' => Carbon::now()->subDays(12)],
-                ['descricao' => 'Marketing e publicidade', 'valor' => 3500.00, 'data' => Carbon::now()->subDays(8)],
-                ['descricao' => 'Manutenção de equipamentos', 'valor' => 2500.00, 'data' => Carbon::now()->subDays(4)],
-                ['descricao' => 'Despesas administrativas', 'valor' => 1800.00, 'data' => Carbon::now()->subDays(1)],
+                ['descricao' => 'Compra de materiais', 'valor' => 8000.00, 'data_despesa' => Carbon::now()->subDays(12)->format('Y-m-d')],
+                ['descricao' => 'Marketing e publicidade', 'valor' => 3500.00, 'data_despesa' => Carbon::now()->subDays(8)->format('Y-m-d')],
+                ['descricao' => 'Manutenção de equipamentos', 'valor' => 2500.00, 'data_despesa' => Carbon::now()->subDays(4)->format('Y-m-d')],
+                ['descricao' => 'Despesas administrativas', 'valor' => 1800.00, 'data_despesa' => Carbon::now()->subDays(1)->format('Y-m-d')],
             ];
 
             foreach ($despesas as $despesa) {
@@ -573,7 +574,8 @@ class DemoFinanceiroSeeder extends Seeder
                     'user_id' => $userId,
                     'descricao' => $despesa['descricao'],
                     'valor' => $despesa['valor'],
-                    'data' => $despesa['data'],
+                    'data_despesa' => $despesa['data_despesa'],
+                    'confirmado' => true,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
