@@ -266,8 +266,43 @@
             });
         });
 
-        // ViaCEP automático - busca enquanto digita
+        // ViaCEP automático - busca enquanto digita ou ao sair do campo
         let cepTimeout;
+        
+        function buscarCep($input) {
+            const cep = $input.val().replace(/\D/g, '');
+            if (cep.length !== 8) return;
+            
+            // Procura no container mais próximo (form, modal, tab, etc)
+            const $container = $input.closest('form, .modal-content, .tab-pane, .card, body').first();
+            
+            $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(dados) {
+                if (dados.erro) { 
+                    toast('CEP não encontrado.', 'alerta'); 
+                    return; 
+                }
+                
+                // Preenche os campos
+                $container.find('[name="logradouro"], [name="endereco"]').val(dados.logradouro || '');
+                $container.find('[name="bairro"]').val(dados.bairro || '');
+                $container.find('[name="cidade"], [name="localidade"]').val(dados.localidade || '');
+                $container.find('[name="estado"], [name="uf"]').val(dados.uf || '');
+                
+                // Foca no campo número
+                setTimeout(() => {
+                    const $numero = $container.find('[name="numero"]').first();
+                    if ($numero.length && $numero.is(':visible')) {
+                        $numero.focus().select();
+                    }
+                }, 100);
+                
+                toast('Endereço preenchido automaticamente!', 'sucesso');
+            }).fail(function() {
+                toast('Erro ao buscar CEP. Tente novamente.', 'erro');
+            });
+        }
+        
+        // Evento input (enquanto digita)
         $(document).on('input', '.viacep', function() {
             const $this = $(this);
             const cep = $this.val().replace(/\D/g, '');
@@ -275,19 +310,16 @@
             clearTimeout(cepTimeout);
             if (cep.length !== 8) return;
             
-            cepTimeout = setTimeout(() => {
-                const form = $this.closest('form');
-                $.getJSON('https://viacep.com.br/ws/' + cep + '/json/', function(dados) {
-                    if (dados.erro) { toast('CEP não encontrado.', 'alerta'); return; }
-                    form.find('[name="logradouro"]').val(dados.logradouro);
-                    form.find('[name="bairro"]').val(dados.bairro);
-                    form.find('[name="cidade"]').val(dados.localidade);
-                    form.find('[name="estado"]').val(dados.uf);
-                    // Foca no campo número automaticamente
-                    form.find('[name="numero"]').focus().select();
-                    toast('Endereço preenchido automaticamente!', 'sucesso');
-                });
-            }, 300);
+            cepTimeout = setTimeout(() => buscarCep($this), 400);
+        });
+        
+        // Evento blur (ao sair do campo) - backup
+        $(document).on('blur', '.viacep', function() {
+            const $this = $(this);
+            const cep = $this.val().replace(/\D/g, '');
+            if (cep.length === 8) {
+                buscarCep($this);
+            }
         });
     </script>
 
