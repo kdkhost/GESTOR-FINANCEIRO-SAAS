@@ -53,6 +53,12 @@ class AuditoriaController extends Controller
             });
         }
 
+        // Se solicitou CSV, retorna download
+        if ($request->get('format') === 'csv') {
+            $auditorias = $query->orderBy('created_at', 'desc')->get();
+            return $this->exportarCsv($auditorias);
+        }
+
         $auditorias = $query->orderBy('created_at', 'desc')
                            ->paginate(25);
 
@@ -125,5 +131,41 @@ class AuditoriaController extends Controller
         $entidades = Auditoria::distinct()->pluck('entidade');
 
         return response()->json($entidades);
+    }
+
+    private function exportarCsv($auditorias)
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="auditoria_' . date('Y-m-d_H-i-s') . '.csv"',
+        ];
+
+        $output = fopen('php://temp', 'r+');
+
+        // Cabeçalhos CSV
+        fputcsv($output, ['ID', 'Data', 'Usuário', 'Ação', 'Entidade', 'Registro ID', 'Observação', 'URL', 'IP']);
+
+        foreach ($auditorias as $auditoria) {
+            fputcsv($output, [
+                $auditoria->id,
+                $auditoria->created_at ? $auditoria->created_at->format('d/m/Y H:i:s') : '',
+                $auditoria->user_name ?? 'Sistema',
+                $auditoria->acao,
+                $auditoria->entidade,
+                $auditoria->entidade_id ?? '',
+                $auditoria->observacao ?? '',
+                $auditoria->url ?? '',
+                $auditoria->ip ?? '',
+            ]);
+        }
+
+        rewind($output);
+        $csv = stream_get_contents($output);
+        fclose($output);
+
+        // Adiciona BOM para UTF-8 (Excel)
+        $csv = "\xEF\xBB\xBF" . $csv;
+
+        return response($csv, 200, $headers);
     }
 }
