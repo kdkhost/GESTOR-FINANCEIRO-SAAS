@@ -13,10 +13,25 @@ Artisan::command('inspire', function () {
 
 // Agenda execução automática de tarefas cron a cada minuto
 Schedule::call(function () {
+    // Log de execução do scheduler
+    \Log::info('Cron scheduler executado em: ' . now()->format('d/m/Y H:i:s'));
+    
     $jobs = CronJob::where('ativo', true)->get();
+    $executados = 0;
+    
     foreach ($jobs as $job) {
         if ($job->deveExecutar()) {
-            $job->executar();
+            \Log::info("Executando tarefa: {$job->nome} (ID: {$job->id})");
+            $resultado = $job->executar();
+            $executados++;
+            
+            if ($resultado['sucesso']) {
+                \Log::info("Tarefa {$job->nome} executada com sucesso");
+            } else {
+                \Log::error("Tarefa {$job->nome} falhou: " . ($resultado['erro'] ?? 'Erro desconhecido'));
+            }
         }
     }
+    
+    \Log::info("Cron scheduler finalizado. Tarefas executadas: {$executados}");
 })->everyMinute()->name('auto-cron-jobs');

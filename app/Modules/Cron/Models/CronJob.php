@@ -49,7 +49,8 @@ class CronJob extends Model
 
         try {
             $cron = \Cron\CronExpression::factory($this->expressao_cron);
-            return $cron->getNextRunDate();
+            // Usar o timezone do sistema (America/Sao_Paulo)
+            return $cron->getNextRunDate(null, 0, false, config('app.timezone'));
         } catch (\Exception $e) {
             return null;
         }
