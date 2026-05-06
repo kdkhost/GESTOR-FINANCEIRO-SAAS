@@ -19,13 +19,6 @@ class CronJobsSeeder extends Seeder
                 'ativo' => true,
             ],
             [
-                'nome' => 'Otimizar Cache',
-                'descricao' => 'Otimiza cache do sistema',
-                'comando' => 'cache:optimize',
-                'expressao_cron' => '0 3 * * *', // 3h da manhã diariamente
-                'ativo' => true,
-            ],
-            [
                 'nome' => 'Limpar View Cache',
                 'descricao' => 'Limpa cache de views compiladas',
                 'comando' => 'view:clear',
