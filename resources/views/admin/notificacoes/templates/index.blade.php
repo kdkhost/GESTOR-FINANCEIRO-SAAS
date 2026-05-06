@@ -251,7 +251,7 @@ $(document).on('click', '.btn-editar', function () {
         f.find('[name="chave"]').val(t.chave);
         f.find('[name="assunto"]').val(t.assunto || '');
         $('.summernote-editor').summernote('code', t.conteudo || '');
-        f.find('[name="variaveis"]').val((t.variaveis || []).join('\\n'));
+        f.find('[name="variaveis"]').val((t.variaveis || []).join('\n'));
         $('#template-ativo').prop('checked', !!t.ativo);
         $('#modal-template').modal('show');
         // Dispara preview após abrir modal
