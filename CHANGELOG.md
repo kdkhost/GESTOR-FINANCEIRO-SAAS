@@ -6,6 +6,40 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.5] - 2026-05-06
+
+### Adicionado
+- Editor Summernote WYSIWYG no campo de conteúdo dos templates de notificação.
+- Preview em tempo real durante digitação de templates de email (com debounce de 500ms).
+- Área de preview no modal de templates mostrando assunto e conteúdo atualizados automaticamente.
+- Botão de preview em modal para visualização detalhada do template.
+- Seeder `EmailTemplatesSeeder` com 4 templates padrão (cobrança mensal, fatura vencendo, fatura vencida, boas vindas).
+
+### Corrigido
+- Timezone do sistema alterado de UTC para `America/Sao_Paulo` em `config/app.php`.
+- Formatação de timestamps em `FaturaController` (vencimento_em, pago_em).
+- Formatação de timestamps em `AssinaturaController` (inicio_em, proxima_cobranca_em).
+- Formatação de timestamps em `TemplateNotificacaoController` (updated_at).
+- Funcionalidade do cron revertida para comportamento original (execução em paralelo em massa).
+- Tratamento de erro aprimorado na execução individual de tarefas cron com feedback visual.
+- Migration `create_notificacao_templates_table` executada para suportar templates de email.
+
+### Alterado
+- Layout da dashboard com cards mais compactos, espaçamento reduzido e fontes proporcionais.
+- Cards KPI com padding reduzido, ícones menores e labels mais compactos.
+- Gráficos e gauges com altura reduzida para melhor aproveitamento de espaço.
+- Botões de filtro com tamanho menor e padding ajustado.
+- Seções da dashboard com espaçamento mb-3 ao invés de mb-4.
+
+### Validado
+- `php artisan migrate` executado com sucesso (tabelas de notificações criadas).
+- `php artisan db:seed --class=EmailTemplatesSeeder` executado com sucesso (4 templates criados).
+- `php artisan db:seed --class=CronJobsSeeder` executado com sucesso (6 tarefas cron criadas).
+- Comandos Artisan `saas:verificar-faturas` e `saas:gerar-faturas` registrados e funcionando.
+- Comandos `backup:database` e `backup:arquivos` registrados e funcionando.
+
+---
+
 ## [1.2.4] - 2026-05-04
 
 ### Corrigido
