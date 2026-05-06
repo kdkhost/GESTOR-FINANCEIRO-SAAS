@@ -18,6 +18,7 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Opções adicionais no Summernote: strikethrough, superscript, subscript, alinhamento de parágrafo, cores de fundo.
 
 ### Corrigido
+- **Padronização dos botões de período na dashboard**: Todos os botões (Hoje, Semana, Mês, Trimestre, Semestre, Ano) agora têm o mesmo tamanho (5.5rem de largura, 2rem de altura) e espaçamento igual (gap de 0.5rem).
 - **Exportação CSV na Auditoria**: Implementado método `exportarCsv()` no `AuditoriaController` para permitir download de registros em formato CSV.
 - **Formatação de datas em todo o sistema**: Todos os controllers agora retornam datas no formato `d/m/Y` nos métodos `show()` e `index()`.
 - Controllers corrigidos: Recorrência, ContaPagar, ContaReceber, Receita, Despesa, Meta, Fatura, Assinatura.
