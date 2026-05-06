@@ -17,7 +17,21 @@
 .kpi-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .25rem; }
 .saude-gauge { min-height: 160px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
 .saude-indice { font-size: 2.2rem; font-weight: 800; line-height: 1; }
-.filtro-periodo .btn { border-radius: 999px; padding: .25rem .75rem; font-size: .8rem; margin: 0 .1rem; }
+.filtro-periodo { gap: .5rem; }
+.filtro-periodo .btn {
+    border-radius: 999px;
+    padding: .375rem 0;
+    font-size: .8rem;
+    margin: 0;
+    min-width: 5.5rem;
+    width: 5.5rem;
+    height: 2rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
 .recomendacao-item { border-left: 3px solid #3b82f6; padding: .5rem .75rem; margin-bottom: .375rem; background: #eff6ff; border-radius: 0 .75rem .75rem 0; font-size: .8rem; }
 .chart-placeholder { min-height: 200px; display: none; align-items: center; justify-content: center; color: #6b7280; font-weight: 600; }
 .card-standard { border-radius: .75rem; }
@@ -38,7 +52,7 @@
             <div class="card-body py-2">
                 <div class="d-flex align-items-center flex-wrap gap-2">
                     <span class="fw-semibold me-2 text-muted small">PERÍODO:</span>
-                    <div class="filtro-periodo btn-group" role="group" id="filtros-periodo">
+                    <div class="filtro-periodo d-flex" role="group" id="filtros-periodo">
                         <button type="button" class="btn btn-sm btn-outline-primary" data-periodo="hoje">Hoje</button>
                         <button type="button" class="btn btn-sm btn-outline-primary" data-periodo="semana">Semana</button>
                         <button type="button" class="btn btn-sm btn-outline-primary active" data-periodo="mes">Mês</button>
