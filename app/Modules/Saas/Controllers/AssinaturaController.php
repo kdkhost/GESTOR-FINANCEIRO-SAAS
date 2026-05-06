@@ -42,8 +42,10 @@ class AssinaturaController extends Controller
                     'empresa' => $empresas[$a->empresa_id]->nome_fantasia ?? ('#' . $a->empresa_id),
                     'plano' => $planos[$a->plano_id]->nome ?? ('#' . $a->plano_id),
                     'status' => $a->status,
-                    'inicio_em' => optional($a->inicio_em)->toDateTimeString(),
-                    'proxima_cobranca_em' => optional($a->proxima_cobranca_em)->toDateTimeString(),
+                    'inicio_em' => $a->inicio_em ? $a->inicio_em->format('d/m/Y H:i') : null,
+                    'inicio_em_formatado' => $a->inicio_em ? $a->inicio_em->format('d/m/Y H:i') : null,
+                    'proxima_cobranca_em' => $a->proxima_cobranca_em ? $a->proxima_cobranca_em->format('d/m/Y H:i') : null,
+                    'proxima_cobranca_em_formatado' => $a->proxima_cobranca_em ? $a->proxima_cobranca_em->format('d/m/Y H:i') : null,
                     'gateway' => $a->gateway,
                     'gateway_ref' => $a->gateway_ref,
                 ];

@@ -255,7 +255,7 @@ function carregarFaturas(pagina = 1) {
                 <td>${f.empresa}</td>
                 <td>${f.competencia}</td>
                 <td>R$ ${toBr(f.valor)}</td>
-                <td>${fmtData(f.vencimento_em)}</td>
+                <td>${f.vencimento_em_formatado || '-'}</td>
                 <td><span class="badge bg-${statusMap[f.status]||'secondary'}">${f.status}</span></td>
                 <td>${fmtGateway(f)}</td>
                 <td class="text-end"><div class="btn-group btn-group-sm">
