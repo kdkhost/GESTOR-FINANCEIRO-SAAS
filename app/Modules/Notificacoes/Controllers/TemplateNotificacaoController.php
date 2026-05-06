@@ -4,12 +4,17 @@ namespace App\Modules\Notificacoes\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Notificacoes\Models\TemplateNotificacao;
+use App\Services\EmailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class TemplateNotificacaoController extends Controller
 {
+    public function __construct(private EmailService $emailService)
+    {
+    }
+
     public function index()
     {
         return view('admin.notificacoes.templates.index');
@@ -108,6 +113,32 @@ class TemplateNotificacaoController extends Controller
         $t = TemplateNotificacao::findOrFail($id);
         $t->delete();
         return response()->json(['sucesso' => true, 'mensagem' => 'Template removido com sucesso!']);
+    }
+
+    public function preview(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'chave' => ['required', 'string'],
+            'conteudo' => ['required', 'string'],
+            'assunto' => ['nullable', 'string'],
+        ]);
+
+        $dados = $this->emailService->getDadosPreview($validated['chave']);
+
+        $preview = [
+            'assunto' => $this->substituirVariaveis($validated['assunto'] ?? '', $dados),
+            'conteudo' => $this->substituirVariaveis($validated['conteudo'], $dados),
+        ];
+
+        return response()->json(['sucesso' => true, 'preview' => $preview]);
+    }
+
+    private function substituirVariaveis(string $texto, array $dados): string
+    {
+        foreach ($dados as $chave => $valor) {
+            $texto = str_replace("{{$chave}}", $valor, $texto);
+        }
+        return $texto;
     }
 
     private function parseVariaveis(string $raw): array

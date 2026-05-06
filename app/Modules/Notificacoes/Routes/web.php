@@ -10,5 +10,6 @@ Route::prefix('admin/notificacoes')->name('admin.notificacoes.')->middleware(['a
     Route::get('/templates/{id}',     [TemplateNotificacaoController::class, 'show'])->name('templates.show');
     Route::put('/templates/{id}',     [TemplateNotificacaoController::class, 'update'])->name('templates.update');
     Route::delete('/templates/{id}',  [TemplateNotificacaoController::class, 'destroy'])->name('templates.destroy');
+    Route::post('/templates/preview', [TemplateNotificacaoController::class, 'preview'])->name('templates.preview');
 });
 

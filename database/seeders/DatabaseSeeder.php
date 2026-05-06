@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             FormasPagamentoSeeder::class,
             CategoriasSeeder::class,
             CronJobsSeeder::class,
+            EmailTemplatesSeeder::class,
             DemoDataSeeder::class, // Dados de demonstração
         ]);
     }

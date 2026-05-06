@@ -86,8 +86,11 @@
                             <input type="text" class="form-control" name="assunto" placeholder="Assunto do e-mail">
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-medium">Conteudo</label>
-                            <textarea class="form-control" rows="7" name="conteudo" required placeholder="Use variaveis como &#123;&#123;nome&#125;&#125;, &#123;&#123;email&#125;&#125;, &#123;&#123;valor&#125;&#125;"></textarea>
+                            <label class="form-label fw-medium">Conteúdo</label>
+                            <textarea class="form-control summernote-editor" name="conteudo" required placeholder="Use variáveis como {{nome}}, {{email}}, {{valor}}"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="button" class="btn btn-info btn-sm" id="btn-preview"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</button>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-medium">Variaveis (uma por linha)</label>
@@ -119,6 +122,7 @@ const URLS_T = {
     show:   '{{ url("/admin/notificacoes/templates") }}/',
     update: '{{ url("/admin/notificacoes/templates") }}/',
     destroy:'{{ url("/admin/notificacoes/templates") }}/',
+    preview: '{{ route("admin.notificacoes.templates.preview") }}',
 };
 let paginaAtualT = 1;
 const perPageT = 10;
@@ -235,6 +239,51 @@ $(document).on('click', '.btn-excluir', function () {
 $('#btn-filtrar').on('click', () => carregarTemplates(1));
 $('#btn-limpar').on('click', () => { $('#filtro-search').val(''); carregarTemplates(1); });
 $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTemplates(1); });
+
+// Preview em tempo real
+$('#btn-preview').on('click', function() {
+    const chave = $('#form-template [name="chave"]').val();
+    const conteudo = $('#form-template [name="conteudo"]').val();
+    const assunto = $('#form-template [name="assunto"]').val();
+
+    if (!chave || !conteudo) {
+        toast('Preencha a chave e o conteúdo primeiro.', 'alerta');
+        return;
+    }
+
+    $.post(URLS_T.preview, { chave, conteudo, assunto }, function(r) {
+        if (!r.sucesso) return;
+
+        let html = '<div class="modal fade" id="modal-preview" tabindex="-1">';
+        html += '<div class="modal-dialog modal-lg">';
+        html += '<div class="modal-content">';
+        html += '<div class="modal-header bg-info text-white">';
+        html += '<h5 class="modal-title"><i class="bi bi-eye me-2"></i>Preview do Template</h5>';
+        html += '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>';
+        html += '</div>';
+        html += '<div class="modal-body">';
+        html += '<div class="mb-3">';
+        html += '<label class="form-label fw-medium">Assunto:</label>';
+        html += '<div class="p-2 bg-light rounded">' + (r.preview.assunto || '-') + '</div>';
+        html += '</div>';
+        html += '<div>';
+        html += '<label class="form-label fw-medium">Conteúdo:</label>';
+        html += '<div class="p-3 bg-light rounded border">' + r.preview.conteudo + '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="modal-footer">';
+        html += '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        $('#modal-preview').remove();
+        $('body').append(html);
+        $('#modal-preview').modal('show');
+        $('#modal-preview').on('hidden.bs.modal', function() { $(this).remove(); });
+    }).fail(() => toast('Erro ao gerar preview.', 'erro'));
+});
 
 carregarTemplates();
 </script>
