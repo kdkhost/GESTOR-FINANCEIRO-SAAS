@@ -18,6 +18,7 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Opções adicionais no Summernote: strikethrough, superscript, subscript, alinhamento de parágrafo, cores de fundo.
 
 ### Corrigido
+- **Exportação CSV na Auditoria**: Implementado método `exportarCsv()` no `AuditoriaController` para permitir download de registros em formato CSV.
 - **Formatação de datas em todo o sistema**: Todos os controllers agora retornam datas no formato `d/m/Y` nos métodos `show()` e `index()`.
 - Controllers corrigidos: Recorrência, ContaPagar, ContaReceber, Receita, Despesa, Meta, Fatura, Assinatura.
 - Campos formatados: `data_inicio`, `data_fim`, `data_vencimento`, `data_pagamento`, `data_recebimento`, `vencimento_em`, `pago_em`, `created_at`, `updated_at`.
