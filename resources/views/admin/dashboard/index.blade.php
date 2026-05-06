@@ -9,27 +9,30 @@
 
 @push('styles')
 <style>
-.kpi-card { transition: transform .25s ease, box-shadow .25s ease; border-left-width: .25rem; border-left-style: solid; cursor: default; }
-.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
-.kpi-card .card-body { padding: 1rem; }
-.kpi-icon { width: 2.5rem; height: 2.5rem; border-radius: .75rem; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-.kpi-valor { font-size: 1.25rem; font-weight: 700; line-height: 1; }
-.kpi-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; opacity: .8; }
-.saude-gauge { min-height: 230px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-.saude-indice { font-size: 3.5rem; font-weight: 800; line-height: 1; }
-.filtro-periodo .btn { border-radius: 999px; }
-.recomendacao-item { border-left: 3px solid #3b82f6; padding: .75rem 1rem; margin-bottom: .75rem; background: #eff6ff; border-radius: 0 1rem 1rem 0; }
-.chart-placeholder { min-height: 250px; display: none; align-items: center; justify-content: center; color: #6b7280; font-weight: 600; }
+.kpi-card { transition: transform .2s ease, box-shadow .2s ease; border-left-width: 4px; border-left-style: solid; cursor: default; }
+.kpi-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(15,23,42,.1); }
+.kpi-card .card-body { padding: .875rem 1rem; }
+.kpi-icon { width: 2rem; height: 2rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.kpi-valor { font-size: 1.125rem; font-weight: 700; line-height: 1.2; }
+.kpi-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .25rem; }
+.saude-gauge { min-height: 180px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.saude-indice { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+.filtro-periodo .btn { border-radius: 999px; padding: .25rem .75rem; font-size: .8rem; }
+.recomendacao-item { border-left: 3px solid #3b82f6; padding: .625rem .875rem; margin-bottom: .5rem; background: #eff6ff; border-radius: 0 .75rem .75rem 0; font-size: .875rem; }
+.chart-placeholder { min-height: 200px; display: none; align-items: center; justify-content: center; color: #6b7280; font-weight: 600; }
+.card-standard { border-radius: .75rem; }
+.card-header { padding: .75rem 1rem; }
+.card-title { font-size: .95rem; font-weight: 600; }
 </style>
 @endpush
 
 @section('conteudo')
 
 {{-- Filtros de Período --}}
-<div class="row mb-4">
+<div class="row mb-3">
     <div class="col-12">
         <div class="card card-outline card-secondary card-standard">
-            <div class="card-body py-3">
+            <div class="card-body py-2">
                 <div class="d-flex align-items-center flex-wrap gap-2">
                     <span class="fw-semibold me-2 text-muted small">PERÍODO:</span>
                     <div class="filtro-periodo btn-group" role="group" id="filtros-periodo">
@@ -58,7 +61,7 @@
 </div>
 
 {{-- KPIs Principais --}}
-<div class="row gx-4 gy-4 mb-4" id="kpis-container">
+<div class="row g-3 mb-3" id="kpis-container">
 
     {{-- Saldo Atual --}}
     <div class="col-xl-3 col-md-6">
