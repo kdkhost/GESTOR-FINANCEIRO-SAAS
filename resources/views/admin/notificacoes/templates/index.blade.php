@@ -338,7 +338,6 @@ function atualizarPreview() {
 }
 
 $('#form-template [name="chave"], #form-template [name="assunto"]').on('input change', atualizarPreview);
-$('.summernote-editor').on('summernote.change', atualizarPreview);
 
 carregarTemplates();
 </script>
