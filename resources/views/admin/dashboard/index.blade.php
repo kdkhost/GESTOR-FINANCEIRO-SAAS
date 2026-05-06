@@ -11,10 +11,10 @@
 <style>
 .kpi-card { transition: transform .2s ease, box-shadow .2s ease; border-left-width: 4px; border-left-style: solid; cursor: default; }
 .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(15,23,42,.1); }
-.kpi-card .card-body { padding: .75rem .875rem; }
-.kpi-icon { width: 1.75rem; height: 1.75rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; font-size: .875rem; }
-.kpi-valor { font-size: 1.05rem; font-weight: 700; line-height: 1.2; }
-.kpi-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .25rem; }
+.kpi-card .card-body { padding: .6rem .75rem; }
+.kpi-icon { width: 1.5rem; height: 1.5rem; border-radius: .375rem; display: flex; align-items: center; justify-content: center; font-size: .75rem; }
+.kpi-valor { font-size: .95rem; font-weight: 700; line-height: 1.1; }
+.kpi-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .2rem; }
 .saude-gauge { min-height: 160px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
 .saude-indice { font-size: 2.2rem; font-weight: 800; line-height: 1; }
 .filtro-periodo { gap: .5rem; }
