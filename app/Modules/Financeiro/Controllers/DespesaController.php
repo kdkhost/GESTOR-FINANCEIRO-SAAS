@@ -48,7 +48,11 @@ class DespesaController extends Controller
     public function show(int $id): JsonResponse
     {
         $despesa = Despesa::with(['categoria','contaBancaria','fornecedor'])->doUsuario(auth()->id())->findOrFail($id);
-        return response()->json(['sucesso'=>true,'dado'=>$despesa]);
+        $dado = $despesa->toArray();
+        $dado['data_despesa'] = $despesa->data_despesa ? $despesa->data_despesa->format('d/m/Y') : null;
+        $dado['created_at'] = $despesa->created_at ? $despesa->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $despesa->updated_at ? $despesa->updated_at->format('d/m/Y H:i') : null;
+        return response()->json(['sucesso'=>true,'dado'=>$dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

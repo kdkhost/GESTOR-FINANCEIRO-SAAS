@@ -82,7 +82,12 @@ class AssinaturaController extends Controller
     public function show(int $id): JsonResponse
     {
         $a = Assinatura::findOrFail($id);
-        return response()->json(['sucesso' => true, 'dado' => $a]);
+        $dado = $a->toArray();
+        $dado['inicio_em'] = $a->inicio_em ? $a->inicio_em->format('d/m/Y H:i') : null;
+        $dado['proxima_cobranca_em'] = $a->proxima_cobranca_em ? $a->proxima_cobranca_em->format('d/m/Y H:i') : null;
+        $dado['created_at'] = $a->created_at ? $a->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $a->updated_at ? $a->updated_at->format('d/m/Y H:i') : null;
+        return response()->json(['sucesso' => true, 'dado' => $dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

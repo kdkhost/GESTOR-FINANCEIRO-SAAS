@@ -72,7 +72,14 @@ class ContaReceberController extends Controller
     {
         $conta = ContaReceber::with(['categoria', 'subcategoria', 'cliente', 'contaBancaria', 'anexos'])
             ->doUsuario(auth()->id())->findOrFail($id);
-        return response()->json(['sucesso' => true, 'dado' => $conta]);
+
+        $dado = $conta->toArray();
+        $dado['data_vencimento'] = $conta->data_vencimento ? $conta->data_vencimento->format('d/m/Y') : null;
+        $dado['data_recebimento'] = $conta->data_recebimento ? $conta->data_recebimento->format('d/m/Y') : null;
+        $dado['created_at'] = $conta->created_at ? $conta->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $conta->updated_at ? $conta->updated_at->format('d/m/Y H:i') : null;
+
+        return response()->json(['sucesso' => true, 'dado' => $dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

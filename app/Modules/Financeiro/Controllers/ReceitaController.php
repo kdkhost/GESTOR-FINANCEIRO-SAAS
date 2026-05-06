@@ -48,7 +48,11 @@ class ReceitaController extends Controller
     public function show(int $id): JsonResponse
     {
         $receita = Receita::with(['categoria','contaBancaria','cliente'])->doUsuario(auth()->id())->findOrFail($id);
-        return response()->json(['sucesso'=>true,'dado'=>$receita]);
+        $dado = $receita->toArray();
+        $dado['data_receita'] = $receita->data_receita ? $receita->data_receita->format('d/m/Y') : null;
+        $dado['created_at'] = $receita->created_at ? $receita->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $receita->updated_at ? $receita->updated_at->format('d/m/Y H:i') : null;
+        return response()->json(['sucesso'=>true,'dado'=>$dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

@@ -36,7 +36,12 @@ class RecorrenciaController extends Controller
     public function show(int $id): JsonResponse
     {
         $rec = Recorrencia::with('categoria')->doUsuario(auth()->id())->findOrFail($id);
-        return response()->json(['sucesso'=>true,'dado'=>$rec]);
+        $dado = $rec->toArray();
+        $dado['data_inicio'] = $rec->data_inicio ? $rec->data_inicio->format('d/m/Y') : null;
+        $dado['data_fim'] = $rec->data_fim ? $rec->data_fim->format('d/m/Y') : null;
+        $dado['created_at'] = $rec->created_at ? $rec->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $rec->updated_at ? $rec->updated_at->format('d/m/Y H:i') : null;
+        return response()->json(['sucesso'=>true,'dado'=>$dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

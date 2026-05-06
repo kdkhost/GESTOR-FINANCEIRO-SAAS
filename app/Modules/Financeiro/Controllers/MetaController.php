@@ -13,7 +13,13 @@ class MetaController extends Controller
             $dados = Meta::doUsuario(auth()->id())
                 ->orderBy('data_prazo')
                 ->get()
-                ->map(fn($m) => array_merge($m->toArray(), ['percentual' => round($m->percentual, 1)]));
+                ->map(fn($m) => array_merge($m->toArray(), [
+                    'percentual' => round($m->percentual, 1),
+                    'data_inicio' => $m->data_inicio ? $m->data_inicio->format('d/m/Y') : null,
+                    'data_prazo' => $m->data_prazo ? $m->data_prazo->format('d/m/Y') : null,
+                    'created_at' => $m->created_at ? $m->created_at->format('d/m/Y H:i') : null,
+                    'updated_at' => $m->updated_at ? $m->updated_at->format('d/m/Y H:i') : null,
+                ]));
             return response()->json(['sucesso' => true, 'dados' => $dados]);
         }
         return view('admin.financeiro.metas.index');
@@ -46,7 +52,14 @@ class MetaController extends Controller
     public function show(int $id): JsonResponse
     {
         $meta = Meta::doUsuario(auth()->id())->findOrFail($id);
-        return response()->json(['sucesso'=>true,'dado'=>array_merge($meta->toArray(),['percentual'=>round($meta->percentual,1)])]);
+        $dado = array_merge($meta->toArray(),[
+            'percentual' => round($meta->percentual,1),
+            'data_inicio' => $meta->data_inicio ? $meta->data_inicio->format('d/m/Y') : null,
+            'data_prazo' => $meta->data_prazo ? $meta->data_prazo->format('d/m/Y') : null,
+            'created_at' => $meta->created_at ? $meta->created_at->format('d/m/Y H:i') : null,
+            'updated_at' => $meta->updated_at ? $meta->updated_at->format('d/m/Y H:i') : null,
+        ]);
+        return response()->json(['sucesso'=>true,'dado'=>$dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse

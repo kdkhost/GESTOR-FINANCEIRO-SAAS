@@ -93,7 +93,13 @@ class FaturaController extends Controller
     {
         $f = Fatura::with('empresa')->findOrFail($id);
 
-        return response()->json(['sucesso' => true, 'dado' => $f]);
+        $dado = $f->toArray();
+        $dado['vencimento_em'] = $f->vencimento_em ? $f->vencimento_em->format('d/m/Y H:i') : null;
+        $dado['pago_em'] = $f->pago_em ? $f->pago_em->format('d/m/Y H:i') : null;
+        $dado['created_at'] = $f->created_at ? $f->created_at->format('d/m/Y H:i') : null;
+        $dado['updated_at'] = $f->updated_at ? $f->updated_at->format('d/m/Y H:i') : null;
+
+        return response()->json(['sucesso' => true, 'dado' => $dado]);
     }
 
     public function update(Request $request, int $id): JsonResponse
