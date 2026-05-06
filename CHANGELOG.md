@@ -18,6 +18,7 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Opções adicionais no Summernote: strikethrough, superscript, subscript, alinhamento de parágrafo, cores de fundo.
 
 ### Corrigido
+- **Tamanho dos KPIs na dashboard**: Reduzidos para mais compactos - padding diminuído de `.75rem .875rem` para `.6rem .75rem`, ícones de `1.75rem` para `1.5rem`, valores de `1.05rem` para `.95rem`, labels de `.65rem` para `.6rem`.
 - **Cron automático não estava executando**: Corrigido timezone no cálculo da próxima execução (`CronJob::calcularProximaExecucao()`). Agora usa `config('app.timezone')` (America/Sao_Paulo) em vez de UTC.
 - Adicionado comando `cron:verificar` para diagnosticar status das tarefas cron.
 - Adicionado logs de execução no scheduler (`storage/logs/laravel.log`).
