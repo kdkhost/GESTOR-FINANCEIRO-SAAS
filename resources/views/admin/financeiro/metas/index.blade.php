@@ -92,6 +92,7 @@
 @endsection
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS_META = {
     index:  '{{ route("admin.metas.index") }}',
     store:  '{{ route("admin.metas.store") }}',
@@ -214,6 +215,7 @@ $(document).on('click', '.btn-excluir-meta', function(e) {
     });
 });
 
-carregarMetas();
+    carregarMetas();
+}); // fecha $(document).ready
 </script>
 @endpush

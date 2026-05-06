@@ -87,6 +87,7 @@
 @endsection
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS_R = {
     index:  '{{ route("admin.recorrencias.index") }}',
     store:  '{{ route("admin.recorrencias.store") }}',
@@ -165,7 +166,8 @@ $(document).on('click','.btn-excluir-rec',function(){
     });
 });
 
-carregarSelects();
-carregarTabela();
+    carregarSelects();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush

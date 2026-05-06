@@ -73,6 +73,7 @@
 @endsection
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS_O = {
     index:  '{{ route("admin.orcamentos.index") }}',
     store:  '{{ route("admin.orcamentos.store") }}',
@@ -146,6 +147,7 @@ $(document).on('click','.btn-excluir-orc',function(){
     });
 });
 
-carregarTabela();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush

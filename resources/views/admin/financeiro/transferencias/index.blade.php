@@ -86,6 +86,7 @@
 @endsection
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS_T = {
     listar: '{{ route("admin.transferencias.listar") }}',
     store:  '{{ route("admin.transferencias.store") }}',
@@ -159,7 +160,8 @@ $(document).on('click','.btn-excluir',function(){
 $('#btn-filtrar').on('click',()=>carregarTabela(1));
 $('#btn-limpar').on('click',()=>{$('#filtro-inicio,#filtro-fim').val('');carregarTabela(1);});
 
-carregarContas();
-carregarTabela();
+    carregarContas();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush

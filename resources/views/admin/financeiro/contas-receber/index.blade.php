@@ -198,6 +198,7 @@
 
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS = {
     listar: '{{ route("admin.contas-receber.listar") }}',
     store:  '{{ route("admin.contas-receber.store") }}',
@@ -402,7 +403,8 @@ $('#btn-filtrar').on('click', () => carregarTabela(1));
 $('#btn-limpar-filtros').on('click', () => { $('#filtro-status, #filtro-inicio, #filtro-fim, #filtro-search').val(''); carregarTabela(1); });
 $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTabela(1); });
 
-carregarSelects();
-carregarTabela();
+    carregarSelects();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush

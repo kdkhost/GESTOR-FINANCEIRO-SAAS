@@ -198,6 +198,7 @@
 
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS = {
     listar:  '{{ route("admin.contas-pagar.listar") }}',
     store:   '{{ route("admin.contas-pagar.store") }}',
@@ -432,6 +433,7 @@ $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTabela(1);
 
 // Init
 carregarSelects();
-carregarTabela();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush

@@ -125,6 +125,7 @@
 
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS = {
     listar: '{{ route("admin.receitas.listar") }}',
     store:  '{{ route("admin.receitas.store") }}',
@@ -243,7 +244,8 @@ $('#btn-filtrar').on('click', () => carregarTabela(1));
 $('#btn-limpar').on('click', () => { $('#filtro-inicio,#filtro-fim,#filtro-categoria,#filtro-search').val(''); carregarTabela(1); });
 $('#filtro-search').on('keypress', e => { if (e.which===13) carregarTabela(1); });
 
-carregarSelects();
-carregarTabela();
+    carregarSelects();
+    carregarTabela();
+}); // fecha $(document).ready
 </script>
 @endpush
