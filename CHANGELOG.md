@@ -6,6 +6,32 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ---
 
+## [1.2.6] - 2026-05-06
+
+### Adicionado
+- Página de gerenciamento de backups (`/admin/backup`) com listagem, download e exclusão.
+- Controller `BackupController` com métodos para listar, executar, baixar e deletar backups.
+- Cards de ações rápidas na dashboard com links para Nova Despesa, Nova Receita, Faturas e Automações.
+- Card de alertas na dashboard com informações de contas a vencer e saúde financeira.
+- Seção "Última atualização" e "Auto-refresh" na dashboard.
+- Mais fontes no editor Summernote (14 fontes incluindo Roboto, Montserrat, Open Sans).
+- Opções adicionais no Summernote: strikethrough, superscript, subscript, alinhamento de parágrafo, cores de fundo.
+
+### Corrigido
+- Espaçamento entre botões de período na dashboard (agora com gap de 0.375rem).
+- Rotas dos botões de ações rápidas corrigidas para `admin.contas-pagar.index` e `admin.contas-receber.index`.
+- Quebra de linha das variáveis customizadas no modal de templates (corrigido `join('\n')`).
+- Tamanho dos KPIs da segunda linha reduzidos (classe `mini-kpi` com fontes menores).
+- Padding e margens dos cards da dashboard ajustados para layout mais compacto.
+
+### Alterado
+- Dashboard com 6 mini-KPIs por linha (col-4 em mobile, col-md-2 em desktop).
+- Layout dos cards de ações rápidas com ícones e textos centralizados.
+- Menu do sidebar atualizado com link para Backups no grupo Sistema.
+- Botões de período agora usam `d-flex` com `gap` ao invés de `btn-group`.
+
+---
+
 ## [1.2.5] - 2026-05-06
 
 ### Adicionado
