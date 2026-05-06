@@ -19,52 +19,24 @@ class CronJobsSeeder extends Seeder
                 'ativo' => true,
             ],
             [
-                'nome' => 'Backup Database',
-                'descricao' => 'Backup da base de dados',
-                'comando' => 'backup:run',
+                'nome' => 'Otimizar Cache',
+                'descricao' => 'Otimiza cache do sistema',
+                'comando' => 'cache:optimize',
                 'expressao_cron' => '0 3 * * *', // 3h da manhã diariamente
                 'ativo' => true,
             ],
             [
-                'nome' => 'Verificar Faturas',
-                'descricao' => 'Verifica faturas vencidas',
-                'comando' => 'saas:verificar-faturas',
-                'expressao_cron' => '0 * * * *', // A cada hora
+                'nome' => 'Limpar View Cache',
+                'descricao' => 'Limpa cache de views compiladas',
+                'comando' => 'view:clear',
+                'expressao_cron' => '0 4 * * *', // 4h da manhã diariamente
                 'ativo' => true,
             ],
             [
-                'nome' => 'Limpar Auditoria Antiga',
-                'descricao' => 'Remove logs antigos de auditoria',
-                'comando' => 'auditoria:limpar --dias=30',
-                'expressao_cron' => '0 4 * * 0', // Domingo 4h da manhã (semanal)
-                'ativo' => true,
-            ],
-            [
-                'nome' => 'Processar Recorrências',
-                'descricao' => 'Gera contas a pagar/receber recorrentes',
-                'comando' => 'financeiro:processar-recorrencias',
-                'expressao_cron' => '0 0 * * *', // Meia-noite diariamente
-                'ativo' => true,
-            ],
-            [
-                'nome' => 'Verificar Vencimentos',
-                'descricao' => 'Envia alertas de contas vencendo',
-                'comando' => 'financeiro:alertar-vencimentos',
-                'expressao_cron' => '0 9 * * *', // 9h da manhã diariamente
-                'ativo' => true,
-            ],
-            [
-                'nome' => 'Limpar Logs Antigos',
-                'descricao' => 'Remove logs de execução antigos',
-                'comando' => 'cron:limpar-logs --dias=7',
-                'expressao_cron' => '0 5 * * 0', // Domingo 5h da manhã
-                'ativo' => true,
-            ],
-            [
-                'nome' => 'Sincronizar Metas',
-                'descricao' => 'Atualiza status das metas financeiras',
-                'comando' => 'financeiro:sincronizar-metas',
-                'expressao_cron' => '0 1 * * *', // 1h da manhã diariamente
+                'nome' => 'Limpar Config Cache',
+                'descricao' => 'Limpa cache de configurações',
+                'comando' => 'config:clear',
+                'expressao_cron' => '0 5 * * *', // 5h da manhã diariamente
                 'ativo' => true,
             ],
         ];
