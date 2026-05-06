@@ -162,6 +162,7 @@
 
 @push('scripts')
 <script>
+$(document).ready(function() {
 const URLS_T = {
     listar: '{{ route("admin.notificacoes.templates.listar") }}',
     store:  '{{ route("admin.notificacoes.templates.store") }}',
@@ -345,5 +346,6 @@ function atualizarPreview() {
 $('#form-template [name="chave"], #form-template [name="assunto"]').on('input change', atualizarPreview);
 
 carregarTemplates();
+}); // fecha $(document).ready
 </script>
 @endpush
