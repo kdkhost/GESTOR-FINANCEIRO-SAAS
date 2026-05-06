@@ -495,14 +495,21 @@
         const $editor = $(this);
         $editor.summernote({
             lang: 'pt-BR',
-            height: 200,
+            height: 250,
+            fontNames: [
+                'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New',
+                'Helvetica', 'Impact', 'Lucida Grande', 'Tahoma',
+                'Times New Roman', 'Verdana', 'Georgia', 'Palatino Linotype',
+                'Segoe UI', 'Roboto', 'Montserrat', 'Open Sans'
+            ],
+            fontNamesIgnoreCheck: ['Montserrat', 'Open Sans', 'Segoe UI', 'Roboto'],
             toolbar: [
                 ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
                 ['fontname', ['fontname']],
                 ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
+                ['color', ['color', 'forecolor', 'backcolor']],
+                ['para', ['ul', 'ol', 'paragraph', 'height']],
                 ['insert', ['link', 'picture', 'video', 'table', 'hr']],
                 ['view', ['fullscreen', 'codeview', 'help']],
                 ['custom', ['iconpicker']]

@@ -297,22 +297,6 @@ $('#btn-filtrar').on('click', () => carregarTemplates(1));
 $('#btn-limpar').on('click', () => { $('#filtro-search').val(''); carregarTemplates(1); });
 $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTemplates(1); });
 
-// Inicializar Summernote
-$('.summernote-editor').summernote({
-    height: 200,
-    toolbar: [
-        ['style', ['style']],
-        ['font', ['bold', 'italic', 'underline', 'clear']],
-        ['fontname', ['fontname']],
-        ['fontsize', ['fontsize']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['insert', ['link', 'picture', 'video']],
-        ['view', ['fullscreen', 'codeview', 'help']]
-    ],
-    lang: 'pt-BR'
-});
-
 // Inserir variável no Summernote ao clicar
 $(document).on('click', '.var-sistema', function() {
     const variavel = $(this).data('var');

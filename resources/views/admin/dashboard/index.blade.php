@@ -11,18 +11,21 @@
 <style>
 .kpi-card { transition: transform .2s ease, box-shadow .2s ease; border-left-width: 4px; border-left-style: solid; cursor: default; }
 .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(15,23,42,.1); }
-.kpi-card .card-body { padding: .875rem 1rem; }
-.kpi-icon { width: 2rem; height: 2rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-.kpi-valor { font-size: 1.125rem; font-weight: 700; line-height: 1.2; }
-.kpi-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .25rem; }
-.saude-gauge { min-height: 180px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-.saude-indice { font-size: 2.5rem; font-weight: 800; line-height: 1; }
-.filtro-periodo .btn { border-radius: 999px; padding: .25rem .75rem; font-size: .8rem; }
-.recomendacao-item { border-left: 3px solid #3b82f6; padding: .625rem .875rem; margin-bottom: .5rem; background: #eff6ff; border-radius: 0 .75rem .75rem 0; font-size: .875rem; }
+.kpi-card .card-body { padding: .75rem .875rem; }
+.kpi-icon { width: 1.75rem; height: 1.75rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; font-size: .875rem; }
+.kpi-valor { font-size: 1.05rem; font-weight: 700; line-height: 1.2; }
+.kpi-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin-top: .25rem; }
+.saude-gauge { min-height: 160px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.saude-indice { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.filtro-periodo .btn { border-radius: 999px; padding: .25rem .75rem; font-size: .8rem; margin: 0 .1rem; }
+.recomendacao-item { border-left: 3px solid #3b82f6; padding: .5rem .75rem; margin-bottom: .375rem; background: #eff6ff; border-radius: 0 .75rem .75rem 0; font-size: .8rem; }
 .chart-placeholder { min-height: 200px; display: none; align-items: center; justify-content: center; color: #6b7280; font-weight: 600; }
 .card-standard { border-radius: .75rem; }
 .card-header { padding: .75rem 1rem; }
 .card-title { font-size: .95rem; font-weight: 600; }
+.mini-kpi .card-body { padding: .625rem .75rem; }
+.mini-kpi .fs-2 { font-size: 1.4rem !important; }
+.mini-kpi .fs-3 { font-size: 1.25rem !important; }
 </style>
 @endpush
 
@@ -129,67 +132,136 @@
 
 </div>
 
-{{-- Segunda linha de KPIs --}}
-<div class="row gx-4 gy-4 mb-4">
+{{-- Segunda linha de KPIs (mini) --}}
+<div class="row gx-2 gy-3 mb-3">
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
                 <div class="fs-2 fw-bold text-danger" id="kpi-cp-vencidas-qtd">—</div>
-                <div class="small text-muted">Contas Vencidas<br><span class="text-danger fw-medium" id="kpi-cp-vencidas-valor">—</span></div>
+                <div class="small text-muted">Vencidas</div>
+                <div class="small text-danger fw-medium" id="kpi-cp-vencidas-valor">—</div>
             </div>
         </div>
     </div>
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
                 <div class="fs-2 fw-bold text-warning" id="kpi-vencendo-hoje">—</div>
-                <div class="small text-muted">Vencem Hoje</div>
+                <div class="small text-muted">Hoje</div>
             </div>
         </div>
     </div>
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
                 <div class="fs-2 fw-bold text-info" id="kpi-vencendo-7dias">—</div>
-                <div class="small text-muted">Vencem em 7 dias</div>
+                <div class="small text-muted">+7 dias</div>
             </div>
         </div>
     </div>
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
                 <div class="fs-2 fw-bold text-success" id="kpi-total-recebido">—</div>
-                <div class="small text-muted">Total Recebido</div>
+                <div class="small text-muted">Recebido</div>
             </div>
         </div>
     </div>
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
-                <div class="fs-3 fw-bold" id="kpi-economia">—</div>
-                <div class="small text-muted">% Economia</div>
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
+                <div class="fs-3 fw-bold text-primary" id="kpi-economia">—</div>
+                <div class="small text-muted">Economia</div>
             </div>
         </div>
     </div>
 
-    <div class="col-6 col-sm-6 col-md-4 col-xl-2">
-        <div class="card text-center border-0 shadow-sm card-standard h-100">
-            <div class="card-body py-3">
+    <div class="col-4 col-sm-4 col-md-2">
+        <div class="card mini-kpi text-center border-0 shadow-sm card-standard h-100">
+            <div class="card-body">
                 <div class="fs-3 fw-bold text-danger" id="kpi-comprometimento">—</div>
-                <div class="small text-muted">% Comprometimento</div>
+                <div class="small text-muted">Comprom.</div>
             </div>
         </div>
     </div>
 
 </div>
 
+{{-- Ações Rápidas e Controles --}}
+<div class="row gx-3 gy-3 mb-3">
+    <div class="col-md-8">
+        <div class="card shadow-sm card-standard h-100">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="bi bi-lightning-charge me-2 text-warning"></i>Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6 col-sm-3">
+                        <a href="{{ route('admin.financeiro.contas-pagar.index') }}" class="btn btn-outline-danger w-100 d-flex flex-column align-items-center py-2">
+                            <i class="bi bi-arrow-up-circle fs-4 mb-1"></i>
+                            <span class="small">Nova Despesa</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <a href="{{ route('admin.financeiro.contas-receber.index') }}" class="btn btn-outline-success w-100 d-flex flex-column align-items-center py-2">
+                            <i class="bi bi-arrow-down-circle fs-4 mb-1"></i>
+                            <span class="small">Nova Receita</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <a href="{{ route('admin.saas.faturas.index') }}" class="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-2">
+                            <i class="bi bi-receipt fs-4 mb-1"></i>
+                            <span class="small">Faturas</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <a href="{{ route('admin.cron.index') }}" class="btn btn-outline-dark w-100 d-flex flex-column align-items-center py-2">
+                            <i class="bi bi-gear fs-4 mb-1"></i>
+                            <span class="small">Automações</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="p-2 bg-light rounded">
+                            <div class="d-flex justify-content-between align-items-center small text-muted">
+                                <span><i class="bi bi-clock-history me-1"></i>Última atualização: <span id="ultima-atualizacao">agora</span></span>
+                                <span><i class="bi bi-arrow-repeat me-1"></i>Auto-refresh: 5 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm card-standard h-100 border-start border-4 border-info">
+            <div class="card-header border-0">
+                <h5 class="card-title mb-0"><i class="bi bi-bell me-2 text-info"></i>Alertas</h5>
+            </div>
+            <div class="card-body p-2">
+                <div id="dashboard-alertas" class="small">
+                    <div class="d-flex align-items-center p-2 mb-1 rounded bg-warning-subtle">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        <span class="text-muted">Verifique contas a vencer</span>
+                    </div>
+                    <div class="d-flex align-items-center p-2 mb-1 rounded bg-info-subtle">
+                        <i class="bi bi-info-circle text-info me-2"></i>
+                        <span class="text-muted">Saúde financeira estável</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Gráficos e Saúde Financeira --}}
-<div class="row gx-4 gy-4 mb-4">
+<div class="row gx-3 gy-3 mb-3">
 
     {{-- Evolução Mensal --}}
     <div class="col-xl-8">
@@ -230,7 +302,7 @@
 </div>
 
 {{-- Gráficos de categorias --}}
-<div class="row gx-4 gy-4 mb-4">
+<div class="row gx-3 gy-3 mb-3">
     <div class="col-md-6">
         <div class="card shadow-sm card-standard">
             <div class="card-header border-0">
