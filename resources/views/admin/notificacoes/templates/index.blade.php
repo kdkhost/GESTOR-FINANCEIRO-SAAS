@@ -87,7 +87,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-medium">Conteúdo</label>
-                            <textarea class="form-control summernote-editor" name="conteudo" required placeholder="Use variáveis como {{nome}}, {{email}}, {{valor}}"></textarea>
+                            <textarea class="form-control summernote-editor" name="conteudo" required placeholder="Use variáveis como {!! '{{nome}}' !!}, {!! '{{email}}' !!}, {!! '{{valor}}' !!}"></textarea>
                         </div>
                         <div class="col-12">
                             <button type="button" class="btn btn-info btn-sm" id="btn-preview"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</button>
