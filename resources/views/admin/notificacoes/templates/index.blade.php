@@ -107,22 +107,22 @@
                                 <div class="col-12">
                                     <label class="form-label fw-medium small mb-2">Variáveis do Sistema <small class="text-muted fw-normal">(clique para inserir no editor)</small></label>
                                     <div class="d-flex flex-wrap gap-2" id="variaveis-sistema">
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{nome}}' }}">{{ '{{nome}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{email}}' }}">{{ '{{email}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{telefone}}' }}">{{ '{{telefone}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{empresa}}' }}">{{ '{{empresa}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{valor}}' }}">{{ '{{valor}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{data}}' }}">{{ '{{data}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{numero_fatura}}' }}">{{ '{{numero_fatura}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{vencimento}}' }}">{{ '{{vencimento}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{link_pagamento}}' }}">{{ '{{link_pagamento}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{dias_restantes}}' }}">{{ '{{dias_restantes}}' }}</span>
-                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{competencia}}' }}">{{ '{{competencia}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;nome&#125;&#125;">&#123;&#123;nome&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;email&#125;&#125;">&#123;&#123;email&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;telefone&#125;&#125;">&#123;&#123;telefone&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;empresa&#125;&#125;">&#123;&#123;empresa&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;valor&#125;&#125;">&#123;&#123;valor&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;data&#125;&#125;">&#123;&#123;data&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;numero_fatura&#125;&#125;">&#123;&#123;numero_fatura&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;vencimento&#125;&#125;">&#123;&#123;vencimento&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;link_pagamento&#125;&#125;">&#123;&#123;link_pagamento&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;dias_restantes&#125;&#125;">&#123;&#123;dias_restantes&#125;&#125;</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="&#123;&#123;competencia&#125;&#125;">&#123;&#123;competencia&#125;&#125;</span>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-medium">Variáveis Customizadas <small class="text-muted fw-normal">(uma por linha)</small></label>
-                                    <textarea class="form-control" rows="2" name="variaveis" placeholder="{{ '{{var_custom}}' }}"></textarea>
+                                    <textarea class="form-control" rows="2" name="variaveis" placeholder="&#123;&#123;var_custom&#125;&#125;"></textarea>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-check form-switch">
