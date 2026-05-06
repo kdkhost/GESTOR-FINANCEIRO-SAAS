@@ -8,6 +8,15 @@
     <li class="breadcrumb-item active">Notificacoes</li>
 @endsection
 
+@push('styles')
+<style>
+.var-sistema { cursor: pointer; font-size: .8rem; transition: all .15s ease; }
+.var-sistema:hover { transform: scale(1.05); box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+#preview-conteudo img { max-width: 100%; height: auto; }
+#preview-conteudo table { width: 100%; }
+</style>
+@endpush
+
 @section('conteudo')
 <div class="card card-outline card-secondary mb-3">
     <div class="card-body py-2">
@@ -54,69 +63,89 @@
 </div>
 
 <div class="modal fade" id="modal-template" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title"><i class="bi bi-bell me-2"></i><span id="modal-titulo">Novo Template</span></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="form-template">
-                <div class="modal-body">
-                    <input type="hidden" id="template-id">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Canal</label>
-                            <select class="form-select" name="canal" required>
-                                <option value="whatsapp">WhatsApp</option>
-                                <option value="email">E-mail</option>
-                                <option value="push">Push</option>
-                            </select>
-                        </div>
-                        <div class="col-md-8">
-                            <label class="form-label fw-medium">Nome</label>
-                            <input type="text" class="form-control" name="nome" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">Chave</label>
-                            <input type="text" class="form-control" name="chave" required placeholder="ex: cadastro_boas_vindas">
-                            <div class="form-text">Somente letras, numeros, hifen e underline.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">Assunto (para e-mail)</label>
-                            <input type="text" class="form-control" name="assunto" placeholder="Assunto do e-mail">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium">Conteúdo</label>
-                            <textarea class="form-control summernote-editor" name="conteudo" required placeholder="Use variáveis como {!! '{{nome}}' !!}, {!! '{{email}}' !!}, {!! '{{valor}}' !!}"></textarea>
-                        </div>
-                        <div class="col-12">
-                            <button type="button" class="btn btn-info btn-sm" id="btn-preview"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</button>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <div class="card bg-light">
-                                <div class="card-header py-2">
-                                    <h6 class="mb-0"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</h6>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        {{-- Coluna Esquerda: Formulario --}}
+                        <div class="col-md-7 border-end p-3">
+                            <input type="hidden" id="template-id">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-medium">Canal</label>
+                                    <select class="form-select" name="canal" required>
+                                        <option value="whatsapp">WhatsApp</option>
+                                        <option value="email">E-mail</option>
+                                        <option value="push">Push</option>
+                                    </select>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-2">
-                                        <label class="small text-muted">Assunto:</label>
-                                        <div id="preview-assunto" class="fw-medium">-</div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-medium">Nome</label>
+                                    <input type="text" class="form-control" name="nome" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Chave</label>
+                                    <input type="text" class="form-control" name="chave" required placeholder="ex: cadastro_boas_vindas">
+                                    <div class="form-text">Somente letras, numeros, hifen e underline.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium">Assunto (para e-mail)</label>
+                                    <input type="text" class="form-control" name="assunto" placeholder="Assunto do e-mail">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium d-flex align-items-center justify-content-between">
+                                        <span>Conteúdo</span>
+                                        <small class="text-muted">Clique nas variáveis abaixo para inserir</small>
+                                    </label>
+                                    <textarea class="form-control summernote-editor" name="conteudo" required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium small mb-2">Variáveis do Sistema <small class="text-muted fw-normal">(clique para inserir no editor)</small></label>
+                                    <div class="d-flex flex-wrap gap-2" id="variaveis-sistema">
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{nome}}' }}">{{ '{{nome}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{email}}' }}">{{ '{{email}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{telefone}}' }}">{{ '{{telefone}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{empresa}}' }}">{{ '{{empresa}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{valor}}' }}">{{ '{{valor}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{data}}' }}">{{ '{{data}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{numero_fatura}}' }}">{{ '{{numero_fatura}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{vencimento}}' }}">{{ '{{vencimento}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{link_pagamento}}' }}">{{ '{{link_pagamento}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{dias_restantes}}' }}">{{ '{{dias_restantes}}' }}</span>
+                                        <span class="badge bg-primary cursor-pointer var-sistema" data-var="{{ '{{competencia}}' }}">{{ '{{competencia}}' }}</span>
                                     </div>
-                                    <div>
-                                        <label class="small text-muted">Conteúdo:</label>
-                                        <div id="preview-conteudo" class="border rounded p-2 bg-white" style="min-height: 100px;">-</div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-medium">Variáveis Customizadas <small class="text-muted fw-normal">(uma por linha)</small></label>
+                                    <textarea class="form-control" rows="2" name="variaveis" placeholder="{{ '{{var_custom}}' }}"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="template-ativo" checked>
+                                        <label class="form-check-label" for="template-ativo">Ativo</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label fw-medium">Variaveis (uma por linha)</label>
-                            <textarea class="form-control" rows="3" name="variaveis" placeholder="&#123;&#123;nome&#125;&#125;&#10;&#123;&#123;email&#125;&#125;&#10;&#123;&#123;telefone&#125;&#125;"></textarea>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="template-ativo" checked>
-                                <label class="form-check-label" for="template-ativo">Ativo</label>
+
+                        {{-- Coluna Direita: Preview --}}
+                        <div class="col-md-5 bg-light p-3 d-flex flex-column" style="min-height: 500px;">
+                            <h6 class="mb-3"><i class="bi bi-eye me-2 text-info"></i>Preview em Tempo Real</h6>
+                            <div class="mb-3">
+                                <label class="small text-muted fw-medium">Assunto:</label>
+                                <div id="preview-assunto" class="p-2 bg-white rounded border small">-</div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="small text-muted fw-medium">Conteúdo:</label>
+                                <div id="preview-conteudo" class="p-3 bg-white rounded border small" style="min-height: 300px; overflow-y: auto;">-</div>
+                            </div>
+                            <div class="mt-3 p-2 bg-info-subtle rounded border border-info">
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>As variáveis serão substituídas pelos dados reais no envio.</small>
                             </div>
                         </div>
                     </div>
@@ -196,7 +225,10 @@ $('#btn-novo').on('click', () => {
     $('#modal-titulo').text('Novo Template');
     $('#template-id').val('');
     $('#form-template')[0].reset();
+    $('.summernote-editor').summernote('code', '');
     $('#template-ativo').prop('checked', true);
+    $('#preview-assunto').text('-');
+    $('#preview-conteudo').html('-');
     $('#modal-template').modal('show');
 });
 
@@ -212,10 +244,12 @@ $(document).on('click', '.btn-editar', function () {
         f.find('[name="nome"]').val(t.nome);
         f.find('[name="chave"]').val(t.chave);
         f.find('[name="assunto"]').val(t.assunto || '');
-        f.find('[name="conteudo"]').val(t.conteudo);
+        $('.summernote-editor').summernote('code', t.conteudo || '');
         f.find('[name="variaveis"]').val((t.variaveis || []).join('\\n'));
         $('#template-ativo').prop('checked', !!t.ativo);
         $('#modal-template').modal('show');
+        // Dispara preview após abrir modal
+        setTimeout(atualizarPreview, 300);
     });
 });
 
@@ -273,16 +307,26 @@ $('.summernote-editor').summernote({
     lang: 'pt-BR'
 });
 
+// Inserir variável no Summernote ao clicar
+$(document).on('click', '.var-sistema', function() {
+    const variavel = $(this).data('var');
+    $('.summernote-editor').summernote('editor.saveRange');
+    $('.summernote-editor').summernote('editor.restoreRange');
+    $('.summernote-editor').summernote('editor.focus');
+    $('.summernote-editor').summernote('editor.insertText', variavel);
+    toast('Variável inserida: ' + variavel, 'sucesso');
+});
+
 // Preview em tempo real durante digitação
 let debounceTimer;
 function atualizarPreview() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         const chave = $('#form-template [name="chave"]').val();
-        const conteudo = $('#form-template [name="conteudo"]').val();
+        const conteudo = $('.summernote-editor').summernote('code');
         const assunto = $('#form-template [name="assunto"]').val();
 
-        if (!chave || !conteudo) return;
+        if (!chave) return;
 
         $.post(URLS_T.preview, { chave, conteudo, assunto }, function(r) {
             if (r.sucesso) {
@@ -293,52 +337,8 @@ function atualizarPreview() {
     }, 500);
 }
 
-$('#form-template [name="chave"], #form-template [name="conteudo"], #form-template [name="assunto"]').on('input change', atualizarPreview);
-
-// Preview em tempo real (botão)
-$('#btn-preview').on('click', function() {
-    const chave = $('#form-template [name="chave"]').val();
-    const conteudo = $('#form-template [name="conteudo"]').val();
-    const assunto = $('#form-template [name="assunto"]').val();
-
-    if (!chave || !conteudo) {
-        toast('Preencha a chave e o conteúdo primeiro.', 'alerta');
-        return;
-    }
-
-    $.post(URLS_T.preview, { chave, conteudo, assunto }, function(r) {
-        if (!r.sucesso) return;
-
-        let html = '<div class="modal fade" id="modal-preview" tabindex="-1">';
-        html += '<div class="modal-dialog modal-lg">';
-        html += '<div class="modal-content">';
-        html += '<div class="modal-header bg-info text-white">';
-        html += '<h5 class="modal-title"><i class="bi bi-eye me-2"></i>Preview do Template</h5>';
-        html += '<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>';
-        html += '</div>';
-        html += '<div class="modal-body">';
-        html += '<div class="mb-3">';
-        html += '<label class="form-label fw-medium">Assunto:</label>';
-        html += '<div class="p-2 bg-light rounded">' + (r.preview.assunto || '-') + '</div>';
-        html += '</div>';
-        html += '<div>';
-        html += '<label class="form-label fw-medium">Conteúdo:</label>';
-        html += '<div class="p-3 bg-light rounded border">' + r.preview.conteudo + '</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '<div class="modal-footer">';
-        html += '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>';
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
-
-        $('#modal-preview').remove();
-        $('body').append(html);
-        $('#modal-preview').modal('show');
-        $('#modal-preview').on('hidden.bs.modal', function() { $(this).remove(); });
-    }).fail(() => toast('Erro ao gerar preview.', 'erro'));
-});
+$('#form-template [name="chave"], #form-template [name="assunto"]').on('input change', atualizarPreview);
+$('.summernote-editor').on('summernote.change', atualizarPreview);
 
 carregarTemplates();
 </script>
