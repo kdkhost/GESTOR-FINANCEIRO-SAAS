@@ -18,6 +18,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Opções adicionais no Summernote: strikethrough, superscript, subscript, alinhamento de parágrafo, cores de fundo.
 
 ### Corrigido
+- **Carregamento infinito em todas as páginas de Financeiro**: Scripts envolvidos em `$(document).ready()` para garantir que jQuery esteja carregado antes da execução.
+- Páginas afetadas: Contas a Pagar, Contas a Receber, Receitas, Despesas, Transferências, Recorrências, Metas e Orçamentos.
 - Espaçamento entre botões de período na dashboard (agora com gap de 0.375rem).
 - Rotas dos botões de ações rápidas corrigidas para `admin.contas-pagar.index` e `admin.contas-receber.index`.
 - Quebra de linha das variáveis customizadas no modal de templates (corrigido `join('\n')`).
