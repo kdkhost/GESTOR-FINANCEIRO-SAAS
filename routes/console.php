@@ -11,10 +11,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-// Registra comando de cron
-Artisan::command('cron:executar', [ExecutarCronJobs::class])
-    ->purpose('Executa tarefas cron agendadas');
-
 // Agenda execução automática de tarefas cron a cada minuto
 Schedule::call(function () {
     $jobs = CronJob::where('ativo', true)->get();
