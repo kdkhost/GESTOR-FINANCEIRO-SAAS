@@ -202,13 +202,13 @@
             <div class="card-body">
                 <div class="row g-2">
                     <div class="col-6 col-sm-3">
-                        <a href="{{ route('admin.financeiro.contas-pagar.index') }}" class="btn btn-outline-danger w-100 d-flex flex-column align-items-center py-2">
+                        <a href="{{ route('admin.contas-pagar.index') }}" class="btn btn-outline-danger w-100 d-flex flex-column align-items-center py-2">
                             <i class="bi bi-arrow-up-circle fs-4 mb-1"></i>
                             <span class="small">Nova Despesa</span>
                         </a>
                     </div>
                     <div class="col-6 col-sm-3">
-                        <a href="{{ route('admin.financeiro.contas-receber.index') }}" class="btn btn-outline-success w-100 d-flex flex-column align-items-center py-2">
+                        <a href="{{ route('admin.contas-receber.index') }}" class="btn btn-outline-success w-100 d-flex flex-column align-items-center py-2">
                             <i class="bi bi-arrow-down-circle fs-4 mb-1"></i>
                             <span class="small">Nova Receita</span>
                         </a>
