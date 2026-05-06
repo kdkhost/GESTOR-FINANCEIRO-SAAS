@@ -33,6 +33,9 @@
     {{-- FullCalendar --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.css">
 
+    {{-- Summernote --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css">
+
     {{-- CSS do sistema --}}
     @vite(['resources/css/app.css'])
 
@@ -173,8 +176,15 @@
     {{-- IMask --}}
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
 
+    {{-- FullCalendar --}}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
+
+    {{-- Summernote --}}
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/lang/summernote-pt-BR.min.js"></script>
+
     {{-- Chart.js --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     {{-- ApexCharts --}}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.2/dist/apexcharts.min.js"></script>
@@ -354,19 +364,263 @@
                 buscarCep($this);
             }
         });
-        
-        // Evento input (enquanto digita)
-        $(document).on('input', '.viacep', function() {
-            const $this = $(this);
-            const cep = $this.val().replace(/\D/g, '');
-            
-            clearTimeout(cepTimeout);
+    };
+
+    // Loading global
+    window.mostrarLoading  = () => { document.getElementById('loading-overlay').style.display = 'flex'; };
+    window.ocultarLoading  = () => { document.getElementById('loading-overlay').style.display = 'none'; };
+
+    // Intercepta AJAX global para loading
+    $(document).on('ajaxSend', function() { mostrarLoading(); });
+    $(document).on('ajaxComplete', function() { ocultarLoading(); });
+    $(document).on('ajaxSuccess', function(_event, xhr, settings) {
+        const metodo = String(settings?.type || settings?.method || 'GET').toUpperCase();
+        if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(metodo)) return;
+
+        const detalhe = {
+            metodo,
+            url: settings?.url || null,
+            resposta: xhr?.responseJSON || null,
+        };
+
+        window.dispatchEvent(new CustomEvent('sistema:registro-atualizado', { detail: detalhe }));
+    });
+
+    // Máscaras globais IMask
+    document.addEventListener('DOMContentLoaded', function() {
+        // Moeda
+        document.querySelectorAll('.mask-moeda').forEach(el => {
+            IMask(el, { mask: Number, scale: 2, thousandsSeparator: '.', radix: ',', normalizeZeros: true, padFractionalZeros: true });
+        });
+        // CPF
+        document.querySelectorAll('.mask-cpf').forEach(el => {
+            IMask(el, { mask: '000.000.000-00' });
+        });
+        // CNPJ
+        document.querySelectorAll('.mask-cnpj').forEach(el => {
+            IMask(el, { mask: '00.000.000/0000-00' });
+        });
+        // Telefone
+        document.querySelectorAll('.mask-telefone').forEach(el => {
+            IMask(el, { mask: [{ mask: '(00) 0000-0000' }, { mask: '(00) 00000-0000' }] });
+        });
+        // CEP
+        document.querySelectorAll('.mask-cep').forEach(el => {
+            IMask(el, { mask: '00000-000' });
+        });
+        // Data
+        document.querySelectorAll('.mask-data').forEach(el => {
+            IMask(el, { mask: '00/00/0000' });
+        });
+    });
+
+    // ViaCEP automático - usando fetch para evitar CORS
+    let cepTimeout;
+    
+    function buscarCep($input) {
+        try {
+            const cep = $input.val().replace(/\D/g, '');
             if (cep.length !== 8) return;
             
-            cepTimeout = setTimeout(() => buscarCep($this), 400);
-        });
-    </script>
+            // Procura no container mais próximo
+            const $container = $input.closest('form, .modal-content, .tab-pane, .card, body').first();
+            
+            // Usa fetch com script tag (JSONP) para evitar CORS
+            const script = document.createElement('script');
+            const callbackName = 'viacepCallback_' + Date.now();
+            
+            window[callbackName] = function(dados) {
+                delete window[callbackName];
+                document.head.removeChild(script);
+                
+                if (dados.erro) { 
+                    toast('CEP não encontrado.', 'alerta'); 
+                    return; 
+                }
+                
+                // Preenche os campos
+                $container.find('[name="logradouro"], [name="endereco"]').val(dados.logradouro || '');
+                $container.find('[name="bairro"]').val(dados.bairro || '');
+                $container.find('[name="cidade"], [name="localidade"]').val(dados.localidade || '');
+                $container.find('[name="estado"], [name="uf"]').val(dados.uf || '');
+                
+                // Foca no campo número
+                setTimeout(() => {
+                    const $numero = $container.find('[name="numero"]').first();
+                    if ($numero.length && $numero.is(':visible')) {
+                        $numero.focus().select();
+                    }
+                }, 100);
+                
+                toast('Endereço preenchido automaticamente!', 'sucesso');
+            };
+            
+            script.src = `https://viacep.com.br/ws/${cep}/json/?callback=${callbackName}`;
+            script.onerror = function() {
+                delete window[callbackName];
+                document.head.removeChild(script);
+                toast('Erro ao buscar CEP. Tente novamente.', 'erro');
+            };
+            document.head.appendChild(script);
+            
+        } catch (e) {
+            console.error('Erro na função buscarCep:', e);
+        }
+    }
+    
+    // Evento blur (ao sair do campo)
+    $(document).on('blur', '.viacep', function() {
+        const $this = $(this);
+        const cep = $this.val().replace(/\D/g, '');
+        
+        clearTimeout(cepTimeout);
+        if (cep.length === 8) {
+            buscarCep($this);
+        }
+    });
+    
+    // Evento input (enquanto digita)
+    $(document).on('input', '.viacep', function() {
+        const $this = $(this);
+        const cep = $this.val().replace(/\D/g, '');
+        
+        clearTimeout(cepTimeout);
+        if (cep.length !== 8) return;
+        
+        cepTimeout = setTimeout(() => buscarCep($this), 400);
+    });
 
-    @stack('scripts')
+    // Inicializa Summernote com seletor de ícones
+    $('.summernote-editor').each(function() {
+        const $editor = $(this);
+        $editor.summernote({
+            lang: 'pt-BR',
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video', 'table', 'hr']],
+                ['view', ['fullscreen', 'codeview', 'help']],
+                ['custom', ['iconpicker']]
+            ],
+            buttons: {
+                iconpicker: function(context) {
+                    const ui = $.summernote.ui;
+                    const button = ui.button({
+                        contents: '<i class="bi bi-icons"></i> Ícone',
+                        tooltip: 'Inserir Ícone',
+                        click: function() {
+                            context.invoke('saveRange');
+                            abrirSeletorIcones($editor);
+                        }
+                    });
+                    return button.render();
+                }
+            }
+        });
+    });
+
+    // Lista de ícones Bootstrap mais comuns
+    const iconesComuns = [
+        'bi-alarm', 'bi-calendar', 'bi-calendar-check', 'bi-clock', 'bi-clock-history',
+        'bi-envelope', 'bi-envelope-check', 'bi-envelope-open', 'bi-telephone', 'bi-telephone-inbound',
+        'bi-person', 'bi-people', 'bi-person-check', 'bi-person-x', 'bi-person-gear',
+        'bi-house', 'bi-building', 'bi-shop', 'bi-cart', 'bi-cart-check',
+        'bi-credit-card', 'bi-wallet', 'bi-cash', 'bi-bank', 'bi-piggy-bank',
+        'bi-graph-up', 'bi-graph-down', 'bi-bar-chart', 'bi-pie-chart', 'bi-trend-up',
+        'bi-box', 'bi-box-seam', 'bi-archive', 'bi-inbox', 'bi-truck',
+        'bi-gear', 'bi-sliders', 'bi-tools', 'bi-wrench', 'bi-hammer',
+        'bi-check-circle', 'bi-x-circle', 'bi-exclamation-circle', 'bi-info-circle', 'bi-question-circle',
+        'bi-star', 'bi-star-fill', 'bi-heart', 'bi-heart-fill', 'bi-bookmark',
+        'bi-search', 'bi-filter', 'bi-sort', 'bi-arrow-up', 'bi-arrow-down',
+        'bi-plus', 'bi-plus-circle', 'bi-dash', 'bi-dash-circle', 'bi-x',
+        'bi-download', 'bi-upload', 'bi-share', 'bi-link', 'bi-link-45deg',
+        'bi-camera', 'bi-image', 'bi-file-text', 'bi-file-earmark', 'bi-folder',
+        'bi-shield', 'bi-shield-check', 'bi-lock', 'bi-unlock', 'bi-key',
+        'bi-bell', 'bi-chat', 'bi-chat-dots', 'bi-megaphone', 'bi-broadcast',
+        'bi-globe', 'bi-wifi', 'bi-bluetooth', 'bi-usb', 'bi-printer',
+        'bi-trash', 'bi-eraser', 'bi-pencil', 'bi-pen', 'bi-scissors'
+    ];
+
+    // Função para abrir seletor de ícones
+    function abrirSeletorIcones($editor) {
+        let html = '<div class="modal fade" id="modalIcones" tabindex="-1">';
+        html += '<div class="modal-dialog modal-lg">';
+        html += '<div class="modal-content">';
+        html += '<div class="modal-header">';
+        html += '<h5 class="modal-title">Selecione um Ícone</h5>';
+        html += '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>';
+        html += '</div>';
+        html += '<div class="modal-body">';
+        html += '<input type="text" class="form-control mb-3" id="busca-icones" placeholder="Buscar ícone...">';
+        html += '<div class="row g-2" id="grid-icones" style="max-height: 400px; overflow-y: auto;">';
+
+        iconesComuns.forEach(function(icon) {
+            html += '<div class="col-2 col-md-1">';
+            html += '<button class="btn btn-outline-secondary w-100 p-2 btn-icon-select" data-icon="' + icon + '">';
+            html += '<i class="bi ' + icon + ' fs-4"></i>';
+            html += '</button>';
+            html += '</div>';
+        });
+
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        // Remove modal anterior se existir
+        $('#modalIcones').remove();
+
+        // Adiciona novo modal
+        $('body').append(html);
+
+        const $modal = $('#modalIcones');
+        const $grid = $('#grid-icones');
+
+        // Busca de ícones
+        $('#busca-icones').on('input', function() {
+            const busca = $(this).val().toLowerCase();
+            $grid.find('.btn-icon-select').each(function() {
+                const icon = $(this).data('icon');
+                if (icon.includes(busca)) {
+                    $(this).parent().show();
+                } else {
+                    $(this).parent().hide();
+                }
+            });
+        });
+
+        // Seleção de ícone
+        $grid.on('click', '.btn-icon-select', function() {
+            const icon = $(this).data('icon');
+            $editor.summernote('restoreRange');
+            $editor.summernote('focus');
+            $editor.summernote('createLink', {
+                text: ' ',
+                url: '#',
+                isNewWindow: false,
+                callback: function($link) {
+                    $link.html('<i class="bi ' + icon + '"></i> ');
+                    $link.removeAttr('href');
+                }
+            });
+            $modal.modal('hide');
+        });
+
+        $modal.modal('show');
+
+        // Remove modal ao fechar
+        $modal.on('hidden.bs.modal', function() {
+            $(this).remove();
+        });
+    }
+</script>
+
+@stack('scripts')
 </body>
 </html>
