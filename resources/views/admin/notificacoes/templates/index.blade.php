@@ -174,10 +174,12 @@ let paginaAtualT = 1;
 const perPageT = 10;
 
 function carregarTemplates(pagina = 1) {
+    console.log('carregarTemplates chamado, pagina:', pagina, 'URL:', URLS_T.listar);
     paginaAtualT = pagina;
     $.get(URLS_T.listar, { page: pagina, per_page: perPageT, search: $('#filtro-search').val() }, function (r) {
+        console.log('Resposta do servidor:', r);
         const tbody = $('#tbody-templates').empty();
-        if (!r.sucesso || !r.dados.length) {
+        if (!r.sucesso || !r.dados || !r.dados.length) {
             tbody.html('<tr><td colspan="5" class="text-center py-4 text-muted"><i class="bi bi-inbox fs-3 d-block mb-2"></i>Nenhum template encontrado.</td></tr>');
             $('#info-paginacao').text('0 registros');
             $('#paginacao').empty();
@@ -199,7 +201,10 @@ function carregarTemplates(pagina = 1) {
         const fim = Math.min(pagina * perPageT, r.total);
         $('#info-paginacao').text(`Exibindo ${ini}-${fim} de ${r.total} registros`);
         renderPagT(r.paginas, pagina);
-    }).fail(() => toast('Erro ao carregar templates.', 'erro'));
+    }).fail(function(xhr) {
+        console.error('Erro ao carregar templates:', xhr);
+        toast('Erro ao carregar templates. Verifique o console.', 'erro');
+    });
 }
 
 function renderPagT(total, atual) {
