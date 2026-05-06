@@ -92,6 +92,23 @@
                         <div class="col-12">
                             <button type="button" class="btn btn-info btn-sm" id="btn-preview"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</button>
                         </div>
+                        <div class="col-12 mt-3">
+                            <div class="card bg-light">
+                                <div class="card-header py-2">
+                                    <h6 class="mb-0"><i class="bi bi-eye me-1"></i>Preview em Tempo Real</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <label class="small text-muted">Assunto:</label>
+                                        <div id="preview-assunto" class="fw-medium">-</div>
+                                    </div>
+                                    <div>
+                                        <label class="small text-muted">Conteúdo:</label>
+                                        <div id="preview-conteudo" class="border rounded p-2 bg-white" style="min-height: 100px;">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-12">
                             <label class="form-label fw-medium">Variaveis (uma por linha)</label>
                             <textarea class="form-control" rows="3" name="variaveis" placeholder="&#123;&#123;nome&#125;&#125;&#10;&#123;&#123;email&#125;&#125;&#10;&#123;&#123;telefone&#125;&#125;"></textarea>
@@ -240,7 +257,45 @@ $('#btn-filtrar').on('click', () => carregarTemplates(1));
 $('#btn-limpar').on('click', () => { $('#filtro-search').val(''); carregarTemplates(1); });
 $('#filtro-search').on('keypress', e => { if (e.which === 13) carregarTemplates(1); });
 
-// Preview em tempo real
+// Inicializar Summernote
+$('.summernote-editor').summernote({
+    height: 200,
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['fontname', ['fontname']],
+        ['fontsize', ['fontsize']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['fullscreen', 'codeview', 'help']]
+    ],
+    lang: 'pt-BR'
+});
+
+// Preview em tempo real durante digitação
+let debounceTimer;
+function atualizarPreview() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const chave = $('#form-template [name="chave"]').val();
+        const conteudo = $('#form-template [name="conteudo"]').val();
+        const assunto = $('#form-template [name="assunto"]').val();
+
+        if (!chave || !conteudo) return;
+
+        $.post(URLS_T.preview, { chave, conteudo, assunto }, function(r) {
+            if (r.sucesso) {
+                $('#preview-assunto').text(r.preview.assunto || '-');
+                $('#preview-conteudo').html(r.preview.conteudo || '-');
+            }
+        });
+    }, 500);
+}
+
+$('#form-template [name="chave"], #form-template [name="conteudo"], #form-template [name="assunto"]').on('input change', atualizarPreview);
+
+// Preview em tempo real (botão)
 $('#btn-preview').on('click', function() {
     const chave = $('#form-template [name="chave"]').val();
     const conteudo = $('#form-template [name="conteudo"]').val();

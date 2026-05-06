@@ -462,68 +462,31 @@ function executarTarefa(id) {
 }
 
 function executarTodas() {
-    const ativas = tarefas.filter(t => t.ativo);
-    if (ativas.length === 0) {
-        toast('Nenhuma tarefa ativa para executar.', 'alerta');
-        return;
-    }
-
     SistemaAlert.fire({
         title: 'Executar Todas?',
-        text: `Isso executará ${ativas.length} tarefa(s) ativa(s) sequencialmente.`,
+        text: 'Isso executara todas as tarefas ativas sequencialmente.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Executar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            console.log('Iniciando execução em massa de', ativas.length, 'tarefas');
-
-            // Mostra loading
-            const btn = $('button[onclick="executarTodas()"]');
-            btn.prop('disabled', true).html('<i class="bi bi-hourglass-split me-1"></i>Executando...');
-
+            const ativas = tarefas.filter(t => t.ativo);
             let executadas = 0;
-            let sucessos = 0;
-            let erros = 0;
 
-            // Executa sequencialmente (não em paralelo) para evitar sobrecarga
-            async function executarSequencial() {
-                for (const t of ativas) {
-                    try {
-                        console.log(`Executando tarefa ${t.id}: ${t.nome}`);
-                        const res = await $.ajax({
-                            url: API_URL + '/' + t.id + '/executar',
-                            method: 'POST',
-                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                        });
-
-                        if (res.sucesso) {
-                            sucessos++;
-                            console.log(`Tarefa ${t.nome} executada com sucesso`);
-                        } else {
-                            erros++;
-                            console.error(`Erro na tarefa ${t.nome}:`, res.erro);
-                        }
-                    } catch (err) {
-                        erros++;
-                        console.error(`Falha na tarefa ${t.nome}:`, err);
-                    }
+            ativas.forEach(t => {
+                $.ajax({
+                    url: API_URL + '/' + t.id + '/executar',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }).always(function() {
                     executadas++;
-                }
-
-                // Finaliza
-                btn.prop('disabled', false).html('<i class="bi bi-play-fill me-1"></i>Executar Todas Agora');
-                carregarDados();
-
-                if (erros === 0) {
-                    toast(`Todas as ${sucessos} tarefas executadas com sucesso!`, 'sucesso');
-                } else {
-                    toast(`${sucessos} sucesso(s), ${erros} erro(s). Verifique os logs.`, sucessos > 0 ? 'alerta' : 'erro');
-                }
-            }
-
-            executarSequencial();
+                    if (executadas >= ativas.length) {
+                        toast('Todas as tarefas foram executadas!', 'sucesso');
+                        carregarDados();
+                    }
+                });
+            });
         }
     });
 }
